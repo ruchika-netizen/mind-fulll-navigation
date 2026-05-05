@@ -7,7 +7,7 @@ const EnsoLoader = ({ onComplete }) => {
   useEffect(() => {
     // 1. Sound Logic: Circle animation 3s ki hai
     const soundEnabled = localStorage.getItem("soundEnabled") !== "false";
-    
+
     // Animation khatam hone ke theek pehle ya saath sound bajna chahiye
     const audioTimer = setTimeout(() => {
       if (soundEnabled) {
@@ -27,7 +27,13 @@ const EnsoLoader = ({ onComplete }) => {
       clearTimeout(buttonTimer);
     };
   }, []);
+  const [showLoader, setShowLoader] = useState(false); const handleFinishNavigator = () => {
+    setShowLoader(true);
+  };
 
+  if (showLoader) {
+    return <EnsoLoader onComplete={() => navigate("/")} />;
+  }
   const handleEnter = () => {
     // Ab yahan sound bajane ki zaroorat nahi, wo circle complete hone par baj chuka hai
     // Seedha transition karein
@@ -37,7 +43,7 @@ const EnsoLoader = ({ onComplete }) => {
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#F5F0E8] z-[100] px-6">
       <div className="relative flex flex-col items-center w-full max-w-sm">
-        
+
         {/* LOGO */}
         <div className="relative w-48 h-48 md:w-56 md:h-56 flex items-center justify-center">
           <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
@@ -54,7 +60,7 @@ const EnsoLoader = ({ onComplete }) => {
               strokeLinecap="round"
               style={{ opacity: 0.8 }}
             />
-            
+
             <circle
               cx="92"
               cy="50"
@@ -78,7 +84,7 @@ const EnsoLoader = ({ onComplete }) => {
 
         {/* ENTER BUTTON */}
         <div className={`mt-14 transition-all duration-1000 transform ${showButton ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
-          <button 
+          <button
             onClick={handleEnter}
             className="px-10 py-3 bg-[#36454F] text-[#F5F0E8] text-[10px] uppercase tracking-[0.5em] rounded-full transition-all hover:bg-black active:scale-95 shadow-lg font-medium"
           >

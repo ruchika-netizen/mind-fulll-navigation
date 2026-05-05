@@ -1,24 +1,37 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState(undefined); // undefined means "checking"
+  const location = useLocation();
 
   useEffect(() => {
-    const getSession = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-      setLoading(false);
-    };
-    getSession();
+    // Check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // Listen for changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  // Jab tak check ho raha hai, blank ya chota loader dikhao
+  if (session === undefined) {
+    return (
+      <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center italic opacity-40 text-sm font-serif">
+        Validating flow...
+      </div>
+    );
+  }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  // Agar session nahi hai, to login bhej do
+  if (!session) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return children;

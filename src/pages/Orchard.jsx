@@ -163,7 +163,7 @@ function Orchard() {
             </button>
 
             <div className="flex items-center justify-between opacity-40 mt-6 px-2">
-              <p className="text-[15px] italic max-w-[280px] leading-relaxed font-serif">
+              <p className="text-[16px] italic max-w-[280px] leading-relaxed font-serif">
                 “Tend to your orchard, and the fruit will follow.”
               </p>
               <div className="w-18 h-10 bg-[#36454F]/5 rounded-xl flex items-center justify-center overflow-hidden border border-[#36454F]/10">

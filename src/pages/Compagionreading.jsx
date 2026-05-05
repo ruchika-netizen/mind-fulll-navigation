@@ -16,7 +16,7 @@ const CompanionReadings = () => {
   const readings = [
     {
       id: 1,
-      title: "One — The Pause",
+      title: "The Pause",
       subtitle: "Inspired by the stillness between steps",
       img: pikaice,
       content: [
@@ -28,7 +28,7 @@ const CompanionReadings = () => {
     },
     {
       id: 2,
-      title: "Two — The Return",
+      title: "The Return",
       subtitle: "Finding the way back",
       img: tree,
       content: [
@@ -40,7 +40,7 @@ const CompanionReadings = () => {
     },
     {
       id: 3,
-      title: "Three — The Path",
+      title: " The Path",
       subtitle: "Moving forward",
       img: autunm,
       content: [
@@ -52,7 +52,7 @@ const CompanionReadings = () => {
     },
     {
       id: 4,
-      title: "Four — The Witness",
+      title: " The Witness",
       subtitle: "At the edge of the woods",
       img: Deepwater,
       content: [
@@ -64,7 +64,7 @@ const CompanionReadings = () => {
     },
     {
       id: 5,
-      title: "Five — The Solo Table",
+      title: " The Solo Table",
       subtitle: "Presence over loneliness",
       img: alone,
       content: [
@@ -82,77 +82,78 @@ const CompanionReadings = () => {
 
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif flex flex-col overflow-x-hidden">
-      
+
       {/* HEADER */}
-  <header className="relative w-full max-w-7xl mx-auto py-10 md:py-16 px-6 text-center">
-  {/* Back Button Container */}
-  <div className="absolute top-6 md:top-12 left-0">
-    <button 
-      onClick={() => navigate(-1)} 
-      className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
-    >
-      <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span> 
-      <span className="mt-0.5">Back</span>
-    </button>
-  </div>
+      <header className="relative w-full max-w-7xl mx-auto py-10 md:py-16 px-6 text-center">
+        {/* Back Button Container */}
+        <div className="absolute top-6 md:top-12 left-0">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
+          >
+            <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
+            <span className="mt-0.5">Back</span>
+          </button>
+        </div>
 
-  {/* Header Text */}
-  <div className="flex flex-col items-center pt-6 md:pt-0">
-    <h1 className="text-3xl md:text-4xl font-bold italic tracking-tight text-[#36454F]">
-     The Companion Readings 
-    </h1>
+        {/* Header Text */}
+        <div className="flex flex-col items-center pt-6 md:pt-0">
+          <h1 className="text-3xl md:text-4xl font-bold italic tracking-tight text-[#36454F]">
+            The Companion Readings
+          </h1>
 
-    <div className="w-12 h-[1px] bg-[#36454F]/10 mt-8" />
-  </div>
-</header>
+          <div className="w-12 h-[1px] bg-[#36454F]/10 mt-8" />
+        </div>
+      </header>
 
       {/* BOOK SPREAD AREA */}
       <main className="flex-grow flex items-center justify-center px-4 md:px-10 pb-6">
         <div key={currentSlide} className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 bg-white rounded-[3rem] overflow-hidden shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-1000 border border-[#36454F]/10">
-          
+
           {/* LEFT PAGE: Image (Standardized Size) */}
           <div className="p-8 md:p-8 flex flex-col items-center justify-center border-r border-[#36454F]/10">
             <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-inner bg-[#FDFCFB]">
-              <img 
-                src={readings[currentSlide].img} 
-                alt="Reading Visual" 
-                className="w-full h-full object-cover grayscale-[0.2]" 
+              <img
+                src={readings[currentSlide].img}
+                alt="Reading Visual"
+                className="w-full h-full object-cover grayscale-[0.2]"
               />
             </div>
           </div>
 
           {/* RIGHT PAGE: Text Content */}
           <div className="p-8 md:p-8 flex flex-col justify-center bg-[#FDFCFB]">
-             <div className="max-w-md mx-auto space-y-8 text-center lg:text-left">
-                <header className="space-y-2">
-                  <h2 className="text-4xl font-light italic leading-tight">{readings[currentSlide].title}</h2>
-                  <p className="text-[10px] uppercase tracking-widest font-sans font-bold">The Collection</p>
-                </header>
+            <div className="max-w-md mx-auto space-y-8 text-center lg:text-left">
+              <header className="space-y-2">
+                <h2 className="text-4xl font-light italic leading-tight">{readings[currentSlide].title}</h2>
+                <p className="text-[10px] uppercase tracking-widest font-sans font-bold">The Collection</p>
+              </header>
 
-                <div className="space-y-6">
-                  {readings[currentSlide].content.map((para, i) => (
-                    <p key={i} className="text-[16px] md:text-[18px] italic leading-relaxed">
-                      {para}
-                    </p>
-                  ))}
-                  
-                  {readings[currentSlide].sutra && (
-                    <div className="pt-4 border-t border-[#36454F]/10">
-                      <p className="text-[9px] uppercase tracking-widest font-sans font-bold mb-1 italic">Sutra</p>
-                      <p className="text-2xl italic font-light">“{readings[currentSlide].sutra}”</p>
-                    </div>
-                  )}
-
-                  <p className="text-[10px] uppercase tracking-[0.4em] font-sans font-bold pt-4">
-                    {readings[currentSlide].author}
+              <div className="space-y-6">
+                {readings[currentSlide].content.map((para, i) => (
+                  <p key={i} className="text-[16px] md:text-[18px] italic leading-relaxed">
+                    {para}
                   </p>
-                </div>
-             </div>
+                ))}
+
+                {readings[currentSlide].sutra && (
+                  <div className="pt-4 border-t border-[#36454F]/10">
+                    <p className="text-[9px] uppercase tracking-widest font-sans font-bold mb-1 italic">Sutra</p>
+                    <p className="text-2xl italic font-light">“{readings[currentSlide].sutra}”</p>
+                  </div>
+                )}
+
+                <p className="text-[10px] uppercase tracking-[0.4em] font-sans font-bold pt-4">
+                  {readings[currentSlide].author}
+                </p>
+              </div>
+            </div>
           </div>
 
         </div>
       </main>
 
+      {/* FOOTER */}
       {/* FOOTER */}
       <footer className="h-[15vh] flex flex-col items-center justify-center gap-6 px-10">
         {/* DOTS */}
@@ -165,22 +166,25 @@ const CompanionReadings = () => {
         </div>
 
         <div className="max-w-7xl w-full flex justify-between">
-          <button 
-            disabled={currentSlide === 0} 
+          <button
+            disabled={currentSlide === 0}
             onClick={() => setCurrentSlide(prev => prev - 1)}
-            className={`flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold transition-all ${currentSlide === 0 ? "invisible" : "hover:text-black"}`}
+            className={`flex items-center gap-2 text-[10px] uppercase font-sans tracking-widest font-bold transition-all ${currentSlide === 0 ? "invisible" : "hover:text-black"}`}
           >
             <ChevronLeft size={16} /> Previous
           </button>
-          
-          {currentSlide === totalSlides - 1 ? (
-            <button onClick={() => navigate("/finalword")} className="px-10 py-4 bg-[#36454F] text-[#F5F0E8] text-[10px] uppercase tracking-[0.4em] font-sans font-bold rounded-full hover:bg-black transition-all">
-             Final Word!
-            </button>
-          ) : (
-            <button onClick={() => setCurrentSlide(prev => prev + 1)} className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold hover:text-black transition-all">
+
+          {/* Updated Logic: Only show Next Reading if not on the last slide. Final Word button removed. */}
+          {currentSlide < totalSlides - 1 ? (
+            <button
+              onClick={() => setCurrentSlide(prev => prev + 1)}
+              className="flex font-sans items-center gap-2 text-[10px] uppercase tracking-widest font-bold hover:text-black transition-all"
+            >
               Next Reading <ChevronRight size={16} />
             </button>
+          ) : (
+            /* Spacer to keep 'Previous' button aligned to the left when Next is gone */
+            <div className="min-w-[100px]" />
           )}
         </div>
       </footer>

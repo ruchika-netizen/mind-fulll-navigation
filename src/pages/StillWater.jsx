@@ -25,7 +25,7 @@ function StillWater() {
       }
     ]);
 
-    if (!error) navigate("/river-list");
+    if (!error) navigate("/well");
     setLoading(false);
   };
 
@@ -56,14 +56,14 @@ function StillWater() {
       </header>
 
       <main className="max-w-3xl w-full px-6 pb-20">
-        <div className="bg-white rounded-[40px] p-10 md:p-10 shadow-sm border border-white/50 flex flex-col gap-12">
+        <div className="bg-white rounded-[40px] p-10 md:p-10 shadow-sm border border-white/50 flex flex-col gap-6">
 
           {/* THE PROMPT AREA - Matches Client's Deep Question Look */}
-          <div className="space-y-6 text-center">
+          <div className="space-y-4 text-center">
             <h2 className="text-[13px] uppercase tracking-[0.5em] font-sans font-bold opacity-30 italic">
               {title}
             </h2>
-            <p className="text-[20px] md:text-[22px] italic leading-relaxed text-[#36454F] px-4 font-medium">
+            <p className="text-[18px] md:text-[18px] italic leading-relaxed text-[#36454F] px-4 font-medium">
               "{prompt}"
             </p>
             <div className="w-12 h-[1px] bg-[#36454F]/10 mx-auto mt-8" />

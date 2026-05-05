@@ -92,19 +92,19 @@ function Milestones() {
               >
                 <div className="flex flex-col items-center justify-center w-14 h-14 bg-[#F5F0E8]/80 rounded-xl border border-[#36454F]/5 group-hover:bg-[#36454F] group-hover:text-white transition-all duration-500">
                   <Bookmark size={16} className="mb-0.5 opacity-30 group-hover:opacity-100" />
-                  <span className="text-[9px] uppercase font-bold opacity-50 group-hover:opacity-100">
+                  <span className="text-[9px] uppercase font-bold font-sans opacity-50 group-hover:opacity-100">
                     {new Date(milestone.created_at).toLocaleDateString('en-GB', { day: '2-digit' })}
                   </span>
-                  <span className="text-[8px] uppercase tracking-wider font-bold opacity-30 group-hover:opacity-80">
+                  <span className="text-[8px] uppercase tracking-wider font-bold font-sans opacity-30 group-hover:opacity-80">
                     {new Date(milestone.created_at).toLocaleDateString('en-GB', { month: 'short' })}
                   </span>
                 </div>
 
                 <div className="flex-1 min-w-0 pr-8">
-                  <h3 className="text-lg italic font-medium text-[#36454F] mb-1 group-hover:text-black transition-colors">
+                  <h3 className="text-lg italic font-medium text-[#36454F] mb-1 font-sans group-hover:text-black transition-colors">
                     {milestone.title}
                   </h3>
-                  <p className="text-[12px] opacity-40 italic leading-snug group-hover:opacity-60 transition-opacity">
+                  <p className="text-[12px] opacity-40 italic leading-snug font-sans group-hover:opacity-60 transition-opacity">
                     {truncateWords(milestone.ask_of_you || milestone.description, 10)}
                   </p>
                 </div>

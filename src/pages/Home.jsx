@@ -66,7 +66,7 @@ const sections = [
 
 function Home() {
   return (
-    <div className="h-[calc(80vh-64px)] bg-[#F5F0E8] text-[#36454F] font-serif overflow-hidden flex flex-col selection:bg-[#36454F]/10">
+    <div className="h-[calc(90vh-64px)] bg-[#F5F0E8] text-[#36454F] font-serif overflow-hidden flex flex-col selection:bg-[#36454F]/10">
 
       <header className="w-full py-10 md:py-14 text-center shrink-0">
         <h1 className="text-3xl md:text-4xl font-light tracking-tight italic">The Mindful Navigator</h1>
@@ -84,7 +84,7 @@ function Home() {
               {section.icon}
             </div>
 
-            <h2 className="text-[11px] tracking-[0.3em] uppercase font-bold mb-3 opacity-60 group-hover:opacity-100 transition-opacity">
+            <h2 className="text-[12px] tracking-[0.3em] uppercase font-sans font-bold mb-3 opacity-60 group-hover:opacity-100 transition-opacity">
               {section.title}
             </h2>
 

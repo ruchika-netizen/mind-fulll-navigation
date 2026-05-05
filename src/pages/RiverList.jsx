@@ -118,20 +118,20 @@ function RiverList() {
             >
               {/* Small Date Circle/Block */}
               <div className="flex flex-col items-center justify-center w-12 h-12 bg-[#F5F0E8] rounded-xl border border-[#36454F]/5 group-hover:bg-[#36454F] group-hover:text-white transition-all duration-500 flex-shrink-0">
-                <span className="text-sm font-light italic leading-none">
+                <span className="text-sm font-sans font-light italic leading-none">
                   {new Date(entry.created_at).toLocaleDateString('en-GB', { day: '2-digit' })}
                 </span>
-                <span className="text-[7px] uppercase tracking-widest font-bold opacity-40 group-hover:opacity-100">
+                <span className="text-[7px] uppercase font-sans tracking-widest font-bold opacity-40 group-hover:opacity-100">
                   {new Date(entry.created_at).toLocaleDateString('en-GB', { month: 'short' })}
                 </span>
               </div>
 
               {/* Compact Content Block */}
               <div className="flex-1 min-w-0 pr-4">
-                <h3 className="text-[15px] italic font-medium text-[#36454F] group-hover:text-black transition-colors truncate">
+                <h3 className="text-[15px] italic font-sans font-medium text-[#36454F] group-hover:text-black transition-colors truncate">
                   {entry.presence || "A Silent Flow"}
                 </h3>
-                <p className="text-[11px] opacity-40 line-clamp-1 font-serif mt-0.5 italic">
+                <p className="text-[11px] opacity-40 font-sans line-clamp-1 font-serif mt-0.5 italic">
                   {entry.evening_reflection || "No reflection recorded."}
                 </p>
               </div>
@@ -156,10 +156,10 @@ function RiverList() {
         )}
       </main>
 
-      <footer className="py-24 text-center">
+      {/* <footer className="py-24 text-center">
         <div className="w-12 h-[1px] bg-[#36454F]/10 mx-auto mb-8"></div>
         <p className="text-[9px] uppercase tracking-[0.8em] opacity-20 font-sans">The End of the Stream</p>
-      </footer>
+      </footer> */}
     </div>
   );
 }

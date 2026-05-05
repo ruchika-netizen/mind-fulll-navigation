@@ -40,14 +40,14 @@ function App() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const location = useLocation();
 
-  const isConfirming = location.hash.includes("access_token") ||
-    location.search.includes("verified=true");
+  // 🔥 NEW LOGIC: Check if we are in onboarding mode via URL
+  const searchParams = new URLSearchParams(location.search);
+  const isOnboarding = searchParams.get("mode") === "onboarding";
+  const isAuthPage = ["/login", "/signup"].includes(location.pathname);
 
-  // 🔥 FIXED: Yahan se "/breath", "/navigator", "/navigatorguide" aur "/partners" hata diye hain
-  // Ab in pages par Header aur Footer dikhenge.
-  const hideNavPaths = ["/login", "/signup"];
-
-  const shouldHideNav = hideNavPaths.includes(location.pathname) || isConfirming;
+  // Hide only if it's Login/Signup OR if it's a special page in onboarding mode
+  const specialPages = ["/invitation", "/breath", "/navigator"];
+  const shouldHideNav = isAuthPage || (specialPages.includes(location.pathname) && isOnboarding);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -59,7 +59,6 @@ function App() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      if (_event === "SIGNED_OUT") localStorage.clear();
       setCheckingAuth(false);
     });
 
@@ -78,33 +77,19 @@ function App() {
   return (
     <div className="bg-[#F5F0E8] min-h-screen flex flex-col font-serif">
       <ScrollToTop />
-
-      {/* Header logic */}
-      {((session && !shouldHideNav) || location.pathname === "/rituals") && <Header />}
+      {session && !shouldHideNav && <Header />}
 
       <main className="flex-grow">
         <Routes>
-          {/* Auth Routes */}
-          <Route
-            path="/login"
-            element={(!session || isConfirming) ? <Login /> : <Navigate to="/" />}
-          />
-          <Route
-            path="/signup"
-            element={!session ? <Signup /> : <Navigate to="/" />}
-          />
-
-          <Route path="/rituals" element={<Rituals />} />
-
-          {/* Protected Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={!session ? <Signup /> : <Navigate to="/" />} />
           <Route path="/" element={session ? <Home /> : <Navigate to="/login" />} />
           <Route path="/invitation" element={session ? <Invitation /> : <Navigate to="/login" />} />
           <Route path="/breath" element={session ? <Breath /> : <Navigate to="/login" />} />
-          <Route path="/partners" element={session ? <Partners /> : <Navigate to="/login" />} />
-          <Route path="/navigatorguide" element={session ? <NavigatorGuide /> : <Navigate to="/login" />} />
           <Route path="/navigator" element={session ? <Navigator /> : <Navigate to="/login" />} />
-          <Route path="/river" element={session ? <River /> : <Navigate to="/login" />} />
+          <Route path="/rituals" element={session ? <Rituals /> : <Navigate to="/login" />} />
           <Route path="/milestones" element={session ? <Milestones /> : <Navigate to="/login" />} />
+          <Route path="/river" element={session ? <River /> : <Navigate to="/login" />} />
           <Route path="/well" element={session ? <Well /> : <Navigate to="/login" />} />
           <Route path="/orchard" element={session ? <Orchard /> : <Navigate to="/login" />} />
           <Route path="/river-list" element={session ? <RiverList /> : <Navigate to="/login" />} />
@@ -114,17 +99,17 @@ function App() {
           <Route path="/forge" element={session ? <Forge /> : <Navigate to="/login" />} />
           <Route path="/still-water" element={session ? <StillWater /> : <Navigate to="/login" />} />
           <Route path="/mark-moment" element={session ? <MarkMoment /> : <Navigate to="/login" />} />
-          <Route path="/milestones/edit/:id" element={<MarkMoment />} />
           <Route path="/wellbeingpractices" element={session ? <WellbeingPractices /> : <Navigate to="/login" />} />
           <Route path="/companionReadings" element={session ? <CompanionReadings /> : <Navigate to="/login" />} />
+          <Route path="/partners" element={session ? <Partners /> : <Navigate to="/login" />} />
+          <Route path="/navigatorguide" element={session ? <NavigatorGuide /> : <Navigate to="/login" />} />
           <Route path="/finalword" element={session ? <FinalWord /> : <Navigate to="/login" />} />
-
+          <Route path="/milestones/edit/:id" element={session ? <MarkMoment /> : <Navigate to="/login" />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
 
-      {/* Footer logic */}
-      {((session && !shouldHideNav) || location.pathname === "/rituals") && <Footer />}
+      {session && !shouldHideNav && <Footer />}
     </div>
   );
 }

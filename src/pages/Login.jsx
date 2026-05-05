@@ -1,85 +1,109 @@
 import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
-import { useNavigate, Link, useLocation } from "react-router-dom"; // useLocation add kiya
-import { Loader2 } from "lucide-react";
-import bansuriIntro from "../assets/segment_5s_to_95s (1).mp3"; 
+import { useNavigate, Link, useLocation } from "react-router-dom";
+import { Loader2, AlertCircle } from "lucide-react";
+import EnsoLoader from "../components/EnsoLoader";
+import bansuriIntro from "../assets/segment_5s_to_95s (1).mp3";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showEnso, setShowEnso] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
   const navigate = useNavigate();
-  const location = useLocation(); // URL params check karne ke liye
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const isVerifiedFlow = searchParams.get("verified") === "true";
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg("");
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password
+    });
 
     if (error) {
-      alert(error.message);
+      setErrorMsg(error.message.includes("rate limit") ? "Slow down a bit. Try again in a minute." : error.message);
       setLoading(false);
-    } else {
-      // 1. Check if URL has 'verified=true'
-      const searchParams = new URLSearchParams(location.search);
-      const isVerifiedFlow = searchParams.get("verified") === "true";
-
-      sessionStorage.setItem("isInitialLogin", "true");
-
-      // Sound Setup
-      const soundEnabled = localStorage.getItem("soundEnabled") !== "false";
-      if (soundEnabled && !window.currentAppAudio) {
-        const audio = new Audio(bansuriIntro);
-        audio.loop = true;
-        audio.volume = 0.5;
-        audio.play().catch(err => console.log("Audio Blocked", err));
-        window.currentAppAudio = audio;
-      }
-
-      // 2. REDIRECTION LOGIC:
-      // Agar URL me ?verified=true hai, toh Invitation page par bhejo
-      // Warna sidha Home (/) par bhejo
+    } else if (data?.user) {
       if (isVerifiedFlow) {
-        navigate("/invitation");
+        navigate("/invitation?mode=onboarding");
       } else {
-        navigate("/");
+        setShowEnso(true);
       }
     }
   };
 
+  const handleLoaderComplete = () => {
+    const soundEnabled = localStorage.getItem("soundEnabled") !== "false";
+    if (soundEnabled && !window.currentAppAudio) {
+      const audio = new Audio(bansuriIntro);
+      audio.loop = true;
+      audio.volume = 0.4;
+      audio.play().catch(() => { });
+      window.currentAppAudio = audio;
+    }
+    navigate("/", { replace: true });
+  };
+
+  const fieldClasses = "w-full bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 shadow-inner";
+
+  if (showEnso) return <EnsoLoader onComplete={handleLoaderComplete} />;
+
   return (
-    <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center font-serif text-[#36454F]">
-      <div className="bg-white border border-[#36454F]/5 rounded-[2.5rem] w-full max-w-md p-10 shadow-sm">
-        <h2 className="text-3xl text-center mb-10 italic">Welcome Back</h2>
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div>
-            <label className="text-[9px] uppercase tracking-widest opacity-40 font-sans font-bold ml-1">Email Address</label>
-            <input 
-              type="email" 
-              placeholder="Email Address" 
-              className="w-full bg-transparent border-b border-[#36454F]/10 p-3 outline-none italic"
+    <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center font-serif text-[#36454F] px-4">
+      <div className="bg-white border border-[#36454F]/5 rounded-[2.5rem] w-full max-w-md p-10 shadow-sm animate-in fade-in duration-700">
+        <h2 className="text-3xl text-center mb-10 italic">
+          {isVerifiedFlow ? "Confirm Presence" : "Welcome Back"}
+        </h2>
+
+        {errorMsg && (
+          <div className="mb-6 flex items-center gap-2 text-red-500 text-[11px] uppercase tracking-widest font-sans font-bold bg-red-50 p-3 rounded-xl border border-red-100">
+            <AlertCircle size={14} /> {errorMsg}
+          </div>
+        )}
+
+        <form onSubmit={handleLogin} className="space-y-7" autoComplete="off">
+          <div className="space-y-2">
+            <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold ml-1">Email Address</label>
+            <input
+              type="email"
+              placeholder="name@email.com"
+              className={fieldClasses}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="off"
             />
           </div>
-          <div>
-            <label className="text-[9px] uppercase tracking-widest opacity-40 font-sans font-bold ml-1">Password</label>
-            <input 
-              type="password" 
-              placeholder="Password" 
-              className="w-full bg-transparent border-b border-[#36454F]/10 p-3 outline-none italic"
+
+          <div className="space-y-2">
+            <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold ml-1">Password</label>
+            <input
+              type="text" // 'password' ki jagah 'text' Chrome alert bypass karne ke liye
+              style={{ WebkitTextSecurity: "disc" }}
+              placeholder="••••••••"
+              className={fieldClasses}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="new-password"
             />
           </div>
-          <button type="submit" disabled={loading} className="w-full bg-[#36454F] text-white py-4 rounded-full uppercase text-[10px] tracking-[0.5em] font-bold font-sans transition-all active:scale-95">
-            {loading ? <Loader2 className="animate-spin mx-auto" size={16} /> : "Sign In"}
+
+          <button type="submit" disabled={loading} className="w-full bg-[#36454F] text-white py-5 rounded-2xl uppercase text-[10px] tracking-[0.5em] font-bold font-sans shadow-lg hover:bg-black active:scale-95 transition-all flex justify-center items-center gap-3 mt-4">
+            {loading ? <Loader2 className="animate-spin" size={18} /> : "Sign In"}
           </button>
         </form>
-        <p className="text-center mt-8 text-[10px] uppercase tracking-[0.4em] opacity-40 font-sans font-bold">
-          Don't have an account? <Link to="/signup" className="underline font-bold opacity-100">signup</Link>
-        </p>
+
+        {!isVerifiedFlow && (
+          <p className="text-center mt-8 text-[11px] uppercase tracking-[0.2em] opacity-40 font-bold font-sans">
+            Don't have an account? <Link to="/signup" className="underline font-bold">signup</Link>
+          </p>
+        )}
       </div>
     </div>
   );
