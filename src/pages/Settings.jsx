@@ -12,10 +12,10 @@ function Settings() {
 
   const audioRef = useRef(null);
 
-  // 🔊 Initialize audio once
+
   useEffect(() => {
     const audio = new Audio(sound);
-    audio.volume = 0.4; // subtle
+    audio.volume = 0.4;
     audioRef.current = audio;
   }, []);
 
@@ -28,7 +28,6 @@ function Settings() {
     if (user) setEmail(user.email);
   };
 
-  // 🔊 Play toggle sound (max 2 sec)
   const playToggleSound = () => {
     const audio = audioRef.current;
     if (!audio) return;

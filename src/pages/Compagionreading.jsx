@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-
-// Assets
 import Deepwater from "../assets/deep winter.png";
 import alone from "../assets/alone.png";
 import autunm from "../assets/autnum.png";
@@ -85,7 +83,6 @@ const CompanionReadings = () => {
 
       {/* HEADER */}
       <header className="relative w-full max-w-7xl mx-auto py-10 md:py-16 px-6 text-center">
-        {/* Back Button Container */}
         <div className="absolute top-6 md:top-12 left-0">
           <button
             onClick={() => navigate(-1)}
@@ -154,7 +151,6 @@ const CompanionReadings = () => {
       </main>
 
       {/* FOOTER */}
-      {/* FOOTER */}
       <footer className="h-[15vh] flex flex-col items-center justify-center gap-6 px-10">
         {/* DOTS */}
         <div className="flex gap-4">
@@ -174,7 +170,7 @@ const CompanionReadings = () => {
             <ChevronLeft size={16} /> Previous
           </button>
 
-          {/* Updated Logic: Only show Next Reading if not on the last slide. Final Word button removed. */}
+
           {currentSlide < totalSlides - 1 ? (
             <button
               onClick={() => setCurrentSlide(prev => prev + 1)}
@@ -183,7 +179,7 @@ const CompanionReadings = () => {
               Next Reading <ChevronRight size={16} />
             </button>
           ) : (
-            /* Spacer to keep 'Previous' button aligned to the left when Next is gone */
+
             <div className="min-w-[100px]" />
           )}
         </div>

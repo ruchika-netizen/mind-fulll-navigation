@@ -8,7 +8,6 @@ function Breath() {
   const isOnboarding = searchParams.get("mode") === "onboarding";
 
   const handleContinue = () => {
-    // Yahan Navigator page ka link updated hai
     const nextPath = isOnboarding ? "/navigator?mode=onboarding" : "/navigator";
     navigate(nextPath);
   };

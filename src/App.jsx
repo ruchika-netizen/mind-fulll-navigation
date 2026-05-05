@@ -39,8 +39,6 @@ function App() {
   const [session, setSession] = useState(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const location = useLocation();
-
-  // 🔥 NEW LOGIC: Check if we are in onboarding mode via URL
   const searchParams = new URLSearchParams(location.search);
   const isOnboarding = searchParams.get("mode") === "onboarding";
   const isAuthPage = ["/login", "/signup"].includes(location.pathname);

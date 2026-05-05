@@ -6,11 +6,11 @@ function Dashboard() {
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
-  const [activeTab, setActiveTab] = useState("add"); // Sections: add, journal, milestones
+  const [activeTab, setActiveTab] = useState("add");
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Journal Entry Form State (As per client specs)
+
   const [form, setForm] = useState({
     intentions: "",
     presence: "",
@@ -18,7 +18,6 @@ function Dashboard() {
     evening_reflection: "",
   });
 
-  // Check Authentication
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
@@ -28,7 +27,7 @@ function Dashboard() {
     getUser();
   }, [navigate]);
 
-  // Fetch Entries
+
   useEffect(() => {
     fetchEntries();
   }, []);
@@ -48,7 +47,7 @@ function Dashboard() {
     }));
   };
 
-  // ADD Journal Entry
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -65,7 +64,7 @@ function Dashboard() {
 
     setLoading(false);
     if (error) return alert(error.message);
-    
+
     alert("Your thoughts have been saved.");
     setActiveTab("journal");
     fetchEntries();
@@ -73,7 +72,7 @@ function Dashboard() {
   };
 
   const handleDelete = async (id) => {
-    if(window.confirm("Are you sure you want to delete this memory?")) {
+    if (window.confirm("Are you sure you want to delete this memory?")) {
       await supabase.from("journal_entries").delete().eq("id", id);
       fetchEntries();
     }
@@ -107,7 +106,7 @@ function Dashboard() {
 
       {/* MAIN CONTENT */}
       <div className="flex-1 p-6 md:p-12 overflow-y-auto">
-        
+
         {/* ADD NEW ENTRY (The Morning/Evening Form) */}
         {activeTab === "add" && (
           <div className="max-w-2xl mx-auto bg-white p-10 rounded-3xl shadow-sm border border-[#e5e0d8]">
@@ -211,8 +210,8 @@ function Dashboard() {
         {/* MILESTONES (Placeholder for now) */}
         {activeTab === "milestones" && (
           <div className="text-center mt-20">
-             <h2 className="text-3xl text-[#36454F] mb-4">Milestones</h2>
-             <p className="text-gray-500 italic">This section is for your most significant moments. Coming soon...</p>
+            <h2 className="text-3xl text-[#36454F] mb-4">Milestones</h2>
+            <p className="text-gray-500 italic">This section is for your most significant moments. Coming soon...</p>
           </div>
         )}
       </div>

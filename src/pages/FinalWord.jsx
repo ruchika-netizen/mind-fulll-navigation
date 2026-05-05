@@ -1,9 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-// Assets (Replace with your actual paths)
-import pikaHill from "../assets/pexels-regan-dsouza-1315522347-30692724.jpg"; // Red Panda & Pika on hill
-import pikaSmile from "../assets/pexels-regan-dsouza-1315522347-30990826.jpg"; // Characters facing reader
+import pikaHill from "../assets/pexels-regan-dsouza-1315522347-30692724.jpg"; 
+import pikaSmile from "../assets/pexels-regan-dsouza-1315522347-30990826.jpg"; 
 
 const FinalWord = () => {
   const navigate = useNavigate();

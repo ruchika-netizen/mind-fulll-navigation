@@ -35,7 +35,7 @@ function River() {
     setTimeout(() => setToast({ show: false, message: "", type: "success" }), 4000);
   };
 
-  // 🔥 DELETE LOGIC: Instant Redirect
+
   const handleDelete = async () => {
     setLoading(true);
     try {

@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { Volume2, VolumeX, Menu, X, Settings,CircleHelp } from "lucide-react";
-import bansuriIntro from "../assets/trimmed_output.mp3"; 
+import { Volume2, VolumeX, Menu, X, Settings, CircleHelp } from "lucide-react";
+import bansuriIntro from "../assets/trimmed_output.mp3";
 
 function Header() {
   const [session, setSession] = useState(null);
@@ -37,23 +37,21 @@ function Header() {
   const navLinks = [
     { name: "Home", path: "/" },
 
-    // { name: "Final Word", path: "/finalword" }, 
   ];
 
   return (
     <nav className="bg-[#F5F0E8] border-b border-[#36454F]/10 px-3 sm:px-6 py-3 sm:py-4 sticky top-0 z-[100] font-serif">
       <div className="max-w-7xl mx-auto flex justify-between items-center gap-2">
-        
-        {/* LOGO - Width restricted on mobile to prevent pushing buttons */}
+
+
         <Link to="/" className="z-[110] flex-shrink-1 min-w-0">
           <h1 className="text-[10px] sm:text-[14px] lg:text-lg tracking-tighter text-[#36454F] font-bold uppercase leading-tight truncate sm:whitespace-nowrap">
             The Mindful Navigator
           </h1>
         </Link>
 
-        {/* RIGHT ACTIONS GROUP */}
         <div className="flex items-center gap-2 sm:gap-4 lg:gap-8 flex-shrink-0">
-          
+
           {/* DESKTOP LINKS */}
           <div className="hidden lg:flex items-center gap-8 font-sans">
             {navLinks.map((item) => (
@@ -63,14 +61,12 @@ function Header() {
             ))}
           </div>
 
-          {/* ICON & BUTTON GROUP */}
           <div className="flex items-center gap-2 sm:gap-6 lg:border-l lg:border-[#36454F]/10 lg:pl-8">
-            
-            {/* SOUND ICON - Size optimized for mobile */}
+
             <button onClick={toggleSound} className="p-1 text-[#36454F] active:scale-90">
               {isSoundOn ? <Volume2 size={16} /> : <VolumeX size={16} className="opacity-40" />}
             </button>
-  {/* Ye sirf tab dikhega jab user logged in ho */}
+
             {session && (
               <Link
                 to="/invitation"
@@ -83,9 +79,9 @@ function Header() {
             {session ? (
               <div className="flex items-center gap-2">
                 <Link to="/settings" className="hidden md:block text-[10px] uppercase tracking-widest opacity-60 font-bold font-sans">Settings</Link>
-                {/* Small Logout Button for Mobile */}
-                <button 
-                  onClick={handleLogout} 
+
+                <button
+                  onClick={handleLogout}
                   className="px-3 py-1.5 sm:px-5 sm:py-2 rounded-full border border-[#36454F] text-[8px] sm:text-[10px] uppercase tracking-widest hover:bg-[#36454F] hover:text-white transition font-bold font-sans whitespace-nowrap"
                 >
                   Logout
@@ -97,10 +93,10 @@ function Header() {
               </Link>
             )}
           </div>
-  <button className="lg:hidden text-[#36454F] z-[110] p-1" onClick={() => setIsOpen(!isOpen)}>
+          <button className="lg:hidden text-[#36454F] z-[110] p-1" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
-          {/* HAMBURGER - Hidden on Desktop */}
+
           <button className="lg:hidden text-[#36454F] z-[110] p-1" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -114,9 +110,9 @@ function Header() {
         ))}
         <div className="h-[1px] w-12 bg-[#36454F]/20" />
         {session && (
-           <Link onClick={() => setIsOpen(false)} to="/settings" className="text-sm uppercase tracking-widest font-bold font-sans flex items-center gap-2">
-             <Settings size={18}/> Settings
-           </Link>
+          <Link onClick={() => setIsOpen(false)} to="/settings" className="text-sm uppercase tracking-widest font-bold font-sans flex items-center gap-2">
+            <Settings size={18} /> Settings
+          </Link>
         )}
       </div>
     </nav>

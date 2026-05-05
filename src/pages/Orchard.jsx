@@ -50,7 +50,7 @@ function Orchard() {
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif flex flex-col selection:bg-[#36454F]/10 relative overflow-x-hidden">
 
-      {/* --- CUSTOM TOAST NOTIFICATION --- */}
+
       <div
         className={`fixed top-10 right-10 z-[100] flex items-center gap-4 p-5 rounded-2xl shadow-2xl border transition-all duration-500 transform ${toast.show ? "translate-x-0 opacity-100" : "translate-x-20 opacity-0 pointer-events-none"
           } ${toast.type === "success"
@@ -94,7 +94,7 @@ function Orchard() {
 
       <main className="max-w-7xl mx-auto w-full px-6 py-5 pb-20 flex flex-col lg:flex-row gap-8 items-stretch relative z-10 justify-center">
 
-        {/* LEFT PAGE: SEASONAL PRUNING (Compass style Fields) */}
+
         <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col transition-all hover:shadow-md overflow-hidden">
 
           <div className="mb-8 text-center">
@@ -103,7 +103,6 @@ function Orchard() {
           </div>
 
           <div className="flex-grow space-y-6">
-            {/* Image Placeholder like Compass Circle space */}
             <div className="w-full h-78 mb-6 rounded-[2rem] overflow-hidden border border-[#36454F]/5 shadow-inner">
               <img src={redpanda} alt="Red Panda" className="w-full h-full object-cover grayscale-[20%] opacity-90" />
             </div>

@@ -7,28 +7,15 @@ function NavigatorGuide() {
 
   return (
     <div className="min-h-screen bg-[#F5F0E8] font-serif text-[#36454F] selection:bg-[#36454F]/10 p-6 md:p-12 lg:p-20 flex flex-col items-center overflow-x-hidden">
-      
-      {/* Back Button */}
-      {/* <button 
-        onClick={() => navigate(-1)} 
-        className="fixed left-6 top-8 md:left-12 md:top-12 text-[10px] uppercase tracking-[0.4em] opacity-40 hover:opacity-100 font-sans font-bold transition-all z-50 bg-[#F5F0E8]/80 backdrop-blur-sm px-4 py-2 rounded-full"
-      >
-        ‹ Back
-      </button> */}
 
-      {/* Main Container: Auto-centering and Responsive Width */}
+
       <div className="w-full max-w-7xl flex flex-col lg:flex-row gap-10  items-stretch">
-        
-        {/* PAGE 1: THE BREATH OF THE NAVIGATOR */}
+
         <div className="flex-1 bg-white rounded-[25px]  p-8  shadow-sm border border-white/50 relative flex flex-col justify-center min-h-[650px] transition-transform hover:shadow-md">
-          
-          {/* Watermark ENSO: Centered Behind Content */}
+
+
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-             {/* <img 
-               src={ensoImage} 
-               alt="Enso Watermark" 
-               className="w-[70%] opacity-[0.15] grayscale object-contain" 
-             /> */}
+
           </div>
 
           <div className="relative z-10 text-center space-y-12">
@@ -36,8 +23,8 @@ function NavigatorGuide() {
               <h1 className="text-4xl md:text-5xl font-light tracking-tight italic mb-3">The Breath</h1>
               <p className="text-[10px] uppercase tracking-[0.5em] opacity-40 font-sans font-bold">of the Navigator</p>
             </header>
-<p>Before you open to the first page, before you pick up your pen, before the entry begins — pause here for one breath.</p>
-            {/* Instruction Steps */}
+            <p>Before you open to the first page, before you pick up your pen, before the entry begins — pause here for one breath.</p>
+
             <div className="space-y-6 text-left font-sans">
               {[
                 "Sit or stand with both feet on the floor. Feel the ground beneath you.",
@@ -60,16 +47,16 @@ function NavigatorGuide() {
           </div>
         </div>
 
-        {/* PAGE 2: THE NAVIGATOR'S JOURNAL GUIDE */}
+
         <div className="flex-1 bg-white rounded-[25px] p-8  shadow-sm border border-white/50 flex flex-col min-h-[650px] transition-transform hover:shadow-md">
           <header className="mb-10 text-center lg:text-left">
             <p className="text-[10px] uppercase tracking-[0.5em] opacity-40 font-sans font-bold mb-4">The Navigator’s </p>
             <h2 className="text-3xl md:text-4xl font-light tracking-tight italic">Journal Guide</h2>
           </header>
 
-          {/* Guide Sections with minimalist scroll */}
+
           <div className="space-y-8 flex-grow overflow-y-auto river-scroll pr-4">
-            
+
             <section className="group">
               <h3 className="text-[11px] uppercase tracking-[0.25em] font-sans font-bold mb-3  transition-opacity">Find Your Moment</h3>
               <p className="text-lg italic opacity-70 leading-relaxed font-serif">

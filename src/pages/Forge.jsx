@@ -30,8 +30,7 @@ function Forge() {
 
   const completeRitual = async () => {
     setIsActive(false);
-    
-    // Play Zen Bell (Placeholder Sound)
+
     new Audio("https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3").play();
 
     const { data: { user } } = await supabase.auth.getUser();
@@ -60,7 +59,7 @@ function Forge() {
             {formatTime(timeLeft)}
           </div>
           <p className="text-[10px] uppercase tracking-[0.4em] opacity-40 italic">{selectedRitual}</p>
-          <button 
+          <button
             onClick={() => setIsActive(false)}
             className="text-[9px] uppercase tracking-widest opacity-30 hover:opacity-100 border-b border-[#36454F]/20 pb-1 transition-all"
           >

@@ -4,15 +4,14 @@ import { supabase } from "../supabaseClient";
 import { ChevronLeft, Loader2, Save } from "lucide-react";
 
 function MilestoneForm() {
-  const { id } = useParams(); // URL se ID uthayega (/edit/:id)
+  const { id } = useParams();
   const navigate = useNavigate();
-  
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
 
-  // 🔥 EDIT MODE: Agar ID hai toh content fetch karo
   useEffect(() => {
     if (id) {
       const fetchMilestone = async () => {
@@ -22,7 +21,7 @@ function MilestoneForm() {
           .select("*")
           .eq("id", id)
           .single();
-        
+
         if (data && !error) {
           setTitle(data.title);
           setDescription(data.description);
@@ -46,14 +45,14 @@ function MilestoneForm() {
 
     let error;
     if (id) {
-      // Update existing
+
       const { error: updateError } = await supabase
         .from("milestones")
         .update(milestoneData)
         .eq("id", id);
       error = updateError;
     } else {
-      // Insert new
+
       const { error: insertError } = await supabase
         .from("milestones")
         .insert([milestoneData]);
@@ -83,7 +82,7 @@ function MilestoneForm() {
         <form onSubmit={handleSave} className="space-y-12">
           <div className="space-y-2">
             <label className="text-[10px] uppercase tracking-widest font-sans font-bold opacity-30">The Title</label>
-            <input 
+            <input
               required
               className="w-full bg-transparent border-b border-[#36454F]/10 py-3 outline-none text-2xl italic placeholder:opacity-10"
               placeholder="What happened?"
@@ -94,7 +93,7 @@ function MilestoneForm() {
 
           <div className="space-y-2">
             <label className="text-[10px] uppercase tracking-widest font-sans font-bold opacity-30">The Reflection</label>
-            <textarea 
+            <textarea
               required
               className="w-full bg-transparent border border-[#36454F]/10 rounded-2xl p-6 outline-none text-lg italic min-h-[200px] leading-relaxed resize-none shadow-inner"
               placeholder="Describe this turning point..."
@@ -103,7 +102,7 @@ function MilestoneForm() {
             />
           </div>
 
-          <button 
+          <button
             disabled={loading}
             className="w-full bg-[#36454F] text-white py-4 rounded-full text-[10px] uppercase tracking-[0.4em] font-bold shadow-xl active:scale-95 transition-all flex items-center justify-center gap-2"
           >

@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import EnsoLoader from "../components/EnsoLoader"; // Loader import kiya
-import bansuriIntro from "../assets/segment_5s_to_95s (1).mp3"; // Music import kiya
+import EnsoLoader from "../components/EnsoLoader";
+import bansuriIntro from "../assets/segment_5s_to_95s (1).mp3";
 
 function JournalGuide() {
     const navigate = useNavigate();
-    const [showEnso, setShowEnso] = useState(false); // Loader state
+    const [showEnso, setShowEnso] = useState(false);
 
     const handleFinalContinue = () => {
-        // Direct navigate karne ki jagah loader dikhao
+
         setShowEnso(true);
     };
 
@@ -23,11 +23,11 @@ function JournalGuide() {
             window.currentAppAudio = audio;
         }
 
-        // Loader khatam hone par Home par bhejo
+
         navigate("/", { replace: true });
     };
 
-    // Agar showEnso true hai toh sirf Loader dikhao
+
     if (showEnso) {
         return <EnsoLoader onComplete={handleLoaderComplete} />;
     }

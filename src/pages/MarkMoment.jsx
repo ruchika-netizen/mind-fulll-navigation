@@ -47,7 +47,7 @@ function MarkMoment() {
     }
   }, [id]);
 
-  // 🔥 DELETE LOGIC (Single Entry)
+
   const handleDelete = async () => {
     setLoading(true);
     try {
@@ -57,7 +57,7 @@ function MarkMoment() {
         .eq("id", id);
 
       if (error) throw error;
-      navigate("/milestones"); // Delete ke baad wapas list par
+      navigate("/milestones");
     } catch (err) {
       alert("Error deleting milestone");
     } finally {
@@ -102,7 +102,6 @@ function MarkMoment() {
 
         <h1 className="text-3xl italic tracking-tight">{id ? "Edit Milestone" : "Mark Milestone"}</h1>
 
-        {/* 🔥 TRASH ICON (Sirf Edit Mode mein dikhega) */}
         <div className="absolute right-6 top-12">
           {id && (
             <div className="flex items-center gap-1.5 bg-white/40 p-1.5 rounded-full border border-[#36454F]/5 shadow-sm">

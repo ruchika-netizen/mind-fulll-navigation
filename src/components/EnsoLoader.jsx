@@ -5,19 +5,18 @@ const EnsoLoader = ({ onComplete }) => {
   const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
-    // 1. Sound Logic: Circle animation 3s ki hai
+
     const soundEnabled = localStorage.getItem("soundEnabled") !== "false";
 
-    // Animation khatam hone ke theek pehle ya saath sound bajna chahiye
+
     const audioTimer = setTimeout(() => {
       if (soundEnabled) {
         const audio = new Audio(bowlSound);
-        audio.volume = 0.6; // Presence ke liye thoda loud rakha hai
+        audio.volume = 0.6;
         audio.play().catch(e => console.log("Bowl sound blocked by browser", e));
       }
-    }, 2800); // 3s animation hai, 2.8s par strike hona perfect lagta hai
+    }, 2800);
 
-    // 2. Button dikhane ka timer
     const buttonTimer = setTimeout(() => {
       setShowButton(true);
     }, 3500);
@@ -35,8 +34,7 @@ const EnsoLoader = ({ onComplete }) => {
     return <EnsoLoader onComplete={() => navigate("/")} />;
   }
   const handleEnter = () => {
-    // Ab yahan sound bajane ki zaroorat nahi, wo circle complete hone par baj chuka hai
-    // Seedha transition karein
+
     onComplete();
   };
 
