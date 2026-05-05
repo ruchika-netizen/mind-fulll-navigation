@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+.spacing li {
+  margin-bottom: 10px; 
+}
