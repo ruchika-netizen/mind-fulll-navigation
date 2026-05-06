@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react"; // useRef add kiya
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
 import EnsoLoader from "../components/EnsoLoader";
 import bansuriIntro from "../assets/segment_5s_to_95s (1).mp3";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,33 +12,46 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showEnso, setShowEnso] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null); // Captcha state added
 
   const navigate = useNavigate();
   const location = useLocation();
+  const recaptchaRef = useRef(); // Ref added
   const searchParams = new URLSearchParams(location.search);
 
-  // URL check: ?verified=true
   const isVerifiedFlow = searchParams.get("verified") === "true";
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    // Captcha Check
+    if (!captchaToken) {
+      setErrorMsg("Please verify the captcha");
+      return;
+    }
+
     setLoading(true);
     setErrorMsg("");
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
-      password
+      password,
+      options: {
+        captchaToken: captchaToken, // Token passed to supabase
+      },
     });
 
     if (error) {
       setErrorMsg(error.message);
       setLoading(false);
+      recaptchaRef.current?.reset(); // Reset on error
+      setCaptchaToken(null);
     } else if (data?.user) {
-      // Check if coming from verification link
       if (isVerifiedFlow) {
         navigate("/invitation?mode=onboarding");
       } else {
-        setShowEnso(true); // Normal users get Enso -> Home
+        setShowEnso(true);
       }
     }
   };
@@ -54,7 +68,7 @@ const Login = () => {
     navigate("/", { replace: true });
   };
 
-  const fieldClasses = "w-full bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 shadow-inner";
+  const fieldClasses = "w-full bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 shadow-inner pr-12";
 
   if (showEnso) return <EnsoLoader onComplete={handleLoaderComplete} />;
 
@@ -76,6 +90,7 @@ const Login = () => {
             <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold ml-1">Email Address</label>
             <input
               type="email"
+              name={`email_login_${Math.random()}`}
               placeholder="Enter Email"
               className={fieldClasses}
               onChange={(e) => setEmail(e.target.value)}
@@ -86,15 +101,41 @@ const Login = () => {
 
           <div className="space-y-2">
             <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold ml-1">Password</label>
-            <input
-              type="text"
-              style={{ WebkitTextSecurity: "disc" }}
-              placeholder="Enter Password"
-              className={fieldClasses}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="new-password"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                style={!showPassword ? { WebkitTextSecurity: "disc" } : {}}
+                name={`pass_login_${Math.random()}`}
+                placeholder="Enter Password"
+                className={fieldClasses}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#36454F]/30 hover:text-[#36454F] transition-colors p-1"
+              >
+                {showPassword ? (
+                  <EyeOff size={18} strokeWidth={1.5} />
+                ) : (
+                  <Eye size={18} strokeWidth={1.5} />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* GOOGLE reCAPTCHA - Center Design */}
+          <div className="flex justify-center py-2 overflow-hidden">
+            <div className="scale-[0.85] origin-center">
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey="6LeH3NssAAAAAGpM5Uw9uM8XLWDTq_5a2qqR0fHA"
+                onChange={(token) => setCaptchaToken(token)}
+              />
+            </div>
           </div>
 
           <button type="submit" disabled={loading} className="w-full bg-[#36454F] text-white py-5 rounded-2xl uppercase text-[10px] tracking-[0.5em] font-bold font-sans shadow-lg hover:bg-black active:scale-95 transition-all flex justify-center items-center gap-3 mt-4">
@@ -104,7 +145,7 @@ const Login = () => {
 
         {!isVerifiedFlow && (
           <p className="text-center mt-8 text-[11px] uppercase tracking-[0.2em] opacity-40 font-bold font-sans">
-            Don't have an account? <Link to="/signup" className="underline font-bold">signup</Link>
+            Don't have an account? <Link to="/signup" className="underline font-bold opacity-100">signup</Link>
           </p>
         )}
       </div>

@@ -16,7 +16,7 @@ function Invitation() {
   };
 
   return (
-    <div className=" bg-[#F5F0E8] flex items-center justify-center py-8 px-4 font-serif text-[#36454F] selection:bg-[#EAB308]/20">
+    <div className=" bg-[#F5F0E8] flex items-center justify-center py-20 px-4 font-serif text-[#36454F] selection:bg-[#EAB308]/20">
       <div className="max-w-[1400px] w-full bg-white rounded-[3.5rem] shadow-sm flex flex-col lg:flex-row items-stretch overflow-hidden animate-in fade-in zoom-in duration-1000">
 
         {/* LEFT COLUMN */}

@@ -135,7 +135,7 @@ function GatheringPlace() {
                   <div className="w-14 h-10 rounded-full bg-[#F5F0E8] flex items-center justify-center border border-[#36454F]/5 group-hover:bg-[#36454F] group-hover:text-white transition-all transform group-active:scale-90">
                     {uploadingPhoto ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />}
                   </div>
-                  <span className="text-[12px] uppercase tracking-widest font-bold opacity-30">Add {activeTab}</span>
+                  <span className="text-[12px] uppercase tracking-widest font-bold ">Add {activeTab}</span>
                 </button>
               </div>
             ) : (
@@ -143,8 +143,8 @@ function GatheringPlace() {
                 <textarea
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  placeholder={`Write your ${activeTab}...`}
-                  className="w-full bg-transparent outline-none italic text-xl text-center resize-none h-[40px] placeholder:opacity-10 leading-relaxed"
+                  placeholder={`Enter your ${activeTab}...`}
+                  className="w-full bg-transparent outline-none italic text-lg text-center resize-none h-[40px] text-[#000]  leading-relaxed"
                 />
                 {inputText.trim() && (
                   <button onClick={addItem} disabled={loading} className="px-10 py-3 bg-[#36454F] text-white rounded-2xl text-[10px] uppercase tracking-[0.3em] font-bold shadow-lg transform active:scale-95 transition-all">
