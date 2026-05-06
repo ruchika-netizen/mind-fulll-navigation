@@ -116,6 +116,8 @@ function App() {
           <Route path="/forge" element={session ? <Forge /> : <Navigate to="/login" />} />
           <Route path="/still-water" element={session ? <StillWater /> : <Navigate to="/login" />} />
           <Route path="/mark-moment" element={session ? <MarkMoment /> : <Navigate to="/login" />} />
+
+          <Route path="/milestones/edit/:id" element={<MarkMoment />} />
           <Route path="/wellbeingpractices" element={session ? <WellbeingPractices /> : <Navigate to="/login" />} />
           <Route path="/companionReadings" element={session ? <CompanionReadings /> : <Navigate to="/login" />} />
           <Route path="/partners" element={session ? <Partners /> : <Navigate to="/login" />} />
