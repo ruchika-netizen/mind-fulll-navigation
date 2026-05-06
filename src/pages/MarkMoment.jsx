@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "../supabaseClient";
-import { Loader2, Trash2, CheckCircle2, X } from "lucide-react"; // Icons add kiye
+import { Loader2, Trash2, CheckCircle2, X } from "lucide-react";
 
 function MarkMoment() {
   const { id } = useParams();
@@ -9,7 +9,7 @@ function MarkMoment() {
 
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false); // Delete confirmation ke liye
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",

@@ -90,7 +90,7 @@ function App() {
             path="/"
             element={
               session ? (
-                // Agar email se verify hoke aaya hai to Invitation page par bhejo
+
                 isVerified ? <Navigate to="/invitation?mode=onboarding" replace /> : <Home />
               ) : (
                 <Navigate to="/login" replace />

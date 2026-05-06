@@ -11,7 +11,6 @@ function RiverList() {
 
   const fetchEntries = async (isManualUpdate = false) => {
     if (isManualUpdate) setIsUpdating(true);
-    // Artifical delay for that "mindful" feel
     const timer = new Promise(resolve => setTimeout(resolve, 800));
 
     try {
@@ -106,10 +105,7 @@ function RiverList() {
             </Link>
           </div>
         </div>
-
-        {/* 3. MINIMAL LISTING */}
-        {/* 3. COMPACT MINIMAL LISTING */}
-        <div className="space-y-3"> {/* Spacing kam ki hai */}
+        <div className="space-y-3">
           {entries.map((entry) => (
             <div
               key={entry.id}
@@ -136,7 +132,6 @@ function RiverList() {
                 </p>
               </div>
 
-              {/* Minimal Icon instead of text */}
               <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
                 <ChevronRight size={14} className="text-[#36454F]/30" />
               </div>

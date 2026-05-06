@@ -28,7 +28,6 @@ function Milestones() {
     }
   };
 
-  // 10-word limit helper for preview
   const truncateWords = (text, limit = 10) => {
     if (!text) return "";
     const words = text.trim().split(/\s+/);
@@ -86,7 +85,7 @@ function Milestones() {
             milestones.map((milestone) => (
               <div
                 key={milestone.id}
-                
+
                 onClick={() => navigate(`/milestones/edit/${milestone.id}`)}
                 className="group relative bg-white/60 rounded-[22px] p-6 shadow-sm border border-white/50 hover:shadow-md transition-all duration-500 flex items-center gap-6 cursor-pointer"
               >

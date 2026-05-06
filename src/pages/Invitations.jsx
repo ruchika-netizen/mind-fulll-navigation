@@ -10,7 +10,7 @@ function Invitation() {
     const isOnboarding = searchParams.get("mode") === "onboarding";
 
     const handleContinue = () => {
-        // Carry the onboarding flag to the next page
+
         const nextPath = isOnboarding ? "/breath?mode=onboarding" : "/breath";
         navigate(nextPath);
     };

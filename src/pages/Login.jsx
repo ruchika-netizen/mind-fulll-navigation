@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react"; // useRef add kiya
+import React, { useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
@@ -13,7 +13,7 @@ const Login = () => {
   const [showEnso, setShowEnso] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState(null); // Captcha state added
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -38,14 +38,14 @@ const Login = () => {
       email: email.trim(),
       password,
       options: {
-        captchaToken: captchaToken, // Token passed to supabase
+        captchaToken: captchaToken,
       },
     });
 
     if (error) {
       setErrorMsg(error.message);
       setLoading(false);
-      recaptchaRef.current?.reset(); // Reset on error
+      recaptchaRef.current?.reset();
       setCaptchaToken(null);
     } else if (data?.user) {
       if (isVerifiedFlow) {
@@ -127,7 +127,6 @@ const Login = () => {
             </div>
           </div>
 
-          {/* GOOGLE reCAPTCHA - Center Design */}
           <div className="flex justify-center py-2 overflow-hidden">
             <div className="scale-[0.85] origin-center">
               <ReCAPTCHA

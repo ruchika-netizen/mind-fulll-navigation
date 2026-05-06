@@ -44,7 +44,7 @@ function River() {
 
       triggerToast("Entry deleted successfully", "success");
 
-      // Fast navigation: Redirects after 500ms so the user sees the success toast briefly
+  
       setTimeout(() => navigate("/river-list"), 500);
     } catch (err) {
       triggerToast("Error deleting entry", "error");

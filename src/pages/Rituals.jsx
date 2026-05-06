@@ -2,7 +2,6 @@ import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { ArrowLeft } from "lucide-react";
-// Assets
 import pikaSmile from "../assets/pexels-regan-dsouza-1315522347-30990826.jpg";
 import bellSound from "../assets/universfield-clear-bell-chime-487898.mp3";
 

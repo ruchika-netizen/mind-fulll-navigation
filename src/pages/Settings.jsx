@@ -46,7 +46,6 @@ function Settings() {
       });
   };
 
-  // 1. Password Change Logic
   const handlePasswordChange = async () => {
     if (!newPassword) return alert("Enter a new password");
     setLoading(true);
