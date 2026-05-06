@@ -54,7 +54,7 @@ function Well() {
       {/* Header matches Navigator Guide Style */}
       <header className="relative w-full max-w-7xl mx-auto pt-10 py-8 text-center">
         {/* Back Button Container */}
-        <div className="absolute top-6 md:top-12 left-6">
+        <div className="absolute top-6 md:top-12 left-0">
           <button
             onClick={() => navigate(-1)}
             className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"

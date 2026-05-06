@@ -44,7 +44,7 @@ function River() {
 
       triggerToast("Entry deleted successfully", "success");
 
-  
+
       setTimeout(() => navigate("/river-list"), 500);
     } catch (err) {
       triggerToast("Error deleting entry", "error");
@@ -124,7 +124,7 @@ function River() {
     <div className="min-h-screen bg-[#F5F0E8] font-serif text-[#36454F] relative animate-in fade-in duration-1000">
 
       {/* Toast Notification */}
-      <div className={`fixed top-10 right-10 z-[100] flex items-center gap-4 p-5 rounded-2xl shadow-2xl border transition-all duration-500 transform ${toast.show ? "translate-x-0 opacity-100" : "translate-x-20 opacity-0 pointer-events-none"} ${toast.type === "success" ? "bg-white border-green-100 text-[#36454F]" : "bg-[#36454F] border-white/10 text-[#F5F0E8]"}`}>
+      <div className={`fixed top-8 right-10 z-[100] flex items-center gap-4 p-5 rounded-2xl shadow-2xl border transition-all duration-500 transform ${toast.show ? "translate-x-0 opacity-100" : "translate-x-20 opacity-0 pointer-events-none"} ${toast.type === "success" ? "bg-white border-green-100 text-[#36454F]" : "bg-[#36454F] border-white/10 text-[#F5F0E8]"}`}>
         {toast.type === "success" ? <CheckCircle2 className="text-green-500" size={20} /> : <AlertCircle className="text-red-400" size={20} />}
         <p className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold italic">{toast.message}</p>
       </div>
@@ -133,9 +133,10 @@ function River() {
         <div className="flex justify-between items-center ">
           <button
             onClick={() => navigate("/river-list")}
-            className="text-[10px] uppercase tracking-[0.4em] font-bold transition-all font-sans flex items-center gap-2"
+            className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
           >
-            ‹ Back
+            <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
+            <span className="mt-0.5">Back</span>
           </button>
 
           <h1 className="md:text-4xl font-bold tracking-tight italic flex-grow text-center">
