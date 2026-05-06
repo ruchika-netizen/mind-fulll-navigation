@@ -76,7 +76,7 @@ const EnsoLoader = ({ onComplete }) => {
             The Mindful Navigator
           </h1>
           <p className="text-[10px] md:text-xs tracking-[0.4em] text-[#36454F]/50 uppercase opacity-0 animate-fade-up-delayed">
-            Arrive. Breathe. Begin.
+            Present Moment, Future Path
           </p>
         </div>
 

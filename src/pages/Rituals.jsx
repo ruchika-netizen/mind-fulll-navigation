@@ -75,7 +75,7 @@ const JourneyEnd = () => {
               onClick={() => navigate("/")}
               className="flex items-center gap-2 text-[9px] text-[#fff] uppercase tracking-[0.4em] px-4  py-4 bg-[#36454F] rounded-full font-sans font-bold hover:opacity-50 transition-opacity"
             >
-              <ArrowLeft size={12} /> Back to River
+              <ArrowLeft size={12} /> Back to Home
             </button>
           </div>
         </div>

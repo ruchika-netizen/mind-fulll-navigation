@@ -232,7 +232,7 @@ function River() {
 
             <div className="flex-grow flex flex-col">
               <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-40 ml-1 leading-relaxed">
-                Gratitude & Observations
+                Gratitude & Observations & Closing
               </label>
               <textarea
                 value={evening}
