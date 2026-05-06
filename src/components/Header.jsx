@@ -36,11 +36,13 @@ function Header() {
 
   const navLinks = [
     { name: "Home", path: "/" },
+
   ];
 
   return (
     <nav className="bg-[#F5F0E8] border-b border-[#36454F]/10 px-3 sm:px-6 py-3 sm:py-4 sticky top-0 z-[100] font-serif">
       <div className="max-w-7xl mx-auto flex justify-between items-center gap-2">
+
 
         <Link to="/" className="z-[110] flex-shrink-1 min-w-0">
           <h1 className="text-[10px] sm:text-[14px] lg:text-lg tracking-tighter text-[#36454F] font-bold uppercase leading-tight truncate sm:whitespace-nowrap">
@@ -74,17 +76,9 @@ function Header() {
                 <CircleHelp size={18} strokeWidth={1.5} />
               </Link>
             )}
-
             {session ? (
-              <div className="flex items-center gap-2 sm:gap-5">
-                {/* SETTINGS ICON - VISIBLE ON ALL SCREENS EXCEPT VERY SMALL */}
-                <Link
-                  to="/settings"
-                  className="p-1 text-[#36454F] hover:rotate-45 transition-all duration-300 active:scale-90"
-                  title="Settings"
-                >
-                  <Settings size={18} strokeWidth={1.5} />
-                </Link>
+              <div className="flex items-center gap-2 sm:gap-6">
+                <Link to="/settings" className="hidden md:block text-[10px] uppercase tracking-widest opacity-60 font-bold font-sans">Settings</Link>
 
                 <button
                   onClick={handleLogout}
@@ -99,6 +93,9 @@ function Header() {
               </Link>
             )}
           </div>
+          <button className="lg:hidden text-[#36454F] z-[110] p-1" onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
 
           <button className="lg:hidden text-[#36454F] z-[110] p-1" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X size={20} /> : <Menu size={20} />}

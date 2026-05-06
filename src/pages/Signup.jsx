@@ -21,43 +21,31 @@ function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-
     if (!captchaToken) {
       triggerToast("Please verify the Google reCAPTCHA", "error");
       return;
     }
-
     setLoading(true);
 
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email: form.email.trim(),
-        password: form.password,
-        options: {
-          // captchaToken: captchaToken, // Isse abhi comment rakho agar Supabase me OFF hai
-          emailRedirectTo: `${window.location.origin}/login?verified=true`,
-        },
-      });
+    const { error } = await supabase.auth.signUp({
+      email: form.email.trim(),
+      password: form.password,
+      options: {
+        captchaToken: captchaToken,
+        emailRedirectTo: `${window.location.origin}/login?verified=true`,
+      },
+    });
 
-      if (error) {
-        // Agar Supabase koi error deta hai (jaise User already exists)
-        triggerToast(error.message, "error");
-        recaptchaRef.current?.reset();
-        setCaptchaToken(null);
-      } else if (data?.user && data.session === null) {
-        // Iska matlab signup success hai par email verify hona baki hai
-        triggerToast("Verification link sent! Please check your spam/inbox.", "success");
-        setForm({ email: "", password: "" }); // Form clear kar do
-        recaptchaRef.current?.reset();
-      } else {
-        triggerToast("Signup successful!", "success");
-        navigate("/login");
-      }
-    } catch (err) {
-      triggerToast("Something went wrong. Try again.", "error");
-    } finally {
-      setLoading(false);
+    if (error) {
+      triggerToast(error.message, "error");
+      recaptchaRef.current?.reset();
+      setCaptchaToken(null);
+    } else {
+      triggerToast("Verification link sent! Check your email.", "success");
+      await supabase.auth.signOut();
+      setTimeout(() => navigate("/login"), 2500);
     }
+    setLoading(false);
   };
 
   const fieldClasses = "w-full bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 shadow-inner pr-14";
