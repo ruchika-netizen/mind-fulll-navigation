@@ -21,12 +21,17 @@ function Signup() {
     const { error } = await supabase.auth.signUp({
       email: form.email.trim(),
       password: form.password,
+      // YE LINE SABSE ZAROORI HAI:
+      options: {
+        emailRedirectTo: `${window.location.origin}/login?verified=true`,
+      },
     });
 
     if (error) {
       triggerToast(error.message, "error");
     } else {
-      triggerToast("Account created successfully!", "success");
+      triggerToast("Verification link sent! Check your email.", "success");
+      // Sign out taaki user turant login na ho jaye, link se hi aaye
       await supabase.auth.signOut();
       setTimeout(() => navigate("/login"), 2500);
     }
@@ -52,7 +57,7 @@ function Signup() {
             <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold ml-1">Email Address</label>
             <input
               type="email"
-              placeholder="name@email.com"
+              placeholder="Enter Email"
               className={fieldClasses}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               required
@@ -65,7 +70,7 @@ function Signup() {
             <input
               type="text" // Alert bypass hack
               style={{ WebkitTextSecurity: "disc" }}
-              placeholder="••••••••"
+              placeholder="Enter Password"
               className={fieldClasses}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               required

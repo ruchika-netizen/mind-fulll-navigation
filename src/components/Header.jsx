@@ -69,7 +69,7 @@ function Header() {
 
             {session && (
               <Link
-                to="/invitation"
+                to="/invitations"
                 title="View Invitation"
                 className="p-1 text-[#36454F] hover:opacity-60 transition active:scale-90"
               >

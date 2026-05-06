@@ -85,7 +85,7 @@ function RiverList() {
               Total Flow
             </span>
             <span className="text-xl italic font-light font-serif">
-              {entries.length} {entries.length === 1 ? "Moment" : "Moments"}
+              {entries.length} {entries.length === 1 ? "" : "Moments"}
             </span>
           </div>
 

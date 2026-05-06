@@ -15,6 +15,8 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+
+  // URL check: ?verified=true
   const isVerifiedFlow = searchParams.get("verified") === "true";
 
   const handleLogin = async (e) => {
@@ -28,13 +30,14 @@ const Login = () => {
     });
 
     if (error) {
-      setErrorMsg(error.message.includes("rate limit") ? "Slow down a bit. Try again in a minute." : error.message);
+      setErrorMsg(error.message);
       setLoading(false);
     } else if (data?.user) {
+      // Check if coming from verification link
       if (isVerifiedFlow) {
         navigate("/invitation?mode=onboarding");
       } else {
-        setShowEnso(true);
+        setShowEnso(true); // Normal users get Enso -> Home
       }
     }
   };
@@ -73,7 +76,7 @@ const Login = () => {
             <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold ml-1">Email Address</label>
             <input
               type="email"
-              placeholder="name@email.com"
+              placeholder="Enter Email"
               className={fieldClasses}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -84,9 +87,9 @@ const Login = () => {
           <div className="space-y-2">
             <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold ml-1">Password</label>
             <input
-              type="text" // 'password' ki jagah 'text' Chrome alert bypass karne ke liye
+              type="text"
               style={{ WebkitTextSecurity: "disc" }}
-              placeholder="••••••••"
+              placeholder="Enter Password"
               className={fieldClasses}
               onChange={(e) => setPassword(e.target.value)}
               required

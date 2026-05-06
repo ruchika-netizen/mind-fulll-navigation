@@ -53,12 +53,10 @@ function Breath() {
             </p>
           </footer>
         </div>
-
         <div className="absolute bottom-10 right-10 z-20">
           <button
-            onClick={handleContinue}
-            className="group flex items-center gap-4 bg-[#36454F] text-[#F5F0E8] pl-7 pr-6 px-5 py-3 rounded-full text-[10px] uppercase tracking-[0.3em] font-sans font-bold transition-all duration-300 hover:bg-black hover:shadow-xl active:scale-95 shadow-md"
-          >
+            onClick={() => navigate("/navigator?mode=onboarding")}
+            className="group flex items-center gap-4 bg-[#36454F] text-[#F5F0E8] pl-7 pr-6 py-3.5 rounded-full text-[10px] uppercase tracking-[0.3em] font-sans font-bold transition-all duration-300 hover:bg-black hover:shadow-xl active:scale-95 shadow-md">
             Continue
             <span className="text-lg transition-transform duration-300 group-hover:translate-x-1">›</span>
           </button>

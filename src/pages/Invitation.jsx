@@ -74,13 +74,12 @@ function Invitation() {
             </div>
           </div>
 
-          <div className="pt-8 flex justify-end">
+          <div className="flex justify-end pt-3 ">
             <button
-              onClick={handleContinue}
-              className="group flex items-center gap-6 bg-[#36454F] text-[#F5F0E8] px-10 py-5 rounded-full text-[10px] uppercase tracking-[0.4em] font-sans font-bold transition-all duration-500 hover:bg-black active:scale-95 shadow-lg"
-            >
+              onClick={() => navigate("/breath?mode=onboarding")}
+              className="group flex items-center gap-4 bg-[#36454F] text-[#F5F0E8] pl-7 pr-6 py-3.5 rounded-full text-[10px] uppercase tracking-[0.3em] font-sans font-bold transition-all duration-300 hover:bg-black hover:shadow-xl active:scale-95 shadow-md">
               Continue
-              <span className="group-hover:translate-x-2 transition-transform text-xl leading-none">›</span>
+              <span className="text-lg transition-transform duration-300 group-hover:translate-x-1">›</span>
             </button>
           </div>
         </div>

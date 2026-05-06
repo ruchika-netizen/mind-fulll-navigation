@@ -29,7 +29,9 @@ import ScrollToTop from "./components/ScrollToTop";
 import Partners from "./pages/Partners";
 import FinalWord from "./pages/FinalWord";
 import "./index.css";
-
+import Invitations from "./pages/Invitations";
+import Breaths from "./pages/Breaths";
+import Navigators from "./pages/Navigators";
 function App() {
   const [isAnimationLoading, setIsAnimationLoading] = useState(() => {
     const played = sessionStorage.getItem("enso_played");
@@ -40,11 +42,12 @@ function App() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+
   const isOnboarding = searchParams.get("mode") === "onboarding";
+  const isVerified = searchParams.get("verified") === "true";
   const isAuthPage = ["/login", "/signup"].includes(location.pathname);
 
-  // Hide only if it's Login/Signup OR if it's a special page in onboarding mode
-  const specialPages = ["/invitation", "/breath", "/navigator"];
+  const specialPages = ["/invitation", "/breath", "/navigator", "/navigatorguide"];
   const shouldHideNav = isAuthPage || (specialPages.includes(location.pathname) && isOnboarding);
 
   useEffect(() => {
@@ -81,10 +84,26 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={!session ? <Signup /> : <Navigate to="/" />} />
-          <Route path="/" element={session ? <Home /> : <Navigate to="/login" />} />
+
+          {/* Root Logic Update */}
+          <Route
+            path="/"
+            element={
+              session ? (
+                // Agar email se verify hoke aaya hai to Invitation page par bhejo
+                isVerified ? <Navigate to="/invitation?mode=onboarding" replace /> : <Home />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
+
           <Route path="/invitation" element={session ? <Invitation /> : <Navigate to="/login" />} />
           <Route path="/breath" element={session ? <Breath /> : <Navigate to="/login" />} />
           <Route path="/navigator" element={session ? <Navigator /> : <Navigate to="/login" />} />
+          <Route path="/navigatorguide" element={session ? <NavigatorGuide /> : <Navigate to="/login" />} />
+
+          {/* ... Baaki routes wahi rahenge ... */}
           <Route path="/rituals" element={session ? <Rituals /> : <Navigate to="/login" />} />
           <Route path="/milestones" element={session ? <Milestones /> : <Navigate to="/login" />} />
           <Route path="/river" element={session ? <River /> : <Navigate to="/login" />} />
@@ -100,9 +119,10 @@ function App() {
           <Route path="/wellbeingpractices" element={session ? <WellbeingPractices /> : <Navigate to="/login" />} />
           <Route path="/companionReadings" element={session ? <CompanionReadings /> : <Navigate to="/login" />} />
           <Route path="/partners" element={session ? <Partners /> : <Navigate to="/login" />} />
-          <Route path="/navigatorguide" element={session ? <NavigatorGuide /> : <Navigate to="/login" />} />
           <Route path="/finalword" element={session ? <FinalWord /> : <Navigate to="/login" />} />
-          <Route path="/milestones/edit/:id" element={session ? <MarkMoment /> : <Navigate to="/login" />} />
+          <Route path="/invitations" element={session ? <Invitations /> : <Navigate to="/login" />} />
+          <Route path="/breaths" element={session ? <Breaths /> : <Navigate to="/login" />} />
+          <Route path="/navigators" element={session ? <Navigators /> : <Navigate to="/login" />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
