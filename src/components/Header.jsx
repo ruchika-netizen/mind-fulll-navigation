@@ -77,7 +77,7 @@ function Header() {
               </Link>
             )}
             {session ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 sm:gap-6">
                 <Link to="/settings" className="hidden md:block text-[10px] uppercase tracking-widest opacity-60 font-bold font-sans">Settings</Link>
 
                 <button

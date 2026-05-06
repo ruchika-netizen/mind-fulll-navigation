@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
-import { Trash2, Link as LinkIcon, FileText, Image as ImageIcon, Loader2, ChevronLeft, Plus, ExternalLink } from "lucide-react";
+import { Trash2, Link as LinkIcon, Loader2, Plus } from "lucide-react";
 
 function GatheringPlace() {
   const navigate = useNavigate();
@@ -86,110 +86,131 @@ function GatheringPlace() {
 
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif pb-20">
-
-      {/* UNIVERSAL RESPONSIVE HEADER */}
+      {/* HEADER SECTION */}
       <header className="relative w-full max-w-7xl mx-auto pt-10 pb-8 text-center">
-        {/* Back Button Container */}
         <div className="absolute top-6 md:top-12 left-0">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
-          >
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all">
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
             <span className="mt-0.5">Back</span>
           </button>
         </div>
-
-        {/* Header Text */}
         <div className="flex flex-col items-center pt-6 md:pt-0">
-          <h1 className="text-3xl md:text-4xl font-bold italic tracking-tight text-[#36454F]">
-            The Gathering Place
-          </h1>
-
+          <h1 className="text-3xl md:text-4xl font-bold italic tracking-tight text-[#36454F]">The Gathering Place</h1>
           <div className="w-12 h-[1px] bg-[#36454F]/10 mt-8" />
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6">
-
-        {/* COMPACT INPUT BOX */}
-        <div className="bg-white rounded-3xl shadow-xl shadow-[#36454F]/5 border border-[#36454F]/5 overflow-hidden mb-16 max-w-lg mx-auto transition-all">
-          <div className="flex bg-[#36454F]/5 p-1.5">
+      <main className="max-w-3xl mx-auto px-6">
+        {/* SLEEK INPUT BOX */}
+        <div className="bg-white rounded-[2rem] shadow-xl shadow-[#36454F]/5 border border-[#36454F]/5 overflow-hidden mb-12 max-w-lg mx-auto transition-all">
+          <div className="flex bg-[#F5F0E8]/50 p-1.5 border-b border-[#36454F]/5">
             {["note", "link", "photo"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => { setActiveTab(tab); setInputText(""); }}
-                className={`flex-1 py-2 text-[12px] uppercase tracking-widest font-sans font-bold rounded-2xl transition-all ${activeTab === tab ? "bg-[#36454F] text-white shadow-md" : "opacity-30 hover:opacity-100"
-                  }`}
+                className={`flex-1 py-2 text-[10px] uppercase tracking-[0.2em] font-sans font-bold rounded-xl transition-all ${activeTab === tab ? "bg-[#36454F] text-white shadow-md" : "opacity-30 hover:opacity-100"}`}
               >
                 {tab}
               </button>
             ))}
           </div>
 
-          <div className="p-5">
+          <div className="p-6 md:p-8">
+            <h2 className="text-[12px] uppercase tracking-[0.3em] font-sans font-bold mb-4 ">
+              {/* {activeTab === "note" && ""}
+              {activeTab === "link" && ""} */}
+              {activeTab === "photo" && "Upload"}
+            </h2>
+
             {activeTab === "photo" ? (
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center py-2">
                 <input type="file" ref={fileInputRef} onChange={handlePhotoUpload} className="hidden" accept="image/*" />
                 <button onClick={() => fileInputRef.current.click()} className="flex flex-col items-center gap-3 group">
-                  <div className="w-14 h-10 rounded-full bg-[#F5F0E8] flex items-center justify-center border border-[#36454F]/5 group-hover:bg-[#36454F] group-hover:text-white transition-all transform group-active:scale-90">
-                    {uploadingPhoto ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />}
+                  <div className="w-16 h-16 rounded-full bg-[#F5F0E8] flex items-center justify-center border border-[#36454F]/10 group-hover:bg-[#36454F] group-hover:text-white transition-all transform group-active:scale-95">
+                    {uploadingPhoto ? <Loader2 size={20} className="animate-spin" /> : <Plus size={22} />}
                   </div>
-                  <span className="text-[12px] uppercase tracking-widest font-bold ">Add {activeTab}</span>
+                  {/* <span className="text-[13px] uppercase tracking-widest font-bold font-sans ">Select Image</span> */}
                 </button>
               </div>
             ) : (
-              <div className="space-y-3 text-center">
+              <div className="space-y-6">
                 <textarea
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  placeholder={`Enter your ${activeTab}...`}
-                  className="w-full bg-transparent outline-none italic text-lg text-center resize-none h-[40px] text-[#000]  leading-relaxed"
+                  placeholder={`Write here...`}
+                  className="w-full bg-transparent outline-none italic text-xl resize-none h-[80px] text-black leading-snug"
                 />
-                {inputText.trim() && (
-                  <button onClick={addItem} disabled={loading} className="px-10 py-3 bg-[#36454F] text-white rounded-2xl text-[10px] uppercase tracking-[0.3em] font-bold shadow-lg transform active:scale-95 transition-all">
-                    {loading ? "..." : "Save Entry"}
-                  </button>
-                )}
+                <button
+                  onClick={addItem}
+                  disabled={loading || !inputText.trim()}
+                  className={`w-full py-4 rounded-xl text-[9px] uppercase tracking-[0.4em] font-bold font-sans transition-all transform active:scale-95 flex justify-center items-center gap-2 ${inputText.trim() ? "bg-[#36454F] text-white shadow-lg" : "bg-[#36454F]/5 text-[#36454F]/20 cursor-not-allowed"}`}
+                >
+                  {loading ? <Loader2 size={14} className="animate-spin" /> : `Save Entry`}
+                </button>
               </div>
             )}
           </div>
         </div>
 
-        {/* FEED GRID */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredItems.map((item) => (
-            <div key={item.id} className="group bg-white rounded-3xl border border-[#36454F]/5 overflow-hidden flex flex-col hover:shadow-2xl hover:shadow-[#36454F]/5 transition-all duration-500">
-              <div className="relative w-full aspect-square bg-[#FDFCFB] overflow-hidden flex items-center justify-center">
-                {item.type === "photo" ? (
-                  <img src={item.content} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt="Gathering" />
-                ) : item.type === "link" ? (
-                  <div className="p-8 text-center flex flex-col items-center gap-4">
-                    <LinkIcon size={20} className="opacity-10" />
-                    <a href={item.content} target="_blank" rel="noreferrer" className="text-sm italic hover:underline break-all leading-snug px-2">
-                      {item.content}
-                    </a>
-                  </div>
-                ) : (
-                  <div className="p-10">
-                    <p className="text-xl italic text-center leading-relaxed">“{item.content}”</p>
-                  </div>
-                )}
+        {/* DYNAMIC LISTING: Photos (Grid) vs Notes/Links (River List) */}
 
-                <button
-                  onClick={() => removeItem(item.id)}
-                  className="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur-sm rounded-full text-red-400 opacity-0 group-hover:opacity-100 transition-all shadow-sm"
-                >
-                  <Trash2 size={12} />
-                </button>
-              </div>
-              <div className="p-4 bg-white border-t border-[#36454F]/5 text-center">
-                <span className="text-[12px] uppercase tracking-widest font-bold opacity-20">
-                  {new Date(item.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
-                </span>
-              </div>
-            </div>
-          ))}
+        <div className={activeTab === "photo" ? "grid grid-cols-2 md:grid-cols-4 gap-4" : "space-y-3"}>
+          {filteredItems.length === 0 ? (
+            <div className="text-center py-20 opacity-20 italic">No entries yet.</div>
+          ) : (
+            filteredItems.map((item) => (
+              item.type === "photo" ? (
+                /* PHOTO GRID STYLE - DATE ALWAYS VISIBLE */
+                <div key={item.id} className="group relative aspect-square bg-white rounded-3xl overflow-hidden border border-[#36454F]/5 shadow-sm hover:shadow-xl transition-all duration-500">
+                  <img src={item.content} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Memory" />
+
+                  {/* Always Visible Date Badge (Bottom Left) */}
+                  <div className="absolute bottom-3 left-3 px-3 py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/20">
+                    <span className="text-[9px] uppercase tracking-[0.1em] font-sans font-bold text-white">
+                      {new Date(item.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+                    </span>
+                  </div>
+
+                  {/* Delete Button (Sirf ye hover par dikhega taaki look clean rahe) */}
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-red-400 opacity-0 group-hover:opacity-100 transition-all shadow-md hover:bg-red-50"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </div>
+              ) : (
+                /* NOTE & LINK RIVER STYLE (Same as before) */
+                <div key={item.id} className="group relative bg-white/60 rounded-[22px] p-4 shadow-sm border border-white/50 hover:shadow-md transition-all duration-500 flex items-center gap-5">
+                  <div className="flex flex-col items-center justify-center min-w-[52px] h-12 bg-[#F5F0E8] rounded-xl border border-[#36454F]/5 group-hover:bg-[#36454F] group-hover:text-white transition-all duration-500">
+                    <span className="text-[10px] font-bold font-sans">
+                      {new Date(item.created_at).toLocaleDateString('en-GB', { day: '2-digit' })}
+                    </span>
+                    <span className="text-[7px] uppercase font-bold font-sans opacity-40 group-hover:opacity-80">
+                      {new Date(item.created_at).toLocaleDateString('en-GB', { month: 'short' })}
+                    </span>
+                  </div>
+
+                  <div className="flex-1 min-w-0 pr-6">
+                    {item.type === "link" ? (
+                      <a href={item.content} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm italic text-[#36454F] hover:underline transition-colors truncate">
+                        <LinkIcon size={12} className="shrink-0 opacity-40" />
+                        {item.content}
+                      </a>
+                    ) : (
+                      <p className="text-[15px] italic text-[#36454F] group-hover:text-black transition-colors leading-tight">
+                        {item.content}
+                      </p>
+                    )}
+                  </div>
+
+                  <button onClick={() => removeItem(item.id)} className="opacity-0 group-hover:opacity-100 transition-all p-2 text-red-400 hover:text-red-600">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              )
+            ))
+          )}
         </div>
       </main>
     </div>
