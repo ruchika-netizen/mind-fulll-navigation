@@ -14,12 +14,21 @@ function Breath() {
 
     return (
         <div className="min-h-screen bg-[#F5F0E8] font-serif text-[#36454F] selection:bg-[#36454F]/10 relative overflow-x-hidden flex flex-col items-center justify-center p-6 py-12">
-            <button
-                onClick={() => navigate(-1)}
-                className="fixed left-8 top-12 text-[10px] uppercase tracking-[0.4em] font-sans font-bold transition-all z-20 "
-            >
-                ‹ Back
-            </button>
+            {/* Back Button - Responsive & Aligned */}
+            {/* BACK BUTTON CONTAINER */}
+            <div className="w-full max-w-7xl mx-auto px-6 relative">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="absolute left-0 -top-8 md:-top-12 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] transition-all z-20 flex items-center gap-2 group"
+                >
+                    <span className="text-xl leading-none group-hover:-translate-x-1 transition-transform inline-block">
+                        ‹
+                    </span>
+                    <span className="mt-0.5  transition-opacity">
+                        Back
+                    </span>
+                </button>
+            </div>
 
             <div className="w-full max-w-[700px] bg-white rounded-[2.5rem] p-8 md:p-14 shadow-sm border border-white/50 relative flex flex-col items-center justify-center overflow-hidden h-auto min-h-[800px]">
                 <div className="relative z-10 w-full pb-15 flex flex-col items-center text-center">

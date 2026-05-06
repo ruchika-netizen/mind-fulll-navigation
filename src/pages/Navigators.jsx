@@ -34,12 +34,20 @@ function JournalGuide() {
 
     return (
         <div className="min-h-screen bg-[#F5F0E8] font-serif text-[#36454F] selection:bg-[#36454F]/10 relative overflow-hidden flex flex-col items-center justify-center p-4 py-10 animate-in fade-in duration-1000">
-            <button
-                onClick={() => navigate(-1)}
-                className="fixed left-6 top-8 text-[10px] uppercase tracking-[0.4em] font-sans font-bold transition-all z-20 "
-            >
-                ‹ Back
-            </button>
+            {/* BACK BUTTON CONTAINER */}
+            <div className="w-full max-w-7xl mx-auto px-6 relative">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="absolute left-0 -top-5 md:-top-0 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] transition-all z-20 flex items-center gap-2 group"
+                >
+                    <span className="text-xl leading-none group-hover:-translate-x-1 transition-transform inline-block">
+                        ‹
+                    </span>
+                    <span className="mt-0.5 transition-opacity">
+                        Back
+                    </span>
+                </button>
+            </div>
 
             <div className="w-full max-w-[750px] bg-white rounded-[2rem] p-8 md:p-14 shadow-sm border border-white/50 relative flex flex-col h-[85vh] md:h-auto md:min-h-[750px]">
                 <header className="mb-10 text-center">
