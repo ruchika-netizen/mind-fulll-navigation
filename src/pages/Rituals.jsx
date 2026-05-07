@@ -57,7 +57,7 @@ const JourneyEnd = () => {
     <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif flex items-center justify-center p-4 md:p-12 overflow-hidden selection:bg-[#36454F]/10">
 
       {/* ORIGINAL CONTAINER - Max width aur styling wapas wahi hai */}
-      <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-stretch bg-white/40 rounded-[3.5rem] p-8 md:p-16 border border-white/60 shadow-2xl relative transition-all duration-[1500ms]">
+      <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-stretch bg-white/40 rounded-[3.5rem] p-8 md:p-10 border border-white/60 shadow-2xl relative transition-all duration-[1500ms]">
 
         {/* LEFT SIDE - Original text aur image wapas aa gayi */}
         <div className={`flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#36454F]/5 pb-12 md:pb-0 md:pr-16 transition-all duration-[2000ms] ${status === 'completed' ? 'opacity-0 blur-sm pointer-events-none' : 'opacity-100'}`}>
@@ -70,7 +70,7 @@ const JourneyEnd = () => {
               <p></p>
               <p>But because in that single moment, you will both be a little less alone.</p>
             </div>
-            <p className="text-[10px] uppercase tracking-[0.5em] font-sans font-bold opacity-30">This is the way of the Mindful Navigator.</p>
+            <p className="text-[10px] uppercase tracking-[0.2em] font-sans font-bold opacity-30">This is the way of the Mindful Navigator.</p>
           </div>
 
           <div className="pt-16 flex flex-col items-start gap-8">
@@ -149,7 +149,7 @@ const JourneyEnd = () => {
                   </div>
 
                   {showFinalOption && (
-                    <div className="animate-in slide-in-from-bottom-12 fade-in duration-[1500ms] bg-[#F5F0E8]/70 rounded-[2.5rem] p-10 border border-white/50 shadow-xl space-y-8 max-w-lg">
+                    <div className="animate-in slide-in-from-bottom-12 fade-in duration-[1500ms] bg-[#F5F0E8]/70 rounded-[2rem] p-8 border border-white/50 shadow-xl space-y-8 max-w-lg">
                       <p className="text-[16px] font-serif italic text-[#36454F]/80 leading-relaxed">
                         "If you would like to hold this moment in your hands — check the box below and we will send you a seed card by post. <br />Plant it. Let it grow."
                       </p>
