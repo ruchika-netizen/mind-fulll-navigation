@@ -54,7 +54,7 @@ const JourneyEnd = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif flex items-center justify-center p-4 md:p-12 overflow-hidden selection:bg-[#36454F]/10">
+    <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif flex items-center justify-center p-4 md:p-8 overflow-hidden selection:bg-[#36454F]/10">
 
       {/* ORIGINAL CONTAINER - Max width aur styling wapas wahi hai */}
       <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-stretch bg-white/40 rounded-[3.5rem] p-8 md:p-10 border border-white/60 shadow-2xl relative transition-all duration-[1500ms]">
