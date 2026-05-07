@@ -164,7 +164,7 @@ const JourneyEnd = () => {
                           />
                           <Check className="absolute text-white opacity-0 peer-checked:opacity-100 transition-opacity" size={18} strokeWidth={4} />
                         </div>
-                        <span className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold opacity-40 group-hover:opacity-100 transition-opacity">
+                        <span className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold transition-opacity">
                           Please send me a seed card — $6 CAD plus postage
                         </span>
                       </label>
