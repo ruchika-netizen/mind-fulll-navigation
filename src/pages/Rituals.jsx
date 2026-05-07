@@ -62,13 +62,15 @@ const JourneyEnd = () => {
         {/* LEFT SIDE - Original text aur image wapas aa gayi */}
         <div className={`flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#36454F]/5 pb-12 md:pb-0 md:pr-16 transition-all duration-[2000ms] ${status === 'completed' ? 'opacity-0 blur-sm pointer-events-none' : 'opacity-100'}`}>
           <div className="space-y-10">
-            <div className="space-y-6 text-xl md:text-2xl font-light italic leading-relaxed opacity-80">
+            <div className="space-y-6 text-md md:text-2xl font-light italic leading-relaxed opacity-80">
               <p>When the day feels long and the path feels uncertain,</p>
               <p>offer a smile to the next person you meet.</p>
               <p>Not because they deserve it.</p>
+              <p>Not because you have it to spare.</p>
+              <p></p>
               <p>But because in that single moment, you will both be a little less alone.</p>
             </div>
-            <p className="text-[10px] uppercase tracking-[0.5em] font-sans font-bold opacity-30">Mindful Navigator</p>
+            <p className="text-[10px] uppercase tracking-[0.5em] font-sans font-bold opacity-30">This is the way of the Mindful Navigator.</p>
           </div>
 
           <div className="pt-16 flex flex-col items-start gap-8">
