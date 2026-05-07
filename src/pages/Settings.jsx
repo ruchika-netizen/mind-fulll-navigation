@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import { LogOut, ShieldCheck, Bell, ChevronLeft } from "lucide-react";
+import { LogOut, ShieldCheck, Bell, ChevronLeft, ChevronDown } from "lucide-react";
 import sound from "../assets/milanwulf-toggle-button-on-166329.mp3";
 
 function Settings() {
@@ -13,13 +13,25 @@ function Settings() {
 
   const audioRef = useRef(null);
 
+  const faqs = [
+    {
+      question: "How do I save my entries?",
+      answer: "Your entries are automatically saved to our secure database as you write. You can find them anytime in The River or your Gathering Place."
+    },
+    {
+      question: "Is my data private?",
+      answer: "Yes. Your journal is yours alone. We use industry-standard encryption through Supabase to ensure only you can access your reflections."
+    },
+    {
+      question: "Can I use the app offline?",
+      answer: "Currently, an internet connection is required to sync your journey across devices, but we are working on offline support for future updates."
+    }
+  ];
+
   useEffect(() => {
     const audio = new Audio(sound);
     audio.volume = 0.4;
     audioRef.current = audio;
-  }, []);
-
-  useEffect(() => {
     getUserData();
   }, []);
 
@@ -28,11 +40,9 @@ function Settings() {
     if (user) setEmail(user.email);
   };
 
-  // Sound play function ko fix kiya
   const playToggleSound = () => {
     const audio = audioRef.current;
     if (!audio) return;
-    // Yahan se !soundEnabled wali condition hata di taaki OFF pe bhi sound aaye
     audio.currentTime = 0;
     audio.play().catch(() => console.log("Sound blocked by browser"));
   };
@@ -55,10 +65,11 @@ function Settings() {
   return (
     <div className="min-h-screen bg-[#FDFCFB] text-[#36454F] font-sans selection:bg-[#36454F]/10">
 
-      <nav className="max-w-7xl mx-auto  py-8 flex items-center justify-between">
+      {/* NAVIGATION */}
+      <nav className="max-w-7xl mx-auto py-8 px-6 flex items-center justify-between">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] font-bold transition-all"
+          className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] font-bold transition-all hover:opacity-60"
         >
           <ChevronLeft size={14} /> Back
         </button>
@@ -71,6 +82,8 @@ function Settings() {
         </header>
 
         <div className="space-y-16">
+
+          {/* PREFERENCES SECTION */}
           <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="flex items-center gap-3 mb-8">
               <Bell size={16} className="opacity-30" />
@@ -85,21 +98,19 @@ function Settings() {
                 </p>
               </div>
 
-              {/* Toggle Button logic fix */}
               <button
                 onClick={() => {
-                  playToggleSound(); // Pehle sound play hogi
-                  setSoundEnabled(!soundEnabled); // Phir state change hogi
+                  playToggleSound();
+                  setSoundEnabled(!soundEnabled);
                 }}
-                className={`w-14 h-7 rounded-full transition-all duration-500 flex items-center px-1.5 ${soundEnabled ? "bg-[#36454F]" : "bg-[#36454F]/10"
-                  }`}
+                className={`w-14 h-7 rounded-full transition-all duration-500 flex items-center px-1.5 ${soundEnabled ? "bg-[#36454F]" : "bg-[#36454F]/10"}`}
               >
-                <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-all duration-300 transform ${soundEnabled ? "translate-x-7" : "translate-x-0"
-                  }`} />
+                <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-all duration-300 transform ${soundEnabled ? "translate-x-7" : "translate-x-0"}`} />
               </button>
             </div>
           </section>
 
+          {/* SECURITY SECTION */}
           <section className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
             <div className="flex items-center gap-3 mb-8">
               <ShieldCheck size={16} className="opacity-30" />
@@ -117,47 +128,63 @@ function Settings() {
                 />
               </div>
 
-              <div className="flex flex-col gap-6 w-full max-w-md">
-                {/* Label - Minimalist & Spaced */}
+              <div className="flex flex-col gap-6 w-full">
                 <label className="text-[13px] font-sans font-bold uppercase tracking-[0.4em] opacity-30 ml-1">
                   Reset Password
                 </label>
 
-                <div className="relative group">
-                  {/* The Presence Style Input Box */}
-                  <div className="relative flex items-center bg-white/40 border border-[#D4AF37]/40 rounded-[1.5rem] px-6 py-1 transition-all duration-500 hover:border-[#D4AF37] focus-within:border-[#D4AF37] focus-within:shadow-lg focus-within:shadow-[#D4AF37]/5">
-                    <input
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="Eneter New password"
-                      className="flex-1 bg-transparent py-2 text-md italic font-serif outline-none text-[#36454F] placeholder:opacity-20"
-                    />
-
-                    {/* Sleek Action Button inside/beside */}
-                    <button
-                      onClick={handlePasswordChange}
-                      disabled={loading || !newPassword}
-                      className={`ml-4 text-[10px] font-sans font-bold uppercase tracking-[0.2em] transition-all duration-300 ${newPassword
-                        ? "text-[#D4AF37] opacity-100 hover:tracking-[0.4em]"
-                        : "text-[#36454F] opacity-10"
-                        }`}
-                    >
-                      {loading ? "..." : "Update"}
-                    </button>
-                  </div>
-
-                  {/* Optional subtle help text */}
-                  {/* <p className="mt-3 ml-4 text-[12px] font-bold  uppercase tracking-widest font-sans">
-                    Enter at least 6 characters
-                  </p> */}
+                <div className="relative flex items-center bg-white/40 border border-[#D4AF37]/40 rounded-[1.5rem] px-6 py-1 transition-all duration-500 hover:border-[#D4AF37] focus-within:border-[#D4AF37] focus-within:shadow-lg focus-within:shadow-[#D4AF37]/5">
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter New password"
+                    className="flex-1 bg-transparent py-3 text-md italic font-serif outline-none text-[#36454F] placeholder:opacity-20"
+                  />
+                  <button
+                    onClick={handlePasswordChange}
+                    disabled={loading || !newPassword}
+                    className={`ml-4 text-[10px] font-sans font-bold uppercase tracking-[0.2em] transition-all duration-300 ${newPassword ? "text-[#D4AF37] opacity-100 hover:tracking-[0.4em]" : "text-[#36454F] opacity-10"}`}
+                  >
+                    {loading ? "..." : "Update"}
+                  </button>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-[#36454F]/5 to-transparent" /> */}
+          {/* FAQ SECTION */}
+          {/* FAQ SECTION - SLEEK & COMPACT */}
+          <section className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-4 h-4 rounded-full border border-[#36454F]/20 flex items-center justify-center">
+                <span className="text-[7px] font-bold">?</span>
+              </div>
+              <h2 className="text-[13px] uppercase tracking-[0.4em] font-bold opacity-30">FAQ</h2>
+            </div>
 
+            <div className="space-y-3"> {/* Spacing kam kar di */}
+              {faqs.map((faq, index) => (
+                <details key={index} className="group bg-white/20 border border-[#36454F]/5 rounded-[1.2rem] p-4 hover:border-[#36454F]/10 transition-all shadow-sm">
+                  <summary className="flex items-center justify-between cursor-pointer list-none">
+                    {/* Question text chota aur sleek */}
+                    <p className="text-[13px] font-serif italic text-[#36454F] opacity-80 group-open:opacity-100 transition-opacity">
+                      {faq.question}
+                    </p>
+                    <ChevronDown size={14} className="text-[#36454F]/20 group-open:rotate-180 transition-transform duration-300" />
+                  </summary>
+
+                  {/* Answer text compact layout */}
+                  <div className="mt-3 pt-3 border-t border-[#36454F]/5">
+                    <p className="text-[13px] font-sans  opacity-50 leading-relaxed  tracking-[0.1em]">
+                      {faq.answer}
+                    </p>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </section>
+          {/* LOGOUT SECTION */}
           <section className="pt-4">
             <div className="flex items-center justify-between bg-red-50/30 border border-red-900/5 p-8 rounded-[2rem]">
               <div>
@@ -173,8 +200,8 @@ function Settings() {
               </button>
             </div>
           </section>
-        </div>
 
+        </div>
       </main>
     </div>
   );

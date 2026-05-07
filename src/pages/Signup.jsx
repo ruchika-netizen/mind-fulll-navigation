@@ -27,7 +27,8 @@ function Signup() {
     }
     setLoading(true);
 
-    const { error } = await supabase.auth.signUp({
+    // Supabase SignUp call
+    const { data, error } = await supabase.auth.signUp({
       email: form.email.trim(),
       password: form.password,
       options: {
@@ -41,9 +42,16 @@ function Signup() {
       recaptchaRef.current?.reset();
       setCaptchaToken(null);
     } else {
-      triggerToast("Verification link sent! Check your email.", "success");
-      await supabase.auth.signOut();
-      setTimeout(() => navigate("/login"), 2500);
+      // CHECK HERE: Agar user pehle se registered hai toh identities array empty hota hai
+      if (data?.user && data.user.identities && data.user.identities.length === 0) {
+        triggerToast("This email is already registered. Try logging in.", "error");
+        recaptchaRef.current?.reset();
+        setCaptchaToken(null);
+      } else {
+        triggerToast("Verification link sent! Check your email.", "success");
+        await supabase.auth.signOut();
+        setTimeout(() => navigate("/login"), 2500);
+      }
     }
     setLoading(false);
   };
