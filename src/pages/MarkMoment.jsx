@@ -143,7 +143,7 @@ function MarkMoment() {
 
           {/* Target Date Input */}
           <div className="space-y-2">
-            <label className="text-[11px] uppercase tracking-[0.3em] block mb-1 font-sans font-bold opacity-30 ml-1">Target Date</label>
+            <label className="text-[11px] uppercase tracking-[0.3em] block mb-1 font-sans font-bold opacity-30 ml-1">Milestone Date</label>
             <div className="relative">
               <input
                 type="date"
