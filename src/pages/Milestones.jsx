@@ -55,7 +55,7 @@ function Milestones() {
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif pb-24 animate-in fade-in duration-700">
       <header className="relative w-full max-w-7xl mx-auto py-16 px-6 text-center">
-        <div className="absolute top-12 left-6">
+        <div className="absolute top-12 left-1">
           <button
             onClick={() => navigate("/")}
             className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
@@ -121,7 +121,7 @@ function Milestones() {
                 {/* Target Date Badge - Ultra Sleek & Small */}
                 {milestone.target_date && (
                   <div className="hidden sm:flex flex-col items-end shrink-0 border-l border-[#36454F]/10 pl-4 py-1">
-                    <span className="text-[12px] uppercase tracking-[0.1em] font-sans font-bold opacity-30">Target</span>
+                    <span className="text-[10px] uppercase tracking-[0.1em] font-sans font-bold opacity-30">Milestone Date</span>
                     <span className="text-[12px] font-sans font-bold text-[#36454F]/60 group-hover:text-[#36454F]">
                       {formatDate(milestone.target_date)}
                     </span>

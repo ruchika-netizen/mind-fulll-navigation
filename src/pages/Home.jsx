@@ -24,7 +24,7 @@ const sections = [
     id: "river",
     title: "The River",
     icon: <Waves size={22} />,
-    path: "/river-list",
+    path: "/river",
     desc: "The flow of your immediate actions and reflections. Navigate the morning current and evening stillness."
   },
   {

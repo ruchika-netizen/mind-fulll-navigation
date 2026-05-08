@@ -10,6 +10,7 @@ function Settings() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [newPassword, setNewPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [openIndex, setOpenIndex] = useState(null); // Track which FAQ is open
 
   const audioRef = useRef(null);
 
@@ -66,13 +67,21 @@ function Settings() {
     <div className="min-h-screen bg-[#FDFCFB] text-[#36454F] font-sans selection:bg-[#36454F]/10">
 
       {/* NAVIGATION */}
-      <nav className="max-w-7xl mx-auto py-8 px-6 flex items-center justify-between">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] font-bold transition-all hover:opacity-60"
-        >
-          <ChevronLeft size={14} /> Back
-        </button>
+      {/* NAVIGATION */}
+      <nav className="max-w-7xl mx-auto py-10 ">
+        <div className="relative flex items-center justify-start">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
+          >
+            {/* Arrow with transition */}
+            <span className="text-xl leading-none group-hover:-translate-x-1 transition-transform duration-300 inline-block">
+              ‹
+            </span>
+            {/* Text with slight margin adjustment */}
+            <span className="mt-0.5">Back</span>
+          </button>
+        </div>
       </nav>
 
       <main className="max-w-2xl mx-auto px-6 pb-24">
@@ -153,8 +162,7 @@ function Settings() {
             </div>
           </section>
 
-          {/* FAQ SECTION */}
-          {/* FAQ SECTION - SLEEK & COMPACT */}
+          {/* FAQ SECTION - WITH FLUID ANIMATION */}
           <section className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-4 h-4 rounded-full border border-[#36454F]/20 flex items-center justify-center">
@@ -163,27 +171,43 @@ function Settings() {
               <h2 className="text-[13px] uppercase tracking-[0.4em] font-bold opacity-30">FAQ</h2>
             </div>
 
-            <div className="space-y-3"> {/* Spacing kam kar di */}
-              {faqs.map((faq, index) => (
-                <details key={index} className="group bg-white/20 border border-[#36454F]/5 rounded-[1.2rem] p-4 hover:border-[#36454F]/10 transition-all shadow-sm">
-                  <summary className="flex items-center justify-between cursor-pointer list-none">
-                    {/* Question text chota aur sleek */}
-                    <p className="text-[13px] font-serif italic text-[#36454F] opacity-80 group-open:opacity-100 transition-opacity">
-                      {faq.question}
-                    </p>
-                    <ChevronDown size={14} className="text-[#36454F]/20 group-open:rotate-180 transition-transform duration-300" />
-                  </summary>
+            <div className="space-y-3">
+              {faqs.map((faq, index) => {
+                const isOpen = openIndex === index;
+                return (
+                  <div
+                    key={index}
+                    className={`group bg-white/20 border border-[#36454F]/5 rounded-[1.2rem] p-4 transition-all duration-500 shadow-sm ${isOpen ? 'bg-white/40 border-[#36454F]/10' : 'hover:border-[#36454F]/10'}`}
+                  >
+                    <button
+                      onClick={() => setOpenIndex(isOpen ? null : index)}
+                      className="w-full flex items-center justify-between cursor-pointer text-left outline-none"
+                    >
+                      <p className={`text-[13px] font-serif italic text-[#36454F] transition-all duration-300 ${isOpen ? 'opacity-100' : 'opacity-60'}`}>
+                        {faq.question}
+                      </p>
+                      <ChevronDown
+                        size={14}
+                        className={`text-[#36454F]/20 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[#36454F]/50' : ''}`}
+                      />
+                    </button>
 
-                  {/* Answer text compact layout */}
-                  <div className="mt-3 pt-3 border-t border-[#36454F]/5">
-                    <p className="text-[13px] font-sans  opacity-50 leading-relaxed  tracking-[0.1em]">
-                      {faq.answer}
-                    </p>
+                    {/* Smooth Grid-Height Transition */}
+                    <div
+                      className={`grid transition-all duration-500 ease-in-out ${isOpen ? 'grid-rows-[1fr] opacity-100 mt-3 pt-3 border-t border-[#36454F]/5' : 'grid-rows-[0fr] opacity-0 mt-0 pt-0 border-t-0'}`}
+                    >
+                      <div className="overflow-hidden">
+                        <p className="text-[14px] font-sans leading-relaxed tracking-[0.05em]">
+                          {faq.answer}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </details>
-              ))}
+                );
+              })}
             </div>
           </section>
+
           {/* LOGOUT SECTION */}
           <section className="pt-4">
             <div className="flex items-center justify-between bg-red-50/30 border border-red-900/5 p-8 rounded-[2rem]">

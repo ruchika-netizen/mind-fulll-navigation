@@ -25,11 +25,25 @@ function RiverList() {
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif pb-20 animate-in fade-in duration-1000">
       <header className="relative w-full max-w-7xl mx-auto pt-10 pb-7 text-center">
-        <div className="absolute top-6 left-6">
-          <button onClick={() => navigate("/")} className="text-[10px] uppercase tracking-[0.4em] font-sans font-bold">‹ Back</button>
+        {/* Back Button Container */}
+        <div className="absolute top-6 md:top-12 left-0">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
+          >
+            <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
+            <span className="mt-0.5">Back</span>
+          </button>
         </div>
-        <h1 className="text-3xl font-bold italic">The River List</h1>
-        <div className="w-12 h-[1px] bg-[#36454F]/10 mx-auto mt-8" />
+
+        {/* Header Text */}
+        <div className="flex flex-col items-center pt-6 md:pt-0">
+          <h1 className="text-3xl md:text-4xl font-bold italic tracking-tight text-[#36454F]">
+            TheRiver list
+          </h1>
+
+          <div className="w-12 h-[1px] bg-[#36454F]/10 mt-8" />
+        </div>
       </header>
 
       <main className="max-w-3xl mx-auto px-6 mt-12">

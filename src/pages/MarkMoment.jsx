@@ -97,7 +97,7 @@ function MarkMoment() {
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif pb-20 selection:bg-[#EAB308]/20">
       <header className="relative w-full max-w-7xl mx-auto py-12 px-6 text-center">
-        <button onClick={() => navigate("/milestones")} className="absolute left-6 top-12 flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold group transition-all">
+        <button onClick={() => navigate("/milestones")} className="absolute left-1 top-12 flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold group transition-all">
           <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform">‹</span>
           <span className="mt-0.5">Back</span>
         </button>
