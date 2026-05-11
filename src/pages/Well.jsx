@@ -57,7 +57,7 @@ function Well() {
     }
   };
 
-  D
+
   useEffect(() => {
     if (isPopupOpen && !fetching && textAreaRef.current) {
       const el = textAreaRef.current;
