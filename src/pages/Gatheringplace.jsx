@@ -14,7 +14,7 @@ function GatheringPlace() {
   const [pageLoading, setPageLoading] = useState(true);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
-  // Tab transition state for smooth fade
+
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
@@ -33,19 +33,19 @@ function GatheringPlace() {
         if (!error) setItems(data);
       }
     } finally {
-      setTimeout(() => setPageLoading(false), 800); // Thoda slow load for zen feel
+      setTimeout(() => setPageLoading(false), 800);
     }
   };
 
   // Smooth Tab Switcher
   const handleTabChange = (tab) => {
     if (tab === activeTab) return;
-    setIsTransitioning(true); // Start fade out
+    setIsTransitioning(true);
     setTimeout(() => {
       setActiveTab(tab);
       setInputText("");
-      setIsTransitioning(false); // Start fade in
-    }, 300); // 0.3s delay for smooth cross-fade
+      setIsTransitioning(false);
+    }, 300);
   };
 
   const filteredItems = items.filter(item => item.type === activeTab);

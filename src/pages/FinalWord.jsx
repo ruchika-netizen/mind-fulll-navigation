@@ -35,7 +35,6 @@ const FinalWord = () => {
         </div>
       </section>
 
-      {/* INSIDE BACK COVER (The Smile Quote) */}
       <section className="min-h-[80vh] bg-[#FDFCFB] flex flex-col items-center justify-center p-8 md:p-20 text-center border-t border-[#36454F]/5">
         <div className="max-w-xl space-y-10">
           <div className="space-y-6 text-2xl md:text-xl font-light italic leading-relaxed">

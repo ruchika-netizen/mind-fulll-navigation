@@ -13,7 +13,7 @@ function JournalGuide() {
     };
 
     const handleLoaderComplete = () => {
-        // Music play logic (jaise Login mein tha)
+
         const soundEnabled = localStorage.getItem("soundEnabled") !== "false";
         if (soundEnabled && !window.currentAppAudio) {
             const audio = new Audio(bansuriIntro);
@@ -34,7 +34,7 @@ function JournalGuide() {
 
     return (
         <div className="min-h-screen bg-[#F5F0E8] font-serif text-[#36454F] selection:bg-[#36454F]/10 relative overflow-hidden flex flex-col items-center justify-center p-4 py-10 animate-in fade-in duration-1000">
-            {/* BACK BUTTON CONTAINER */}
+
             <div className="w-full max-w-7xl mx-auto px-6 relative">
                 <button
                     onClick={() => navigate(-1)}

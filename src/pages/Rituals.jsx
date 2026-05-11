@@ -8,7 +8,7 @@ import bellSound from "../assets/universfield-clear-bell-chime-487898.mp3";
 const JourneyEnd = () => {
   const navigate = useNavigate();
   const [intention, setIntention] = useState("");
-  const [status, setStatus] = useState("idle"); // idle | planting | completed
+  const [status, setStatus] = useState("idle");
   const [sendSeedCard, setSendSeedCard] = useState(false);
   const [showFinalOption, setShowFinalOption] = useState(false);
   const bellRef = useRef(new Audio(bellSound));
@@ -39,15 +39,15 @@ const JourneyEnd = () => {
       }
     } catch (e) { console.error("Error:", e.message); }
 
-    // Step 5: Animation for Enso and Text Dissolve (7 seconds total)
+
     setTimeout(() => {
       bellRef.current.play();
       setStatus("completed");
 
-      // Step 6: "It is planted" aane ke baad checkbox dikhao
+
       setTimeout(() => {
         setShowFinalOption(true);
-        // Step 7: 10 seconds peaceful display then logout
+
         setTimeout(() => performActualLogout(), 10000);
       }, 2500);
     }, 7000);
@@ -84,7 +84,6 @@ const JourneyEnd = () => {
           </div>
         </div>
 
-        {/* RIGHT SIDE - Ye 'completed' hone par center mein shift feel hoga */}
         <div className={`flex flex-col items-center justify-center text-center transition-all duration-[1500ms] ${status === 'completed' ? 'md:translate-x-[-50%] w-full' : ''}`}>
 
           <div className={`w-full relative min-h-[600px] flex flex-col items-center transition-all duration-1000 ${status === 'completed' ? 'justify-center' : 'justify-start pt-6'}`}>

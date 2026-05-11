@@ -14,8 +14,7 @@ function Breath() {
 
     return (
         <div className="min-h-screen bg-[#F5F0E8] font-serif text-[#36454F] selection:bg-[#36454F]/10 relative overflow-x-hidden flex flex-col items-center justify-center p-6 py-12">
-            {/* Back Button - Responsive & Aligned */}
-            {/* BACK BUTTON CONTAINER */}
+
             <div className="w-full max-w-7xl mx-auto px-6 relative">
                 <button
                     onClick={() => navigate(-1)}

@@ -68,7 +68,7 @@ function MarkMoment() {
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      // Data object including the new target_date field
+
       const entryData = {
         ...formData,
         user_id: user.id

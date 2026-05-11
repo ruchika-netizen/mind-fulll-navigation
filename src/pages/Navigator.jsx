@@ -13,7 +13,7 @@ function JournalGuide() {
     };
 
     const handleLoaderComplete = () => {
-        // Music play logic (jaise Login mein tha)
+
         const soundEnabled = localStorage.getItem("soundEnabled") !== "false";
         if (soundEnabled && !window.currentAppAudio) {
             const audio = new Audio(bansuriIntro);

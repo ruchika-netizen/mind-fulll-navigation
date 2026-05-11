@@ -24,7 +24,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Captcha Check
+
     if (!captchaToken) {
       setErrorMsg("Please verify the captcha");
       return;

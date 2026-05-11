@@ -199,7 +199,6 @@ function Settings() {
             </div>
           </section>
 
-          {/* LOGOUT SECTION HAS BEEN REMOVED TO PREVENT CONFLICTS */}
 
         </div>
       </main>

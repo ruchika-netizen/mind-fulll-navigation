@@ -22,8 +22,8 @@ function Well() {
   const [activePrompt, setActivePrompt] = useState(null);
   const [reflection, setReflection] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [loading, setLoading] = useState(false); // Saving state
-  const [fetching, setFetching] = useState(false); // Loading previous data state
+  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
   const showToast = (message, type = "success") => {
@@ -31,7 +31,7 @@ function Well() {
     setTimeout(() => setToast({ show: false, message: "", type: "success" }), 4000);
   };
 
-  // Logic to fetch existing data and handle cursor
+
   const handleEditClick = async (prompt) => {
     setActivePrompt(prompt);
     setIsPopupOpen(true);
@@ -57,12 +57,12 @@ function Well() {
     }
   };
 
-  // 1. Logic for Cursor at the END
+  D
   useEffect(() => {
     if (isPopupOpen && !fetching && textAreaRef.current) {
       const el = textAreaRef.current;
       el.focus();
-      // Cursor ko end pe le jaane ke liye:
+
       el.setSelectionRange(el.value.length, el.value.length);
     }
   }, [isPopupOpen, fetching]);
@@ -76,7 +76,7 @@ function Well() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      // Deleting existing to avoid conflict
+
       await supabase.from("still_water_entries")
         .delete()
         .eq("user_id", user?.id)
@@ -90,10 +90,7 @@ function Well() {
       });
 
       if (!error) {
-        showToast("Reflection merged into the river.", "success");
 
-        // SUCCESS: Pehle toast dikhega, 1.5 seconds tak form dikhta rahega
-        // fir popup close hoga.
         setTimeout(() => {
           setIsPopupOpen(false);
         }, 500);

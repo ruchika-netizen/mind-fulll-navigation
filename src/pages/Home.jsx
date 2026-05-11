@@ -9,7 +9,7 @@ const sections = [
   {
     id: "invitations",
     title: "The Invitations",
-    icon: <MailOpen size={28} />, // Icon Changed
+    icon: <MailOpen size={28} />,
     path: "/invitations",
     desc: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
   },
@@ -65,7 +65,7 @@ const sections = [
   {
     id: "gathering-place",
     title: "Gathering Place",
-    icon: <Layers size={28} />, // Thoda different icon for variety
+    icon: <Layers size={28} />,
     path: "/gathering-place",
     desc: "Your collection of photographs and meaningful moments saved for later."
   },
