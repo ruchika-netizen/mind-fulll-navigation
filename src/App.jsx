@@ -30,7 +30,7 @@ import Partners from "./pages/Partners";
 import FinalWord from "./pages/FinalWord";
 import "./index.css";
 import Invitations from "./pages/Invitations";
-import Breaths from "./pages/Breaths";
+// import Breaths from "./pages/Breaths";
 import Navigators from "./pages/Navigators";
 function App() {
   const [isAnimationLoading, setIsAnimationLoading] = useState(() => {
@@ -123,7 +123,7 @@ function App() {
           <Route path="/partners" element={session ? <Partners /> : <Navigate to="/login" />} />
           <Route path="/finalword" element={session ? <FinalWord /> : <Navigate to="/login" />} />
           <Route path="/invitations" element={session ? <Invitations /> : <Navigate to="/login" />} />
-          <Route path="/breaths" element={session ? <Breaths /> : <Navigate to="/login" />} />
+          {/* <Route path="/breaths" element={session ? <Breaths /> : <Navigate to="/login" />} /> */}
           <Route path="/navigators" element={session ? <Navigators /> : <Navigate to="/login" />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

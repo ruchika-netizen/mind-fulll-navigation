@@ -16,7 +16,7 @@ function Breath() {
     <div className="min-h-screen bg-[#F5F0E8] font-serif text-[#36454F] selection:bg-[#36454F]/10 relative overflow-x-hidden flex flex-col items-center justify-center p-6 py-12">
       <button
         onClick={() => navigate(-1)}
-        className="fixed left-8 top-12 text-[10px] uppercase tracking-[0.4em] font-sans font-bold transition-all z-20 "
+        className="fixed left-8 top-12 text-[12px] uppercase tracking-[0.4em] font-sans font-bold transition-all z-20 "
       >
         ‹ Back
       </button>

@@ -36,14 +36,14 @@ function JournalGuide() {
         <div className="min-h-screen bg-[#F5F0E8] font-serif text-[#36454F] selection:bg-[#36454F]/10 relative overflow-hidden flex flex-col items-center justify-center p-4 py-10 animate-in fade-in duration-1000">
             <button
                 onClick={() => navigate(-1)}
-                className="fixed left-6 top-8 text-[10px] uppercase tracking-[0.4em] font-sans font-bold transition-all z-20 "
+                className="fixed left-6 top-8 text-[12px] uppercase tracking-[0.4em] font-sans font-bold transition-all z-20 "
             >
                 ‹ Back
             </button>
 
             <div className="w-full max-w-[750px] bg-white rounded-[2rem] p-8 md:p-14 shadow-sm border border-white/50 relative flex flex-col h-[85vh] md:h-auto md:min-h-[750px]">
                 <header className="mb-10 text-center">
-                    <p className="text-[9px] uppercase tracking-[0.5em] font-sans font-bold mb-3 ">Welcome to The River</p>
+                    <p className="text-[14px] uppercase tracking-[0.2em] font-sans font-bold mb-3">Welcome to The River</p>
                     <h1 className="text-xl md:text-2xl font-bold tracking-tight italic">This is where your entries will live.</h1>
                 </header>
 
