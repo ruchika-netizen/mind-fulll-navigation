@@ -70,14 +70,14 @@ const JourneyEnd = () => {
               <p></p>
               <p>But because in that single moment, you will both be a little less alone.</p>
             </div>
-            <p className="text-[10px] uppercase tracking-[0.2em] font-sans font-bold opacity-30">This is the way of the Mindful Navigator.</p>
+            <p className="text-[16px] uppercase  font-sans font-bold ">This is the way of the Mindful Navigator.</p>
           </div>
 
           <div className="pt-16 flex flex-col items-start gap-8">
             <img src={pikaSmile} alt="Companion" className="w-24 h-auto grayscale opacity-40 rounded-xl" />
             <button
               onClick={() => navigate("/")}
-              className="flex items-center gap-3 text-[9px] uppercase tracking-[0.4em] font-sans font-bold opacity-40 hover:opacity-100 transition-all"
+              className="flex items-center gap-3 text-[12px] uppercase tracking-[0.2em] font-sans font-bold  hover:opacity-100 transition-all"
             >
               <ArrowLeft size={12} /> Back to Home
             </button>
@@ -111,7 +111,7 @@ const JourneyEnd = () => {
               {status === "idle" && (
                 <div className="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 w-full max-w-sm">
                   <div className="space-y-4">
-                    <h3 className="text-[10px] uppercase tracking-[0.6em] font-sans font-bold opacity-30">The Closing Ritual</h3>
+                    <h3 className="text-[16px] uppercase  font-sans font-bold ">The Closing Ritual</h3>
                     <p className="text-xl font-light italic">Write one intention you are ready to plant in the world.</p>
                   </div>
 
@@ -125,7 +125,7 @@ const JourneyEnd = () => {
                   <button
                     onClick={handlePlant}
                     disabled={!intention.trim()}
-                    className={`w-full py-5 rounded-full text-[10px] uppercase tracking-[0.5em] font-sans font-bold transition-all duration-1000 ${intention.trim() ? "bg-[#36454F] text-white shadow-xl" : "opacity-10 cursor-not-allowed"}`}
+                    className={`w-full py-5 rounded-full text-[12px] uppercase tracking-[0.2em] font-sans font-bold transition-all duration-1000 ${intention.trim() ? "bg-[#36454F] text-white shadow-xl" : "opacity-10 cursor-not-allowed"}`}
                   >
                     Plant It
                   </button>
@@ -136,7 +136,7 @@ const JourneyEnd = () => {
               {status === "planting" && (
                 <div className="space-y-8 animate-out fade-out duration-[5000ms] fill-mode-forwards">
                   <p className="text-3xl italic font-light opacity-60 tracking-wide">"{intention}"</p>
-                  <p className="text-[11px] uppercase tracking-[0.8em] font-sans opacity-20 animate-pulse">Returning to the earth</p>
+                  <p className="text-[13px] uppercase tracking-[0.2em] font-sans  animate-pulse">Returning to the earth</p>
                 </div>
               )}
 

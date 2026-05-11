@@ -105,27 +105,31 @@ function StillWater() {
       {isPopupOpen && (
         <div className="fixed inset-0 bg-[#36454F]/20 backdrop-blur-md z-[130] flex items-center justify-center px-6 animate-in fade-in duration-500">
 
-          {/* focus-within:border-[#EAB308] ab yellow border trigger karega jab textarea pe click hoga */}
-          <div className="w-full max-w-2xl bg-[#F5F0E8] rounded-[2.5rem] p-10 md:p-10 shadow-2xl border-1 border-[#36454F]/10 relative animate-in zoom-in-95 duration-500 focus-within:border-[#EAB308] transition-all duration-300">            <button
-            onClick={() => setIsPopupOpen(false)}
-            className="absolute top-6 right-6 w-10 h-10 bg-white/40 rounded-full flex items-center justify-center border border-[#36454F]/5 shadow-sm hover:bg-white transition-all active:scale-90 z-10"
-          >
-            <X size={18} className="opacity-40" />
-          </button>
+          <div className="w-full max-w-2xl bg-[#F5F0E8] rounded-[2.5rem] p-8 md:p-10 shadow-2xl border border-[#36454F]/10 relative animate-in zoom-in-95 duration-500">
+
+            <button
+              onClick={() => setIsPopupOpen(false)}
+              className="absolute top-6 right-6 w-10 h-10 bg-white/40 rounded-full flex items-center justify-center border border-[#36454F]/5 shadow-sm hover:bg-white transition-all active:scale-90 z-10"
+            >
+              <X size={18} className="opacity-40" />
+            </button>
 
             <div className="pt-4">
-              <textarea
-                ref={textAreaRef} // Yeh zaroori hai
-                autoFocus
-                value={reflection}
-                onChange={(e) => setReflection(e.target.value)}
-                placeholder="If something arrives — write it here..."
-                className="w-full h-[380px] bg-transparent outline-none ring-0 italic text-[18px] text-[#36454F] leading-relaxed resize-none river-scroll placeholder:opacity-40"
-              />
+              {/* Textarea Wrapper for white background and padding */}
+              <div className="bg-white/60 border border-[#36454F]/5 rounded-[1.8rem] p-6 focus-within:border-[#EAB308]/40 transition-all duration-300">
+                <textarea
+                  ref={textAreaRef}
+                  autoFocus
+                  value={reflection}
+                  onChange={(e) => setReflection(e.target.value)}
+                  placeholder="If something arrives — write it here..."
+                  className="w-full h-[320px] bg-transparent outline-none ring-0 italic text-[18px] text-[#36454F] leading-relaxed resize-none river-scroll placeholder:opacity-40"
+                />
+              </div>
             </div>
 
             {/* Action Footer */}
-            <div className="flex justify-center items-center mt-6 pt-8 border-t border-[#36454F]/5">
+            <div className="flex justify-center items-center mt-6 pt-6 border-t border-[#36454F]/5">
               <button
                 onClick={handleSaveAndClose}
                 disabled={loading || !reflection.trim()}

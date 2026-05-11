@@ -97,7 +97,7 @@ function MarkMoment() {
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif pb-20 selection:bg-[#EAB308]/20">
       <header className="relative w-full max-w-7xl mx-auto py-12 px-6 text-center">
-        <button onClick={() => navigate("/milestones")} className="absolute left-1 top-12 flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold group transition-all">
+        <button onClick={() => navigate("/milestones")} className="absolute left-1 top-12 flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold group transition-all">
           <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform">‹</span>
           <span className="mt-0.5">Back</span>
         </button>
@@ -131,7 +131,7 @@ function MarkMoment() {
 
           {/* Milestone Title */}
           <div className="space-y-2">
-            <label className="text-[11px] uppercase tracking-[0.3em] block mb-1 font-sans font-bold opacity-30 ml-1">Name this moment</label>
+            <label className="text-[13px] uppercase tracking-[0.3em] block mb-1 font-sans font-bold opacity-80 ml-1">Name this moment</label>
             <input
               required
               placeholder="Give it a name..."
@@ -143,7 +143,7 @@ function MarkMoment() {
 
           {/* Target Date Input */}
           <div className="space-y-2">
-            <label className="text-[11px] uppercase tracking-[0.3em] block mb-1 font-sans font-bold opacity-30 ml-1">Milestone Date</label>
+            <label className="text-[13px] uppercase tracking-[0.3em] block mb-1 font-sans font-bold opacity-80 ml-1">Milestone Date</label>
             <div className="relative">
               <input
                 type="date"
@@ -157,7 +157,7 @@ function MarkMoment() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[11px] uppercase tracking-[0.3em] block mb-1 font-sans font-bold opacity-30 ml-1">What did this moment ask of you?</label>
+            <label className="text-[13px] uppercase tracking-[0.3em] block mb-1 font-sans font-bold opacity-80 ml-1">What did this moment ask of you?</label>
             <textarea
               className="w-full bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 min-h-[100px] outline-none italic focus:border-[#EAB308] focus:bg-white transition-all duration-300 resize-none"
               value={formData.ask_of_you}
@@ -166,7 +166,7 @@ function MarkMoment() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[11px] uppercase tracking-[0.3em] block mb-1 font-sans font-bold opacity-30 ml-1">What are you ready to carry forward?</label>
+            <label className="text-[13px] uppercase tracking-[0.3em] block mb-1 font-sans font-bold opacity-80 ml-1">What are you ready to carry forward?</label>
             <textarea
               className="w-full bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 min-h-[100px] outline-none italic focus:border-[#EAB308] focus:bg-white transition-all duration-300 resize-none"
               value={formData.carry_forward}
@@ -175,7 +175,7 @@ function MarkMoment() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[11px] uppercase tracking-[0.3em] block mb-1 font-sans font-bold opacity-30 ml-1">What surprised you?</label>
+            <label className="text-[13px] uppercase tracking-[0.3em] block mb-1 font-sans font-bold opacity-80 ml-1 ">What surprised you?</label>
             <textarea
               className="w-full bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 min-h-[100px] outline-none italic focus:border-[#EAB308] focus:bg-white transition-all duration-300 resize-none"
               value={formData.surprised_you}
@@ -186,7 +186,7 @@ function MarkMoment() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#36454F] text-[#F5F0E8] py-5 rounded-2xl text-[10px] font-sans uppercase tracking-[0.5em] font-bold shadow-xl shadow-[#36454F]/10 flex items-center justify-center gap-3 hover:bg-black transition-all active:scale-[0.98]"
+            className="w-full bg-[#36454F] text-[#F5F0E8] py-5 rounded-2xl text-[12px] font-sans uppercase tracking-[0.5em] font-bold shadow-xl shadow-[#36454F]/10 flex items-center justify-center gap-3 hover:bg-black transition-all active:scale-[0.98]"
           >
             {loading ? <Loader2 className="animate-spin" size={16} /> : <>{id ? "Update Flow" : "Seal Moment"}</>}
           </button>

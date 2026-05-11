@@ -76,7 +76,7 @@ function Compass() {
         <div className="absolute top-6 md:top-12 left-0">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
+            className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
           >
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
             <span className="mt-0.5">Back</span>
@@ -99,7 +99,7 @@ function Compass() {
         <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col relative transition-all hover:shadow-md">
           <div className="mb-6 text-center">
             <h2 className="md:text-2xl font-light tracking-tight italic text-[#36454F]">Orientation Phase</h2>
-            <p className="text-[13px] uppercase tracking-[0.3em] font-bold opacity-30 mt-2 font-sans">Finding your direction</p>
+            <p className="text-[14px] uppercase tracking-[0.3em] font-bold opacity-80 mt-2 font-sans">Finding your direction</p>
           </div>
 
           <div className="flex-grow flex flex-col items-center justify-start pt-6">
@@ -110,7 +110,7 @@ function Compass() {
             </div>
 
             <div className="w-full group z-10">
-              <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-40 ml-1 leading-relaxed text-center">
+              <label className="text-[14px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed text-center">
                 Define Your North Star
               </label>
               <textarea
@@ -127,7 +127,7 @@ function Compass() {
         <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col transition-all hover:shadow-md">
           <div className="mb-10 text-center">
             <h2 className="md:text-2xl font-light tracking-tight italic text-[#36454F]">Journey Mapping</h2>
-            <p className="text-[13px] uppercase tracking-[0.3em] font-bold mt-2 font-sans opacity-30">The Shape of Your Journey</p>
+            <p className="text-[13px] uppercase tracking-[0.3em] font-bold mt-2 font-sans opacity-80">The Shape of Your Journey</p>
           </div>
 
           <div className="space-y-6 flex-grow">
@@ -137,7 +137,7 @@ function Compass() {
               { label: "The horizon I am moving toward", val: steps[2], idx: 2 }
             ].map((item) => (
               <div key={item.idx} className="group">
-                <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-40 ml-1 leading-relaxed">{item.label}</label>
+                <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">{item.label}</label>
                 <textarea
                   value={item.val}
                   onChange={(e) => {
@@ -160,8 +160,8 @@ function Compass() {
           </button>
 
           {/* Footer Branding */}
-          <div className="flex items-center justify-between opacity-40 mt-6 px-2">
-            <p className="text-[16px] italic max-w-[280px] leading-relaxed font-serif">
+          <div className="flex items-center justify-between opacity-80 mt-6 px-2">
+            <p className="text-[18px] italic max-w-[280px] leading-relaxed font-serif">
               “Be the traveller, not just the map.”
             </p>
             <div className="w-15 h-10 bg-[#36454F]/5 rounded-4xl flex items-center justify-center overflow-hidden">

@@ -121,7 +121,7 @@ const WellbeingPractices = () => {
         <div className="absolute top-6 md:top-12 left-0">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
+            className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
           >
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
             <span className="mt-0.5">Back</span>
@@ -157,7 +157,7 @@ const WellbeingPractices = () => {
                 <h2 className="text-4xl font-light italic leading-tight text-[#36454F]">
                   {practices[currentSlide].title}
                 </h2>
-                <p className="text-[10px] uppercase tracking-widest font-sans font-bold opacity-50">
+                <p className="text-[12px] uppercase tracking-widest font-sans font-bold ">
                   {practices[currentSlide].subtitle}
                 </p>
               </header>
@@ -171,7 +171,7 @@ const WellbeingPractices = () => {
 
                 {practices[currentSlide].sutra && (
                   <div className="pt-6 border-t border-[#36454F]/10">
-                    <p className="text-[9px] uppercase tracking-widest font-sans font-bold mb-2 italic opacity-40">Sutra</p>
+                    <p className="text-[12px] uppercase tracking-widest font-sans font-bold mb-2 italic ">Sutra</p>
                     <p className="text-xl italic font-light leading-snug">
                       “{practices[currentSlide].sutra}”
                     </p>
@@ -202,17 +202,17 @@ const WellbeingPractices = () => {
           <button
             disabled={currentSlide === 0}
             onClick={() => setCurrentSlide(prev => prev - 1)}
-            className={`flex items-center font-sans gap-2 text-[10px] uppercase tracking-widest font-bold transition-all ${currentSlide === 0 ? "invisible" : "hover:text-black"}`}
+            className={`flex items-center font-sans gap-2 text-[14px] uppercase tracking-widest font-bold transition-all ${currentSlide === 0 ? "invisible" : "hover:text-black"}`}
           >
             <ChevronLeft size={16} /> Previous
           </button>
 
           {currentSlide === totalSlides - 1 ? (
-            <button onClick={() => navigate("/companionReadings")} className="px-10 py-4 bg-[#36454F] text-[#F5F0E8] text-[10px] uppercase tracking-[0.4em] font-sans font-bold rounded-full hover:bg-black transition-all shadow-lg active:scale-95">
+            <button onClick={() => navigate("/companionReadings")} className="px-10 py-4 bg-[#36454F] text-[#F5F0E8] text-[14px] uppercase tracking-[0.2em] font-sans font-bold rounded-full hover:bg-black transition-all shadow-lg active:scale-95">
               Explore Readings
             </button>
           ) : (
-            <button onClick={() => setCurrentSlide(prev => prev + 1)} className="flex items-center font-sans gap-2 text-[10px] uppercase tracking-widest font-bold hover:text-black transition-all">
+            <button onClick={() => setCurrentSlide(prev => prev + 1)} className="flex items-center font-sans gap-2 text-[14px] uppercase tracking-widest font-bold hover:text-black transition-all">
               Next Practice <ChevronRight size={16} />
             </button>
           )}

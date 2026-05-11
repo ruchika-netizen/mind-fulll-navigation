@@ -150,7 +150,7 @@ function River() {
     <div className="min-h-screen bg-[#F5F0E8] font-serif text-[#36454F] selection:bg-[#36454F]/10 pb-20">
       <header className="relative w-full max-w-7xl mx-auto pt-10 pb-7 text-center">
         <div className="absolute top-6 md:top-12 left-0">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all">
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
             <span className="mt-0.5">Back</span>
           </button>
@@ -165,7 +165,7 @@ function River() {
         <div className="flex bg-white/40 p-1 rounded-full border border-[#36454F]/5 shadow-inner relative">
           {tabs.map((tab) => (
             <button key={tab.id} onClick={() => { setActiveTab(tab.id); setShowConfirm(false); setIsEditingAll(false); }}
-              className={`relative flex-1 flex items-center justify-center gap-2 py-3 rounded-full text-[11px] uppercase tracking-[0.2em] font-sans font-bold transition-colors duration-300 z-10 ${activeTab === tab.id ? "text-[#F5F0E8]" : "text-[#36454F] opacity-40 hover:opacity-70"}`}>
+              className={`relative flex-1 flex items-center text-[#36454F] justify-center gap-2 py-3 rounded-full text-[12px] uppercase tracking-[0.2em] font-sans font-bold transition-colors duration-300 z-10 ${activeTab === tab.id ? "text-[#F5F0E8]" : "text-[#36454F] "}`}>
               {tab.icon} {tab.label}
               {activeTab === tab.id && (
                 <motion.div layoutId="activeTab" className="absolute inset-0 bg-[#36454F] rounded-full -z-10 shadow-md" transition={{ type: "spring", bounce: 0.2, duration: 0.6 }} />
@@ -183,15 +183,15 @@ function River() {
                 <h2 className="text-2xl font-light italic text-center pb-10">The Morning Current</h2>
                 <div className="space-y-10 relative z-10">
                   <div>
-                    <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-40 ml-1">Intentions — What matters most in this moment?</label>
+                    <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">Intentions — What matters most in this moment?</label>
                     <textarea value={morning.intentions} onChange={(e) => setMorning({ ...morning, intentions: e.target.value })} placeholder="Permission to..." className="w-full h-[125px] bg-[#F5F0E8]/40 border border-[#36454F]/5 rounded-xl px-5 py-4 outline-none italic transition-all focus:border-[#EAB308] focus:bg-white resize-none" />
                   </div>
                   <div>
-                    <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-40 ml-1">Presence — A single word for your attention.</label>
+                    <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">Presence — A single word for your attention.</label>
                     <input type="text" maxLength={16} value={morning.presence} onChange={(e) => setMorning({ ...morning, presence: e.target.value })} placeholder="..." className="w-full bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-5 py-4 outline-none italic focus:border-[#EAB308] focus:bg-white" />
                   </div>
                   <div>
-                    <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-40 ml-1">First Steps — Actions to move you forward.</label>
+                    <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">First Steps — Actions to move you forward.</label>
                     <textarea value={morning.firstSteps} onChange={(e) => setMorning({ ...morning, firstSteps: e.target.value })} placeholder="Small steps..." className="w-full h-[125px] bg-[#F5F0E8]/40 border border-[#36454F]/5 rounded-xl px-5 py-4 outline-none italic transition-all focus:border-[#EAB308] focus:bg-white resize-none" />
                   </div>
                 </div>
@@ -200,14 +200,14 @@ function River() {
               <div className="flex-1 bg-white rounded-[2.5rem] p-10 shadow-sm border border-white/50 flex flex-col">
                 <h2 className="text-2xl font-light italic text-center pb-10">The Evening Reflection</h2>
                 <div className="flex-grow">
-                  <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-40 ml-1">Gratitude & Observations & Closing</label>
+                  <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">Gratitude & Observations & Closing</label>
                   <textarea value={evening} onChange={(e) => setEvening(e.target.value)} placeholder="How was the flow today?..." className="w-full min-h-[400px] bg-[#F5F0E8]/30 border border-[#36454F]/5 rounded-xl p-6 outline-none italic leading-loose focus:border-[#EAB308] focus:bg-white resize-none" />
                 </div>
                 <div className="mt-8">
-                  <button onClick={handleSave} disabled={loading} className="w-full bg-[#36454F] text-white py-5 mb-4 rounded-xl font-sans flex items-center justify-center gap-3 tracking-[0.4em] uppercase text-[10px] font-bold shadow-lg hover:bg-black transition-all active:scale-95">
+                  <button onClick={handleSave} disabled={loading} className="w-full bg-[#36454F] text-white py-5 mb-4 rounded-xl font-sans flex items-center justify-center gap-3 tracking-[0.4em] uppercase text-[12px] font-bold shadow-lg hover:bg-black transition-all active:scale-95">
                     {loading ? <Loader2 size={16} className="animate-spin" /> : "Record Journey"}
                   </button>
-                  <p className="text-[16px] italic leading-relaxed opacity-40">"{currentSutra}"</p>
+                  <p className="text-[18px] italic leading-relaxed opacity-80">"{currentSutra}"</p>
                 </div>
               </div>
             </motion.div>
@@ -216,9 +216,9 @@ function River() {
           {(activeTab === "previous" || (activeTab === "all" && isEditingAll)) && (
             <motion.div key="edit" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="max-w-6xl mx-auto">
               <div className="flex justify-between items-center mb-5 px-2">
-                {activeTab === "all" && <button onClick={() => setIsEditingAll(false)} className="text-[10px] uppercase font-bold opacity-40 font-sans tracking-widest">‹ Back to List</button>}
+                {activeTab === "all" && <button onClick={() => setIsEditingAll(false)} className="text-[12px] uppercase font-bold  font-sans tracking-widest">‹ Back to List</button>}
                 <div className="ml-auto flex gap-1.5 bg-white/40 p-1.5 rounded-full border border-[#36454F]/5 shadow-sm">
-                  {!showConfirm ? <button onClick={() => setShowConfirm(true)} className="p-1 text-[#36454F]/40 hover:text-red-500"><Trash2 size={18} /></button> :
+                  {!showConfirm ? <button onClick={() => setShowConfirm(true)} className="p-1 text-[#36454F] hover:text-red-500"><Trash2 size={18} /></button> :
                     <div className="flex items-center gap-1"><button onClick={() => deleteEntry(prevEditData.id)} className="p-2 bg-red-500 text-white rounded-full"><CheckCircle2 size={16} /></button><button onClick={() => setShowConfirm(false)} className="p-2 text-[#36454F]/60"><X size={16} /></button></div>}
                 </div>
               </div>
@@ -227,15 +227,15 @@ function River() {
                   <h3 className="text-3xl italic text-center pb-10">The Morning Current</h3>
                   <div className="space-y-12 relative z-10">
                     <div>
-                      <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-40 ml-1">Intentions — What matters most in this moment?</label>
+                      <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">Intentions — What matters most in this moment?</label>
                       <textarea value={prevEditData.intentions || ""} onChange={(e) => setPrevEditData({ ...prevEditData, intentions: e.target.value })} className="w-full h-[125px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-5 py-4 outline-none italic focus:border-[#EAB308] focus:bg-white" />
                     </div>
                     <div>
-                      <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-40 ml-1">Presence — A single word for your attention.</label>
+                      <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">Presence — A single word for your attention.</label>
                       <input type="text" maxLength={16} value={prevEditData.presence || ""} onChange={(e) => setPrevEditData({ ...prevEditData, presence: e.target.value })} className="w-full bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-5 py-4 outline-none italic focus:border-[#EAB308] focus:bg-white" />
                     </div>
                     <div>
-                      <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-40 ml-1">First Steps — Actions to move you forward.</label>
+                      <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">First Steps — Actions to move you forward.</label>
                       <textarea value={prevEditData.first_steps || ""} onChange={(e) => setPrevEditData({ ...prevEditData, first_steps: e.target.value })} className="w-full h-[125px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-5 py-4 outline-none italic focus:border-[#EAB308] focus:bg-white" />
                     </div>
                   </div>
@@ -243,13 +243,13 @@ function River() {
                 </div>
                 <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col">
                   <h3 className="text-3xl italic text-center pb-10">The Evening Reflection</h3>
-                  <label class="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-40 ml-1">Gratitude &amp; Observations &amp; Closing</label>
+                  <label class="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">Gratitude &amp; Observations &amp; Closing</label>
                   <textarea value={prevEditData.evening_reflection || ""} onChange={(e) => setPrevEditData({ ...prevEditData, evening_reflection: e.target.value })} className="w-full min-h-[400px] bg-[#F5F0E8]/30 border border-[#36454F]/5 rounded-xl p-6 outline-none italic leading-loose focus:border-[#EAB308] focus:bg-white resize-none flex-grow" />
                   <div className="mt-12">
                     <button onClick={() => handleUpdate(prevEditData.id, prevEditData)} className="w-full bg-[#36454F] text-white py-6 rounded-2xl font-sans uppercase tracking-[0.5em] text-[12px] font-bold shadow-2xl active:scale-95">
                       {loading ? <Loader2 size={16} className="animate-spin mx-auto" /> : "UPDATE JOURNEY"}
                     </button>
-                    <p className="text-[16px] italic opacity-40 mt-8">"{currentSutra}"</p>
+                    <p className="text-[18px] italic opacity-80 mt-8">"{currentSutra}"</p>
                   </div>
                 </div>
               </div>

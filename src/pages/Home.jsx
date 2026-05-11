@@ -2,95 +2,107 @@ import React from "react";
 import { Link } from "react-router-dom";
 import {
   Waves, Compass, Trees, Droplets,
-  Leaf, Flag, Heart, BookOpen
+  MailOpen, Flag, Heart, BookOpen, Layers
 } from "lucide-react";
 
 const sections = [
   {
+    id: "invitations",
+    title: "The Invitations",
+    icon: <MailOpen size={28} />, // Icon Changed
+    path: "/invitations",
+    desc: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+  },
+  {
     id: "compass",
     title: "The Compass",
-    icon: <Compass size={22} />,
+    icon: <Compass size={28} />,
     path: "/compass",
-    desc: "Your North Star and the shape of your path. Define what you are leaving behind and the horizon you move toward."
+    desc: "Your North Star and the shape of your path. Define what you are leaving behind."
   },
   {
     id: "orchard",
     title: "The Orchard",
-    icon: <Trees size={22} />,
+    icon: <Trees size={28} />,
     path: "/orchard",
-    desc: "Where you tend to your growth, season by season. Prune what no longer serves and celebrate the harvest."
+    desc: "Where you tend to your growth, season by season."
   },
   {
     id: "river",
     title: "The River",
-    icon: <Waves size={22} />,
+    icon: <Waves size={28} />,
     path: "/river",
-    desc: "The flow of your immediate actions and reflections. Navigate the morning current and evening stillness."
+    desc: "The flow of your immediate actions and reflections. "
   },
   {
     id: "milestones",
     title: "The Milestones",
-    icon: <Flag size={22} />,
+    icon: <Flag size={28} />,
     path: "/milestones",
-    desc: "Mark the completions, realisations, and turning points. Seven pages for the moments that ask to be remembered."
+    desc: "Seven unmarked pages for the moments that ask to be remembered."
   },
   {
     id: "well",
-    title: "The Well",
-    icon: <Droplets size={22} />,
+    title: "The Still Water",
+    icon: <Droplets size={28} />,
     path: "/well",
-    desc: "A living resource — wellness practices and reflections to draw from freely. It does not run dry."
+    desc: "A living resource — wellness practices and reflections to draw from freely."
   },
   {
     id: "well-practices",
     title: "The Practices",
-    icon: <Heart size={22} />,
+    icon: <Heart size={28} />,
     path: "/wellbeingpractices",
-    desc: "The Pika's mountain and the Red Panda's river. Small, repeated choices to notice and be seen."
+    desc: "Small, repeated choices to notice and be seen. The Pika's mountain path."
   },
   {
     id: "readings",
     title: "Companion Readings",
-    icon: <BookOpen size={22} />,
+    icon: <BookOpen size={28} />,
     path: "/companionReadings",
-    desc: "Philosophy of stillness and movement. Words to carry you further when the path feels long."
+    desc: "Philosophy of stillness and movement. Words to carry you further."
   },
   {
-    id: "gathering",
+    id: "gathering-place",
     title: "Gathering Place",
-    icon: <Leaf size={22} />,
+    icon: <Layers size={28} />, // Thoda different icon for variety
     path: "/gathering-place",
-    desc: "A private space for keeping the photographs, words, and moments that find you along the way."
+    desc: "Your collection of photographs and meaningful moments saved for later."
   },
 ];
 
 function Home() {
   return (
-    <div className="h-[calc(90vh-64px)] bg-[#F5F0E8] text-[#36454F] font-serif overflow-hidden flex flex-col selection:bg-[#36454F]/10">
+    <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif flex flex-col selection:bg-[#36454F]/10">
 
-      <header className="w-full py-10 md:py-14 text-center shrink-0">
-        <h1 className="text-3xl md:text-4xl font-light tracking-tight italic">The Mindful Navigator</h1>
-        <div className="h-[1px] w-12 bg-[#36454F]/20 mx-auto mt-4" />
+      <header className="w-full py-12 md:py-12 text-center shrink-0">
+        <h1 className="text-4xl md:text-5xl font-light tracking-tight italic">The Mindful Navigator</h1>
+        <div className="h-[1px] w-16 bg-[#36454F]/30 mx-auto mt-6" />
       </header>
 
-      <main className="flex-grow w-full max-w-7xl mx-auto px-6 pb-12 grid grid-cols-2 md:grid-cols-4 grid-rows-4 md:grid-rows-2 gap-4 md:gap-8">
+      {/* Main Grid: 3 Boxes per row on Desktop */}
+      <main className="flex-grow w-full max-w-6xl mx-auto px-6 pb-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-10">
         {sections.map((section) => (
           <Link
             key={section.id}
             to={section.path}
-            className="group bg-white/40 border border-[#36454F]/5 rounded-[2rem] md:rounded-[2.5rem] flex flex-col items-center justify-center text-center p-6 transition-all duration-700 hover:bg-white hover:shadow-2xl hover:-translate-y-2"
+            className="group bg-white/60 border border-[#36454F]/10 rounded-[2.5rem] flex flex-col items-center justify-center text-center p-7 transition-all duration-500 hover:bg-white hover:shadow-[0_20px_50px_rgba(54,69,79,0.1)] hover:-translate-y-2"
           >
-            <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm group-hover:shadow-md group-hover:scale-110 transition-all duration-500 text-[#36454F]/70 group-hover:text-[#36454F]">
+            {/* Icon Container Bada Kiya */}
+            <div className="w-15 h-15 bg-white rounded-3xl flex items-center justify-center mb-6 shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-500 text-[#36454F]/80 group-hover:text-[#EAB308]">
               {section.icon}
             </div>
 
-            <h2 className="text-[12px] tracking-[0.3em] uppercase font-sans font-bold mb-3 opacity-60 group-hover:opacity-100 transition-opacity">
+            {/* Title Font Size Bada Kiya aur Opacity Hata di */}
+            <h2 className="text-[14px] tracking-[0.25em] uppercase font-sans font-bold mb-4 text-[#36454F] group-hover:text-black transition-colors">
               {section.title}
             </h2>
 
-            <div className="w-6 h-[1.5px] bg-[#36454F]/10 mb-4 group-hover:w-12 group-hover:bg-[#EAB308] transition-all duration-500" />
+            {/* Divider */}
+            <div className="w-8 h-[2px] bg-[#36454F]/20 mb-5 group-hover:w-16 group-hover:bg-[#EAB308] transition-all duration-500" />
 
-            <p className="text-[12px] font-sans italic opacity-40 leading-relaxed max-w-[200px] group-hover:opacity-70 transition-opacity">
+            {/* Description Text Bada kiya */}
+            <p className="text-[18px] font-sans italic text-[#36454F]/80 leading-relaxed transition-colors">
               {section.desc}
             </p>
           </Link>

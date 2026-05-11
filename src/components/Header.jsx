@@ -55,7 +55,7 @@ function Header() {
           {/* DESKTOP LINKS */}
           <div className="hidden lg:flex items-center gap-8 font-sans">
             {navLinks.map((item) => (
-              <Link key={item.name} to={item.path} className="hover:opacity-60 transition text-[10px] uppercase tracking-[0.3em] text-[#36454F] font-bold">
+              <Link key={item.name} to={item.path} className="hover:opacity-60 transition text-[13px] uppercase tracking-[0.3em] text-[#36454F] font-bold">
                 {item.name}
               </Link>
             ))}
@@ -67,7 +67,7 @@ function Header() {
               {isSoundOn ? <Volume2 size={16} /> : <VolumeX size={16} className="opacity-40" />}
             </button>
 
-            {session && (
+            {/* {session && (
               <Link
                 to="/invitations"
                 title="View Invitation"
@@ -75,14 +75,14 @@ function Header() {
               >
                 <CircleHelp size={18} strokeWidth={1.5} />
               </Link>
-            )}
+            )} */}
             {session ? (
               <div className="flex items-center gap-2 sm:gap-6">
-                <Link to="/settings" className="hidden md:block text-[10px] uppercase tracking-widest opacity-60 font-bold font-sans">Settings</Link>
+                <Link to="/settings" className="hidden md:block text-[13px] uppercase tracking-widest font-bold font-sans">Settings</Link>
 
                 <button
                   onClick={handleLogout}
-                  className="px-3 py-1.5 sm:px-5 sm:py-2 rounded-full border border-[#36454F] text-[8px] sm:text-[10px] uppercase tracking-widest hover:bg-[#36454F] hover:text-white transition font-bold font-sans whitespace-nowrap"
+                  className="px-3 py-1.5 sm:px-5 sm:py-2 rounded-full border border-[#36454F] text-[12px] sm:text-[11px] uppercase tracking-widest hover:bg-[#36454F] hover:text-white transition font-bold font-sans whitespace-nowrap"
                 >
                   Logout
                 </button>

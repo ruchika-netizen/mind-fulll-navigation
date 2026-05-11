@@ -104,7 +104,7 @@ function GatheringPlace() {
       {/* HEADER SECTION */}
       <header className="relative w-full max-w-7xl mx-auto pt-10 pb-8 text-center px-6">
         <div className="absolute top-10 left-0">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all duration-500">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all duration-500">
             <span className="text-lg leading-none group-hover:-translate-x-2 transition-transform inline-block">‹</span>
             <span className="mt-0.5">Back</span>
           </button>
@@ -118,7 +118,7 @@ function GatheringPlace() {
       <main className="max-w-3xl mx-auto px-6">
 
         {/* SLEEK INPUT BOX */}
-        <div className="bg-white rounded-[2rem] shadow-xl shadow-[#36454F]/5 border border-[#36454F]/5 overflow-hidden mb-12 max-w-lg mx-auto transition-all duration-700 hover:shadow-2xl hover:shadow-[#36454F]/10">
+        <div className="bg-white rounded-[2rem] shadow-xl shadow-[#36454F]/5 border border-[#36454F]/5 mb-12 max-w-lg mx-auto transition-all duration-700 hover:shadow-2xl hover:shadow-[#36454F]/10">
 
           {/* TABS - SLOW TRANSITION */}
           <div className="flex bg-[#F5F0E8]/50 p-1.5 border-b border-[#36454F]/5">
@@ -126,7 +126,7 @@ function GatheringPlace() {
               <button
                 key={tab}
                 onClick={() => handleTabChange(tab)}
-                className={`flex-1 py-2.5 text-[10px] uppercase tracking-[0.2em] font-sans font-bold rounded-xl transition-all duration-500 ease-in-out ${activeTab === tab ? "bg-[#36454F] text-white shadow-lg scale-[1.02]" : "opacity-30 hover:opacity-60 hover:bg-[#36454F]/5"}`}
+                className={`flex-1 py-2.5 text-[13px] uppercase tracking-[0.2em] font-sans font-bold rounded-xl transition-all duration-500 ease-in-out ${activeTab === tab ? "bg-[#36454F] text-white shadow-lg scale-[1.02]" : " hover:bg-[#36454F]/5"}`}
               >
                 {tab}
               </button>
@@ -153,12 +153,12 @@ function GatheringPlace() {
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   placeholder={`Capture a ${activeTab}...`}
-                  className="w-full bg-transparent outline-none italic text-xl resize-none h-[100px] text-black leading-snug placeholder:opacity-20 transition-all duration-500 focus:placeholder:opacity-10"
+                  className="w-full bg-transparent outline-none italic text-xl resize-none h-[100px] text-black leading-snug  transition-all duration-500 "
                 />
                 <button
                   onClick={addItem}
                   disabled={loading || !inputText.trim()}
-                  className={`w-full py-4 rounded-xl text-[9px] uppercase tracking-[0.4em] font-bold font-sans transition-all duration-700 transform active:scale-95 flex justify-center items-center gap-2 ${inputText.trim() ? "bg-[#36454F] text-white shadow-lg hover:shadow-[#36454F]/20" : "bg-[#36454F]/5 text-[#36454F]/20 cursor-not-allowed"}`}
+                  className={`w-full py-4 rounded-xl text-[12px] uppercase tracking-[0.4em] font-bold font-sans transition-all duration-700 transform active:scale-95 flex justify-center items-center gap-2 ${inputText.trim() ? "bg-[#36454F] text-white shadow-lg hover:shadow-[#36454F]/20" : "bg-[#36454F]/5 text-[#36454F]/20 cursor-not-allowed"}`}
                 >
                   {loading ? <Loader2 size={14} className="animate-spin" /> : `Save to Gathering`}
                 </button>
@@ -170,11 +170,11 @@ function GatheringPlace() {
         {/* LISTING SECTION - STAGGERED FADE */}
         <div className={`transition-all duration-700 ${isTransitioning ? "opacity-30 blur-[2px]" : "opacity-100 blur-0"} ${activeTab === "photo" ? "grid grid-cols-2 md:grid-cols-4 gap-4" : "space-y-4"}`}>
           {filteredItems.length === 0 ? (
-            <div className="col-span-full text-center py-20 opacity-20 italic font-light tracking-widest">No {activeTab}s gathered yet.</div>
+            <div className="col-span-full text-center py-20 italic font-light tracking-widest">No {activeTab}s gathered yet.</div>
           ) : (
             filteredItems.map((item) => (
               item.type === "photo" ? (
-                <div key={item.id} className="group relative aspect-square bg-white rounded-3xl overflow-hidden border border-[#36454F]/5 shadow-sm hover:shadow-2xl transition-all duration-700 ease-out">
+                <div key={item.id} className="group relative aspect-square bg-white rounded-3xl border border-[#36454F]/5 shadow-sm hover:shadow-2xl transition-all duration-700 ease-out">
                   <img src={item.content} className="w-full h-full object-cover transition-transform duration-1000 ease-in-out group-hover:scale-110" alt="Memory" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
                   <div className="absolute bottom-3 left-3 px-3 py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/20 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
@@ -192,10 +192,10 @@ function GatheringPlace() {
               ) : (
                 <div key={item.id} className="group relative bg-white/40 hover:bg-white rounded-[22px] p-5 shadow-sm border border-[#36454F]/5 hover:shadow-xl hover:shadow-[#36454F]/5 transition-all duration-700 flex items-center gap-6">
                   <div className="flex flex-col items-center justify-center min-w-[56px] h-14 bg-[#F5F0E8] rounded-xl border border-[#36454F]/5 group-hover:bg-[#36454F] group-hover:text-white transition-all duration-700 ease-in-out">
-                    <span className="text-[11px] font-bold font-sans">
+                    <span className="text-[13px] font-bold font-sans">
                       {new Date(item.created_at).toLocaleDateString('en-GB', { day: '2-digit' })}
                     </span>
-                    <span className="text-[8px] uppercase font-bold font-sans opacity-40 group-hover:opacity-80">
+                    <span className="text-[12px] uppercase font-bold font-sans opacity-40 group-hover:opacity-80">
                       {new Date(item.created_at).toLocaleDateString('en-GB', { month: 'short' })}
                     </span>
                   </div>

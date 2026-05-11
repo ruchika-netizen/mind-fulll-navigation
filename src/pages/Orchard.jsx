@@ -75,7 +75,7 @@ function Orchard() {
         <div className="absolute top-6 md:top-12 left-0">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
+            className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
           >
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
             <span className="mt-0.5">Back</span>
@@ -99,7 +99,7 @@ function Orchard() {
 
           <div className="mb-8 text-center">
             <h2 className="md:text-2xl font-light tracking-tight italic text-[#36454F]">Seasonal Pruning</h2>
-            <p className="text-[13px] uppercase tracking-[0.3em] font-bold opacity-30 mt-2 font-sans">Tending to your growth</p>
+            <p className="text-[14px] uppercase tracking-[0.3em] font-bold opacity-80 mt-2 font-sans">Tending to your growth</p>
           </div>
 
           <div className="flex-grow space-y-6">
@@ -113,7 +113,7 @@ function Orchard() {
               { label: "What I am reaching toward", val: pruning[2], idx: 2 }
             ].map((item) => (
               <div key={item.idx} className="group">
-                <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-40 ml-1 leading-relaxed ">
+                <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed ">
                   {item.label}
                 </label>
                 <textarea
@@ -140,7 +140,7 @@ function Orchard() {
           </div>
 
           <div className="flex-grow flex flex-col">
-            <label className="text-[13px] uppercase tracking-[0.3em] font-bold block mb-3 font-sans opacity-40 text-center italic">
+            <label className="text-[13px] uppercase tracking-[0.3em] font-bold block mb-3 font-sans opacity-80 text-center italic">
               “Three things that grew this season”
             </label>
 
@@ -161,8 +161,8 @@ function Orchard() {
               {loading ? <Loader2 size={16} className="animate-spin" /> : <> SAVE NEW ENTRY </>}
             </button>
 
-            <div className="flex items-center justify-between opacity-40 mt-6 px-2">
-              <p className="text-[16px] italic max-w-[280px] leading-relaxed font-serif">
+            <div className="flex items-center justify-between opacity-80 mt-6 px-2">
+              <p className="text-[18px] italic max-w-[280px] leading-relaxed font-serif">
                 “Tend to your orchard, and the fruit will follow.”
               </p>
               <div className="w-18 h-10 bg-[#36454F]/5 rounded-xl flex items-center justify-center overflow-hidden border border-[#36454F]/10">

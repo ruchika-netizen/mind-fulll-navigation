@@ -86,7 +86,7 @@ const CompanionReadings = () => {
         <div className="absolute top-6 md:top-12 left-0">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
+            className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
           >
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
             <span className="mt-0.5">Back</span>
@@ -123,7 +123,7 @@ const CompanionReadings = () => {
             <div className="max-w-md mx-auto space-y-8 text-center lg:text-left">
               <header className="space-y-2">
                 <h2 className="text-4xl font-light italic leading-tight">{readings[currentSlide].title}</h2>
-                <p className="text-[10px] uppercase tracking-widest font-sans font-bold">The Collection</p>
+                <p className="text-[12px] uppercase tracking-widest font-sans font-bold">The Collection</p>
               </header>
 
               <div className="space-y-6">
@@ -135,12 +135,12 @@ const CompanionReadings = () => {
 
                 {readings[currentSlide].sutra && (
                   <div className="pt-4 border-t border-[#36454F]/10">
-                    <p className="text-[9px] uppercase tracking-widest font-sans font-bold mb-1 italic">Sutra</p>
-                    <p className="text-2xl italic font-light">“{readings[currentSlide].sutra}”</p>
+                    <p className="text-[14px] uppercase tracking-widest font-sans font-bold mb-1 italic">Sutra</p>
+                    <p className="text-xl italic font-light">“{readings[currentSlide].sutra}”</p>
                   </div>
                 )}
 
-                <p className="text-[10px] uppercase tracking-[0.4em] font-sans font-bold pt-4">
+                <p className="text-[14px] uppercase tracking-[0.2em] font-sans font-bold pt-4">
                   {readings[currentSlide].author}
                 </p>
               </div>
@@ -165,7 +165,7 @@ const CompanionReadings = () => {
           <button
             disabled={currentSlide === 0}
             onClick={() => setCurrentSlide(prev => prev - 1)}
-            className={`flex items-center gap-2 text-[10px] uppercase font-sans tracking-widest font-bold transition-all ${currentSlide === 0 ? "invisible" : "hover:text-black"}`}
+            className={`flex items-center gap-2 text-[14px] uppercase font-sans tracking-widest font-bold transition-all ${currentSlide === 0 ? "invisible" : "hover:text-black"}`}
           >
             <ChevronLeft size={16} /> Previous
           </button>
@@ -174,7 +174,7 @@ const CompanionReadings = () => {
           {currentSlide < totalSlides - 1 ? (
             <button
               onClick={() => setCurrentSlide(prev => prev + 1)}
-              className="flex font-sans items-center gap-2 text-[10px] uppercase tracking-widest font-bold hover:text-black transition-all"
+              className="flex font-sans items-center gap-2 text-[14px] uppercase tracking-widest font-bold hover:text-black transition-all"
             >
               Next Reading <ChevronRight size={16} />
             </button>
