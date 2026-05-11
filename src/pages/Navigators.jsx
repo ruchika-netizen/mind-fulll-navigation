@@ -51,7 +51,7 @@ function JournalGuide() {
 
             <div className="w-full max-w-[750px] bg-white rounded-[2rem] p-8 md:p-14 shadow-sm border border-white/50 relative flex flex-col h-[85vh] md:h-auto md:min-h-[750px]">
                 <header className="mb-10 text-center">
-                    <p className="text-[9px] uppercase tracking-[0.5em] font-sans font-bold mb-3 ">Welcome to The River</p>
+                    <p className="text-[14px] uppercase tracking-[0.2em] font-sans font-bold mb-3 ">Welcome to The River</p>
                     <h1 className="text-xl md:text-2xl font-bold tracking-tight italic">This is where your entries will live.</h1>
                 </header>
 

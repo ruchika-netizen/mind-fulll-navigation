@@ -72,10 +72,10 @@ const EnsoLoader = ({ onComplete }) => {
 
         {/* TITLE & SUBTITLE */}
         <div className="mt-12 text-center space-y-4">
-          <h1 className="text-2xl md:text-3xl font-serif text-[#36454F] tracking-[0.15em] opacity-0 animate-fade-up">
+          <h1 className="text-4xl   text-[#36454F] tracking-[0.18em] opacity-0 animate-fade-up">
             The Mindful Navigator
           </h1>
-          <p className="text-[10px] md:text-xs tracking-[0.4em] text-[#36454F]/50 uppercase opacity-0 animate-fade-up-delayed">
+          <p className="text-[16px]  font-sans  tracking-[0.2em] text-[#36454F] uppercase opacity-0 animate-fade-up-delayed">
             Present Moment, Future Path
           </p>
         </div>
@@ -84,7 +84,7 @@ const EnsoLoader = ({ onComplete }) => {
         <div className={`mt-14 transition-all duration-1000 transform ${showButton ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
           <button
             onClick={handleEnter}
-            className="px-10 py-3 bg-[#36454F] text-[#F5F0E8] text-[10px] uppercase tracking-[0.5em] rounded-full transition-all hover:bg-black active:scale-95 shadow-lg font-medium"
+            className="px-10 py-3 bg-[#36454F] text-[#F5F0E8] text-[14px] uppercase font-sans tracking-[0.2em] rounded-full transition-all hover:bg-black active:scale-95 shadow-lg font-medium"
           >
             Enter ›
           </button>

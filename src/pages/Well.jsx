@@ -141,14 +141,25 @@ function Well() {
           <div className="flex-1 h-full overflow-y-auto river-scroll px-8 md:px-14 py-12 bg-white/10">
             <div className="max-w-xl mx-auto md:mx-0 space-y-6">
               {prompts.map((p) => (
-                <div key={p.id} className="group bg-white/60 border border-[#36454F]/5 p-8 rounded-[2.5rem] text-left hover:bg-white transition-all duration-700 relative">
+                <div key={p.id} className="group bg-white/60 border border-[#36454F]/5 p-8 rounded-[2.5rem] text-left hover:shadow-[0_20px_50px_rgba(54,69,79,0.1)] hover:bg-white hover:-translate-y-2 transition-all duration-700 relative">
+                  {/* Edit Button */}
                   <button onClick={() => handleEditClick(p)} className="absolute top-8 right-8 w-10 h-10 bg-[#F5F0E8] rounded-2xl flex items-center justify-center hover:bg-[#36454F] hover:text-white transition-all">
                     <Edit2 size={16} className="opacity-40" strokeWidth={1.5} />
                   </button>
-                  <div className="w-10 h-10 bg-[#F5F0E8] rounded-full flex items-center justify-center mb-6">
-                    <Droplets size={16} strokeWidth={1.2} className="opacity-80" />
+
+                  {/* Icon and Title Row */}
+                  <div className="flex items-center gap-4 mb-6">
+                    {/* Icon Circle */}
+                    <div className="w-10 h-10 bg-[#F5F0E8] rounded-full flex items-center justify-center shrink-0">
+                      <Droplets size={16} strokeWidth={1.2} className="opacity-80" />
+                    </div>
+
+                    {/* Title - Now perfectly centered with icon */}
+                    <h3 className="text-[13px] uppercase tracking-[0.3em] font-sans font-bold leading-none">
+                      {p.title}
+                    </h3>
                   </div>
-                  <h3 className="text-[13px] uppercase tracking-[0.3em] font-sans font-bold mb-3">{p.title}</h3>
+
                   <p className="text-[17px] md:text-[19px] italic leading-relaxed">{p.text}</p>
                 </div>
               ))}

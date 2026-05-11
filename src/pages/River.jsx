@@ -257,21 +257,50 @@ function River() {
           )}
 
           {activeTab === "all" && !isEditingAll && (
-            <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto space-y-3">
-              {entries.map((entry, index) => (
-                <div key={entry.id} onClick={() => handleEntryClick(entry, index)} className="group bg-white/40 px-6 py-5 rounded-2xl border border-[#36454F]/5 flex items-center gap-6 cursor-pointer hover:bg-white/60 transition-all">
-                  <div className="w-12 h-12 bg-[#F5F0E8] rounded-xl flex flex-col items-center justify-center group-hover:bg-[#36454F] group-hover:text-white transition-colors">
-                    <span className="text-sm italic font-sans font-bold">{new Date(entry.created_at).getDate()}</span>
-                    <span className="text-[10px] uppercase font-bold opacity-40 font-sans">{new Date(entry.created_at).toLocaleDateString('en-GB', { month: 'short' })}</span>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-[16px] italic text-[#36454F]">
-                      {entry.presence || `Flow of ${new Date(entry.created_at).toLocaleDateString()}`}
-                    </h3>
-                  </div>
-                  <div className="w-2 h-2 rounded-full bg-[#36454F]/10 group-hover:bg-[#EAB308] transition-colors" />
+            <motion.div
+              key="all-tab-content"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="max-w-3xl mx-auto"
+            >
+              {/* --- NEW: Captured Counter Added Here --- */}
+              <div className="flex flex-col gap-1 mb-8 px-2">
+                <span className="text-[16px] uppercase tracking-[0.1em] font-sans font-bold text-[#36454F]">
+                  Captured
+                </span>
+
+                <div className="flex items-baseline">
+                  <span className="text-2xl italic font-light text-[#36454F]">
+                    {entries.length}
+                  </span>
+                  <span className="text-2xl italic font-light mx-2">/</span>
+                  <span className="text-2xl italic font-light  text-[#36454F]">100</span>
                 </div>
-              ))}
+              </div>
+
+              {/* --- Your Existing Entries List --- */}
+              <div className="space-y-3">
+                {entries.map((entry, index) => (
+                  <div
+                    key={entry.id}
+                    onClick={() => handleEntryClick(entry, index)}
+                    className="group bg-white/40 px-6 py-5 rounded-2xl border border-[#36454F]/5 flex items-center gap-6 cursor-pointer hover:bg-white/60 transition-all"
+                  >
+                    <div className="w-12 h-12 bg-[#F5F0E8] rounded-xl flex flex-col items-center justify-center group-hover:bg-[#36454F] group-hover:text-white transition-colors">
+                      <span className="text-sm italic font-sans font-bold">{new Date(entry.created_at).getDate()}</span>
+                      <span className="text-[10px] uppercase font-bold opacity-40 font-sans">
+                        {new Date(entry.created_at).toLocaleDateString('en-GB', { month: 'short' })}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-[16px] italic text-[#36454F]">
+                        {entry.presence || `Flow of ${new Date(entry.created_at).toLocaleDateString()}`}
+                      </h3>
+                    </div>
+                    <div className="w-2 h-2 rounded-full bg-[#36454F]/10 group-hover:bg-[#EAB308] transition-colors" />
+                  </div>
+                ))}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
