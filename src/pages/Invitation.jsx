@@ -57,7 +57,7 @@ function Invitation() {
                   <h3 className="text-2xl italic font-medium">The Red Panda</h3>
                   <p className="text-[12px] uppercase font-sans font-bold tracking-widest mt-1">Flow</p>
                 </div>
-                <p className="text-[14px] italic font-sans opacity-60 leading-relaxed group-hover:opacity-100 transition-opacity duration-500">
+                <p className="text-[14px] italic font-sans leading-relaxed  transition-opacity duration-500">
                   Meet the Red Panda — your guide through each moment of your journey. The Red Panda thrives in the movement of the trees and the changing of the seasons, never rushing the current but flowing with it. When navigating the energy of the ‘now,’ look to the Red Panda as a reminder that every step taken with intention is a successful one.
 
                 </p>
@@ -67,7 +67,7 @@ function Invitation() {
                   <h3 className="text-2xl italic font-medium">The Pika</h3>
                   <p className="text-[12px] uppercase font-sans font-bold tracking-widest mt-1">Sanctuary</p>
                 </div>
-                <p className="text-[14px] italic font-sans opacity-60 leading-relaxed group-hover:opacity-100 transition-opacity duration-500">
+                <p className="text-[14px] italic font-sans  leading-relaxed transition-opacity duration-500">
                   Meet the Pika — your guide to the Sanctuary of Stillness. The Pika is the master of the high alpine, standing perfectly still upon the ancient stones, never seeking to be anywhere but exactly where it is. When reaching for meditation or quiet, look to the Pika as a reminder that you are a mountain — unshakeable, present, and already home.
                 </p>
               </div>
