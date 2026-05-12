@@ -164,8 +164,8 @@ const JourneyEnd = () => {
                           </span>
                         </label>
 
-                        {/* PAYMENT BUTTON */}
-                        <button
+
+                        {/* <button
                           onClick={handlePayment} // Simulation ki jagah real function
                           disabled={isProcessing || !sendSeedCard}
                           className={`w-full flex items-center justify-between gap-5 p-6 rounded-2xl transition-all group ${sendSeedCard
@@ -189,7 +189,7 @@ const JourneyEnd = () => {
                           </div>
                           <ArrowLeft size={16} className={`rotate-180 transition-all ${sendSeedCard ? "opacity-100 translate-x-0 group-hover:translate-x-2" : "opacity-0"
                             }`} />
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                   )}

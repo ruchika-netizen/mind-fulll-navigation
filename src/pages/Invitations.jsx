@@ -39,7 +39,7 @@ function Invitation() {
                 </div>
 
                 {/* RIGHT COLUMN */}
-                <div className="flex-1 p-8 md:p-8 flex flex-col bg-white min-h-full">
+                <div className="flex-1 p-8 md:p-8 flex flex-col rounded-[2rem] bg-white min-h-full">
                     <div className="flex-grow">
                         <div className="w-full h-44 md:h-[350px] overflow-hidden rounded-[2.5rem] shadow-inner border border-[#36454F]/5 mb-8">
                             <img
