@@ -153,13 +153,13 @@ const CompanionReadings = () => {
       {/* FOOTER */}
       <footer className="h-[15vh] flex flex-col items-center justify-center gap-6 px-10">
         {/* DOTS */}
-        <div className="flex gap-4">
+        {/* <div className="flex gap-4">
           {readings.map((_, idx) => (
             <button key={idx} onClick={() => setCurrentSlide(idx)}
               className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${currentSlide === idx ? "bg-[#36454F] w-8" : "bg-[#36454F]/20"}`}
             />
           ))}
-        </div>
+        </div> */}
 
         <div className="max-w-7xl w-full flex justify-between">
           <button

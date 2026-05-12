@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 function Orchard() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("new");
+  const [activeTab, setActiveTab] = useState("previous");
   const [loading, setLoading] = useState(false);
   const [entries, setEntries] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,8 +56,11 @@ function Orchard() {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
       if (!error && data) setEntries(data);
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const showToast = (message, type = "success") => {
@@ -87,24 +90,39 @@ function Orchard() {
       setHarvest("");
       setPruning(["", "", ""]);
       await fetchEntries();
-      setActiveTab("all");
+      setActiveTab("previous");
       showToast("Harvest Recorded", "success");
-    } catch (err) { showToast(err.message, "error"); }
-    finally { setLoading(false); }
+    } catch (err) {
+      showToast(err.message, "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleUpdate = async (id, updatedData) => {
     setLoading(true);
     try {
-      await supabase.from("orchard_data").update({
+      const { data: { user } } = await supabase.auth.getUser();
+      const { error } = await supabase.from("orchard_data").update({
         harvest: updatedData.harvest,
         pruning: updatedData.pruning
-      }).eq("id", id);
-      await fetchEntries();
+      })
+        .eq("id", id)
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+
+      // Optimistic Update
+      setEntries(prev => prev.map(entry => entry.id === id ? { ...entry, ...updatedData } : entry));
+
       setIsEditingAll(false);
       showToast("Updated Successfully", "success");
-    } catch (err) { showToast(err.message, "error"); }
-    finally { setLoading(false); }
+      await fetchEntries();
+    } catch (err) {
+      showToast(err.message, "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const deleteEntry = async (id) => {
@@ -113,7 +131,7 @@ function Orchard() {
       await fetchEntries();
       setIsEditingAll(false);
       setShowConfirm(false);
-      if (activeTab === "previous") setActiveTab("new");
+      if (entries.length <= 1) setActiveTab("new");
       showToast("Entry Deleted", "success");
     } catch (err) { console.error(err); }
   };
@@ -163,136 +181,147 @@ function Orchard() {
 
       <main className="max-w-6xl mx-auto w-full px-6">
         <AnimatePresence mode="wait">
-          {(activeTab === "new" || activeTab === "previous" || isEditingAll) && (
-            <div className="relative">
+          {loading ? (
+            <motion.div key="loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center justify-center py-32">
+              <Loader2 className="animate-spin text-[#36454F] opacity-20" size={40} />
+              <p className="mt-4 text-[11px] uppercase tracking-[0.3em] font-sans font-bold opacity-30 italic">Loading...</p>
+            </motion.div>
+          ) : (
+            <motion.div key="content" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              {(activeTab === "new" || activeTab === "previous" || isEditingAll) && (
+                <div className="relative">
 
-              {/* DELETE ICON - RIGHT TOP */}
-              {(activeTab === "previous" || isEditingAll) && (
-                <div className="absolute -top-12 right-0 z-20">
-                  {!showConfirm ? (
-                    <button onClick={() => setShowConfirm(true)} className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm border border-[#36454F]/5 text-[#36454F]/40 hover:text-red-500 transition-colors">
-                      <Trash2 size={18} />
+                  {/* Delete UI Logic */}
+                  {(activeTab === "previous" || isEditingAll) && entries.length > 0 && (
+                    <div className="absolute -top-12 right-0 z-20">
+                      {!showConfirm ? (
+                        <button onClick={() => setShowConfirm(true)} className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm border border-[#36454F]/5 text-[#36454F]/40 hover:text-red-500 transition-colors">
+                          <Trash2 size={18} />
+                        </button>
+                      ) : (
+                        <div className="flex items-center gap-2 bg-white p-1 rounded-full shadow-md border border-[#36454F]/5">
+                          <button onClick={() => deleteEntry(prevEditData.id)} className="p-2 bg-red-500 text-white rounded-full transition-transform active:scale-90">
+                            <CheckCircle2 size={16} />
+                          </button>
+                          <button onClick={() => setShowConfirm(false)} className="p-2 text-[#36454F]/40 hover:text-[#36454F] transition-colors">
+                            <X size={16} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {isEditingAll && (
+                    <button onClick={() => setIsEditingAll(false)} className="absolute -top-10 left-0 text-[12px] uppercase font-bold font-sans tracking-widest hover:opacity-100 transition-opacity">
+                      ‹ Back to list
                     </button>
-                  ) : (
-                    <div className="flex items-center gap-2 bg-white p-1 rounded-full shadow-md border border-[#36454F]/5">
-                      <button onClick={() => deleteEntry(prevEditData.id)} className="p-2 bg-red-500 text-white rounded-full transition-transform active:scale-90">
-                        <CheckCircle2 size={16} />
-                      </button>
-                      <button onClick={() => setShowConfirm(false)} className="p-2 text-[#36454F]/40 hover:text-[#36454F] transition-colors">
-                        <X size={16} />
+                  )}
+
+                  {/* Empty State vs Content */}
+                  {activeTab === "previous" && entries.length === 0 ? (
+                    <div className="text-center py-32 italic opacity-40">
+                      <p className="mb-6 text-xl">The orchard is quiet. No previous harvests found.</p>
+                      <button onClick={() => setActiveTab("new")} className="text-[12px] border-b border-[#36454F]/20 pb-1 uppercase font-sans font-bold hover:border-[#36454F] transition-all tracking-[0.2em]">
+                        Plant something new
                       </button>
                     </div>
+                  ) : (
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col lg:flex-row gap-8 justify-center items-stretch">
+
+                      {/* LEFT CARD: SEASONAL PRUNING */}
+                      <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col transition-all hover:shadow-md">
+                        <div className="mb-8 text-center">
+                          <h2 className="text-2xl font-light italic text-[#36454F]">Seasonal Pruning</h2>
+                          <p className="text-[14px] uppercase tracking-[0.3em] font-bold opacity-80 mt-2 font-sans">Tending to your growth</p>
+                        </div>
+                        <div className="w-full h-78 mb-6 rounded-[2rem] overflow-hidden border border-[#36454F]/5 shadow-inner">
+                          <img src={redpandaImg} alt="Red Panda" className="w-full h-full object-cover grayscale-[20%] opacity-90" />
+                        </div>
+                        <div className="space-y-6">
+                          {pruningLabels.map((label, i) => (
+                            <div key={i}>
+                              <label className="text-[13px] uppercase tracking-[0.2em] block mb-2 font-sans font-bold opacity-80">{label}</label>
+                              <textarea
+                                value={activeTab === "new" ? pruning[i] : (prevEditData.pruning ? prevEditData.pruning[i] : "")}
+                                onChange={(e) => {
+                                  if (activeTab === "new") {
+                                    const newP = [...pruning]; newP[i] = e.target.value; setPruning(newP);
+                                  } else {
+                                    const newP = [...prevEditData.pruning]; newP[i] = e.target.value; setPrevEditData({ ...prevEditData, pruning: newP });
+                                  }
+                                }}
+                                placeholder="..."
+                                className="w-full h-[85px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-4 py-3 outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 resize-none river-scroll shadow-sm"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* RIGHT CARD: THE HARVEST */}
+                      <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col transition-all hover:shadow-md">
+                        <div className="text-center">
+                          <h2 className="text-2xl font-light italic text-[#36454F] mb-10 ">The Harvest</h2>
+                          <p className="text-[14px] uppercase tracking-[0.3em] font-bold opacity-80 mt-2 font-sans italic mb-3">“What has grown this season”</p>
+                        </div>
+                        <div className="flex-grow flex flex-col">
+                          <textarea
+                            value={activeTab === "new" ? harvest : prevEditData.harvest || ""}
+                            onChange={(e) => activeTab === "new" ? setHarvest(e.target.value) : setPrevEditData({ ...prevEditData, harvest: e.target.value })}
+                            placeholder="Record what you are gathering..."
+                            className="w-full flex-grow bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 resize-none river-scroll shadow-inner min-h-[300px]"
+                          />
+                        </div>
+                        <div className="mt-8">
+                          <button
+                            onClick={activeTab === "new" ? handleSave : () => handleUpdate(prevEditData.id, prevEditData)}
+                            disabled={loading}
+                            className="w-full bg-[#36454F] text-white py-5 rounded-xl flex items-center justify-center gap-3 hover:bg-black transition-all tracking-[0.4em] font-sans uppercase text-[12px] font-bold shadow-lg active:scale-95 disabled:opacity-50"
+                          >
+                            {loading ? <Loader2 size={16} className="animate-spin" /> : activeTab === "new" ? "SAVE NEW ENTRY" : "UPDATE ENTRY"}
+                          </button>
+                          <div className="flex items-center justify-between opacity-80 mt-6 px-2">
+                            <p className="text-[18px] italic max-w-[280px] leading-relaxed font-serif">“Tend to your orchard, and the fruit will follow.”</p>
+                            <div className="w-18 h-10 bg-[#36454F]/5 rounded-xl flex items-center justify-center overflow-hidden border border-[#36454F]/10">
+                              <img src={redpandasImg} alt="Companion" className="w-full h-full object-contain grayscale" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
                   )}
                 </div>
               )}
 
-              {isEditingAll && (
-                <button onClick={() => setIsEditingAll(false)} className="absolute -top-10 left-0 text-[12px] uppercase font-bold font-sans tracking-widest hover:opacity-100 transition-opacity">
-                  ‹ Back to list
-                </button>
-              )}
-
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col lg:flex-row gap-8 justify-center items-stretch">
-
-                {/* LEFT CARD: SEASONAL PRUNING */}
-                <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col transition-all hover:shadow-md">
-                  <div className="mb-8 text-center">
-                    <h2 className="text-2xl font-light italic text-[#36454F]">Seasonal Pruning</h2>
-                    <p className="text-[14px] uppercase tracking-[0.3em] font-bold opacity-80 mt-2 font-sans">Tending to your growth</p>
+              {/* ALL LIST VIEW */}
+              {activeTab === "all" && !isEditingAll && (
+                <motion.div key="all" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto w-full">
+                  <div className="flex flex-col gap-1 mb-10 px-2">
+                    <span className="text-[16px] uppercase tracking-[0.1em] font-sans font-bold">Captured</span>
+                    <div className="flex items-baseline"><span className="text-2xl italic font-bold">{entries.length}</span><span className="text-2xl italic font-light mx-2 ">/</span><span className="text-2xl italic font-light opacity-40">25</span></div>
                   </div>
-
-                  <div className="w-full h-78 mb-6 rounded-[2rem] overflow-hidden border border-[#36454F]/5 shadow-inner">
-                    <img src={redpandaImg} alt="Red Panda" className="w-full h-full object-cover grayscale-[20%] opacity-90" />
-                  </div>
-
-                  <div className="space-y-6">
-                    {pruningLabels.map((label, i) => (
-                      <div key={i}>
-                        <label className="text-[13px] uppercase tracking-[0.2em] block mb-2 font-sans font-bold opacity-80">{label}</label>
-                        <textarea
-                          value={activeTab === "new" ? pruning[i] : (prevEditData.pruning ? prevEditData.pruning[i] : "")}
-                          onChange={(e) => {
-                            if (activeTab === "new") {
-                              const newP = [...pruning]; newP[i] = e.target.value; setPruning(newP);
-                            } else {
-                              const newP = [...prevEditData.pruning]; newP[i] = e.target.value; setPrevEditData({ ...prevEditData, pruning: newP });
-                            }
-                          }}
-                          placeholder="..."
-                          className="w-full h-[85px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-4 py-3 outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 resize-none river-scroll shadow-sm"
-                        />
+                  <div className="space-y-3">
+                    {currentEntries.map((entry) => (
+                      <div key={entry.id} onClick={() => { setPrevEditData({ ...entry, pruning: entry.pruning || ["", "", ""] }); setIsEditingAll(true); }} className="group bg-white/40 px-6 py-5 rounded-2xl border border-[#36454F]/5 flex items-center gap-6 cursor-pointer hover:bg-white hover:shadow-md transition-all">
+                        <div className="w-12 h-12 bg-[#F5F0E8] rounded-xl flex flex-col items-center justify-center group-hover:bg-[#36454F] group-hover:text-white transition-all">
+                          <span className="text-sm font-sans font-bold">{new Date(entry.created_at).getDate()}</span>
+                          <span className="text-[10px] font-sans uppercase font-bold opacity-40">{new Date(entry.created_at).toLocaleDateString('en-GB', { month: 'short' })}</span>
+                        </div>
+                        <div className="flex-1 truncate">
+                          <h3 className="text-[17px] italic truncate">{entry.harvest || "A seasonal gathering..."}</h3>
+                        </div>
+                        <div className="w-2 h-2 rounded-full bg-[#36454F]/10 group-hover:bg-[#EAB308] transition-colors" />
                       </div>
                     ))}
                   </div>
-                </div>
-
-                {/* RIGHT CARD: THE HARVEST */}
-                <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col transition-all hover:shadow-md">
-                  <div className="text-center">
-                    <h2 className="text-2xl font-light italic text-[#36454F] mb-10 ">The Harvest: What Has Grown</h2>
-                    <p className="text-[14px] uppercase tracking-[0.3em] font-bold opacity-80 mt-2 font-sans italic mb-3">“Three things that grew this season”</p>
-                  </div>
-
-                  <div className="flex-grow flex flex-col">
-                    <textarea
-                      value={activeTab === "new" ? harvest : prevEditData.harvest || ""}
-                      onChange={(e) => activeTab === "new" ? setHarvest(e.target.value) : setPrevEditData({ ...prevEditData, harvest: e.target.value })}
-                      placeholder="Record what you are gathering..."
-                      className="w-full flex-grow bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 resize-none river-scroll shadow-inner min-h-[300px]"
-                    />
-                  </div>
-
-                  <div className="mt-8">
-                    <button
-                      onClick={activeTab === "new" ? handleSave : () => handleUpdate(prevEditData.id, prevEditData)}
-                      disabled={loading}
-                      className="w-full bg-[#36454F] text-white py-5 rounded-xl flex items-center justify-center gap-3 hover:bg-black transition-all tracking-[0.4em] font-sans uppercase text-[12px] font-bold shadow-lg active:scale-95 disabled:opacity-50"
-                    >
-                      {loading ? <Loader2 size={16} className="animate-spin" /> : activeTab === "new" ? "SAVE NEW ENTRY" : "UPDATE ENTRY"}
-                    </button>
-
-                    <div className="flex items-center justify-between opacity-80 mt-6 px-2">
-                      <p className="text-[18px] italic max-w-[280px] leading-relaxed font-serif">
-                        “Tend to your orchard, and the fruit will follow.”
-                      </p>
-                      <div className="w-18 h-10 bg-[#36454F]/5 rounded-xl flex items-center justify-center overflow-hidden border border-[#36454F]/10">
-                        <img src={redpandasImg} alt="Companion" className="w-full h-full object-contain grayscale" />
-                      </div>
+                  {totalPages > 1 && (
+                    <div className="flex justify-center items-center gap-3 mt-12">
+                      {[...Array(totalPages)].map((_, i) => (
+                        <button key={i} onClick={() => { setCurrentPage(i + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`h-2 rounded-full transition-all duration-500 ${currentPage === i + 1 ? "bg-[#36454F] w-10" : "bg-[#36454F]/20 w-2 hover:bg-[#36454F]/40"}`} />
+                      ))}
                     </div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          )}
-
-          {/* ALL LIST VIEW */}
-          {activeTab === "all" && !isEditingAll && (
-            <motion.div key="all" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto w-full">
-              <div className="flex flex-col gap-1 mb-10 px-2">
-                <span className="text-[16px] uppercase tracking-[0.1em] font-sans font-bold">Captured</span>
-                <div className="flex items-baseline"><span className="text-2xl italic font-bold">{entries.length}</span><span className="text-2xl italic font-light mx-2 ">/</span><span className="text-2xl italic font-light opacity-40">25</span></div>
-              </div>
-              <div className="space-y-3">
-                {currentEntries.map((entry) => (
-                  <div key={entry.id} onClick={() => { setPrevEditData({ ...entry, pruning: entry.pruning || ["", "", ""] }); setIsEditingAll(true); }} className="group bg-white/40 px-6 py-5 rounded-2xl border border-[#36454F]/5 flex items-center gap-6 cursor-pointer hover:bg-white hover:shadow-md transition-all">
-                    <div className="w-12 h-12 bg-[#F5F0E8] rounded-xl flex flex-col items-center justify-center group-hover:bg-[#36454F] group-hover:text-white transition-all">
-                      <span className="text-sm font-sans font-bold">{new Date(entry.created_at).getDate()}</span>
-                      <span className="text-[10px] font-sans uppercase font-bold opacity-40">{new Date(entry.created_at).toLocaleDateString('en-GB', { month: 'short' })}</span>
-                    </div>
-                    <div className="flex-1 truncate">
-                      <h3 className="text-[17px] italic truncate">{entry.harvest || "A seasonal gathering..."}</h3>
-                    </div>
-                    <div className="w-2 h-2 rounded-full bg-[#36454F]/10 group-hover:bg-[#EAB308] transition-colors" />
-                  </div>
-                ))}
-              </div>
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-3 mt-12">
-                  {[...Array(totalPages)].map((_, i) => (
-                    <button key={i} onClick={() => { setCurrentPage(i + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`h-2 rounded-full transition-all duration-500 ${currentPage === i + 1 ? "bg-[#36454F] w-10" : "bg-[#36454F]/20 w-2 hover:bg-[#36454F]/40"}`} />
-                  ))}
-                </div>
+                  )}
+                </motion.div>
               )}
             </motion.div>
           )}
