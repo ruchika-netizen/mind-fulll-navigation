@@ -1,174 +1,293 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
+import { Loader2, Plus, History, Waves, Trash2, X, CheckCircle2, AlertCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import redds from "../assets/pexels-regan-dsouza-1315522347-30692724.jpg";
-import { Sparkles, Loader2, CheckCircle2, AlertCircle, X } from "lucide-react";
 
 function Compass() {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("new");
+  const [loading, setLoading] = useState(false);
+  const [entries, setEntries] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
   const [northStar, setNorthStar] = useState("");
   const [steps, setSteps] = useState(["", "", ""]);
-  const [loading, setLoading] = useState(false);
+
+  const [prevEditData, setPrevEditData] = useState({});
+  const [isEditingAll, setIsEditingAll] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentEntries = entries.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(entries.length / itemsPerPage);
+
+  useEffect(() => {
+    fetchEntries();
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === "previous" && entries.length > 0) {
+      const latest = entries[0];
+      setPrevEditData({
+        ...latest,
+        steps: [latest.step_1, latest.step_2, latest.step_3]
+      });
+    }
+    setCurrentPage(1);
+  }, [entries, activeTab]);
+
+  const fetchEntries = async () => {
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from("compass_goals")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      if (!error && data) setEntries(data);
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
+  };
 
   const showToast = (message, type = "success") => {
     setToast({ show: true, message, type });
     setTimeout(() => setToast({ ...toast, show: false }), 4000);
   };
 
-  const saveData = async () => {
-    if (!northStar.trim() && !steps.some((s) => s.trim())) {
-      showToast("Please define your direction first.", "error");
+  const handleSave = async () => {
+    if (entries.length >= 25) {
+      showToast("Compass is full (25/25).", "error");
       return;
     }
-
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      const { error } = await supabase.from("compass_goals").insert({
-        user_id: user?.id,
+      await supabase.from("compass_goals").insert([{
+        user_id: user.id,
         north_star: northStar,
         step_1: steps[0],
         step_2: steps[1],
-        step_3: steps[2],
-        created_at: new Date().toISOString(),
-      });
-
-      if (!error) {
-        setNorthStar("");
-        setSteps(["", "", ""]);
-        showToast("Data has been successfully recorded.", "success");
-      } else {
-        showToast("Something went wrong. Please try again.", "error");
-      }
-    } catch (err) {
-      console.error(err);
-      showToast("Network error. Check connection.", "error");
-    } finally {
-      setLoading(false);
-    }
+        step_3: steps[2]
+      }]);
+      setNorthStar("");
+      setSteps(["", "", ""]);
+      await fetchEntries();
+      setActiveTab("all");
+      showToast("Path Recorded", "success");
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
 
+  const handleUpdate = async (id, updatedData) => {
+    setLoading(true);
+    try {
+      await supabase.from("compass_goals").update({
+        north_star: updatedData.north_star,
+        step_1: updatedData.steps[0],
+        step_2: updatedData.steps[1],
+        step_3: updatedData.steps[2]
+      }).eq("id", id);
+      await fetchEntries();
+      setIsEditingAll(false);
+      showToast("Updated", "success");
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
+  };
+
+  const deleteEntry = async (id) => {
+    try {
+      await supabase.from("compass_goals").delete().eq("id", id);
+      await fetchEntries();
+      setIsEditingAll(false);
+      setShowConfirm(false);
+      if (activeTab === "previous") setActiveTab("new");
+      showToast("Entry Deleted", "success");
+    } catch (err) { console.error(err); }
+  };
+
+  const tabs = [
+    { id: "previous", label: "Previous", icon: <History size={12} /> },
+    { id: "new", label: "New", icon: <Plus size={12} /> },
+    { id: "all", label: "All", icon: <Waves size={12} /> },
+  ];
+
+  const labels = ["What I am leaving behind", "What I am carrying forward", "The horizon I am moving toward"];
+
   return (
-    <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif flex flex-col selection:bg-[#36454F]/10 relative overflow-x-hidden">
-      <div
-        className={`fixed top-10 right-10 z-[100] flex items-center gap-4 p-5 rounded-2xl shadow-2xl border transition-all duration-500 transform ${toast.show ? "translate-x-0 opacity-100" : "translate-x-20 opacity-0 pointer-events-none"
-          } ${toast.type === "success"
-            ? "bg-white border-green-100 text-[#36454F]"
-            : "bg-[#36454F] border-white/10 text-[#F5F0E8]"
-          }`}
-      >
-        {toast.type === "success" ? (
-          <CheckCircle2 className="text-green-500" size={20} />
-        ) : (
-          <AlertCircle className="text-red-400" size={20} />
-        )}
-        <p className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold italic">
-          {toast.message}
-        </p>
-        <button onClick={() => setToast({ ...toast, show: false })} className="ml-4 opacity-30 hover:opacity-100">
-          <X size={14} />
-        </button>
+    <div className="min-h-screen bg-[#F5F0E8] font-serif text-[#36454F] pb-20 selection:bg-[#36454F]/10">
+
+      {/* Toast */}
+      <div className={`fixed top-10 right-10 z-[100] flex items-center gap-4 p-5 rounded-2xl shadow-2xl border transition-all duration-500 transform ${toast.show ? "translate-x-0 opacity-100" : "translate-x-20 opacity-0 pointer-events-none"} ${toast.type === "success" ? "bg-white border-green-100" : "bg-[#36454F] text-white"}`}>
+        {toast.type === "success" ? <CheckCircle2 className="text-green-500" size={20} /> : <AlertCircle className="text-red-400" size={20} />}
+        <p className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold">{toast.message}</p>
       </div>
+
       <header className="relative w-full max-w-7xl mx-auto pt-10 pb-7 text-center">
-        {/* Back Button Container */}
-        <div className="absolute top-6 md:top-12 left-0">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
-          >
+        <div className="absolute top-6 md:top-12 left-0 ">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all">
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
             <span className="mt-0.5">Back</span>
           </button>
         </div>
-
-        {/* Header Text */}
-        <div className="flex flex-col items-center pt-6 md:pt-0">
-          <h1 className="text-3xl md:text-4xl font-bold italic tracking-tight text-[#36454F]">
-            The Compass
-          </h1>
-
+        <div className="flex flex-col items-center">
+          <h1 className="text-3xl md:text-4xl font-bold italic text-[#36454F]">The Compass</h1>
           <div className="w-12 h-[1px] bg-[#36454F]/10 mt-8" />
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto w-full px-6 py-5 pb-20 flex flex-col lg:flex-row gap-8 items-stretch relative z-10 justify-center">
-
-        {/* LEFT PAGE: ORIENTATION */}
-        <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col relative transition-all hover:shadow-md">
-          <div className="mb-6 text-center">
-            <h2 className="md:text-2xl font-light tracking-tight italic text-[#36454F]">Orientation Phase</h2>
-            <p className="text-[14px] uppercase tracking-[0.3em] font-bold opacity-80 mt-2 font-sans">Finding your direction</p>
-          </div>
-
-          <div className="flex-grow flex flex-col items-center justify-start pt-6">
-            <div className="mb-10 opacity-[0.15] pointer-events-none">
-              <svg width="180" height="180" viewBox="0 0 100 100" className="stroke-[#36454F] fill-none">
-                <path d="M 85,50 C 85,75 70,88 50,88 C 25,88 12,70 12,50 C 12,25 30,12 55,12 C 70,12 82,22 84,35" strokeWidth="0.8" strokeLinecap="round" />
-              </svg>
-            </div>
-
-            <div className="w-full group z-10">
-              <label className="text-[14px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed text-center">
-                Define Your North Star
-              </label>
-              <textarea
-                value={northStar}
-                onChange={(e) => setNorthStar(e.target.value)}
-                placeholder="What is your new direction?"
-                className="w-full h-[220px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4  outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 resize-none river-scroll shadow-inner"
-              />
-            </div>
-          </div>
+      {/* TABS */}
+      <div className="max-w-md mx-auto px-6 mb-10">
+        <div className="flex bg-white/40 p-1 rounded-full border border-[#36454F]/5 shadow-inner relative">
+          {tabs.map((tab) => (
+            <button key={tab.id} onClick={() => { setActiveTab(tab.id); setIsEditingAll(false); setShowConfirm(false); }}
+              className={`relative flex-1 flex items-center justify-center gap-2 py-3 rounded-full text-[12px] uppercase tracking-[0.2em] font-sans font-bold transition-colors duration-300 z-10 ${activeTab === tab.id ? "text-[#F5F0E8]" : "text-[#36454F]"}`}>
+              {tab.icon} {tab.label}
+              {activeTab === tab.id && <motion.div layoutId="activeTabCompass" className="absolute inset-0 bg-[#36454F] rounded-full -z-10 shadow-md" transition={{ type: "spring", bounce: 0.2, duration: 0.6 }} />}
+            </button>
+          ))}
         </div>
+      </div>
 
-        {/* RIGHT PAGE: JOURNEY MAPPING */}
-        <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col transition-all hover:shadow-md">
-          <div className="mb-10 text-center">
-            <h2 className="md:text-2xl font-light tracking-tight italic text-[#36454F]">Journey Mapping</h2>
-            <p className="text-[13px] uppercase tracking-[0.3em] font-bold mt-2 font-sans opacity-80">The Shape of Your Journey</p>
-          </div>
+      <main className="max-w-6xl mx-auto px-6">
+        <AnimatePresence mode="wait">
+          {(activeTab === "new" || activeTab === "previous" || isEditingAll) && (
+            <div className="relative">
 
-          <div className="space-y-6 flex-grow">
-            {[
-              { label: "What I am leaving behind", val: steps[0], idx: 0 },
-              { label: "What I am carrying forward", val: steps[1], idx: 1 },
-              { label: "The horizon I am moving toward", val: steps[2], idx: 2 }
-            ].map((item) => (
-              <div key={item.idx} className="group">
-                <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">{item.label}</label>
-                <textarea
-                  value={item.val}
-                  onChange={(e) => {
-                    const newSteps = [...steps];
-                    newSteps[item.idx] = e.target.value;
-                    setSteps(newSteps);
-                  }}
-                  placeholder="..."
-                  className="w-full h-[85px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl p-4  outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 resize-none river-scroll"
-                />
+              {/* DELETE ICON - PLACED EXACTLY LIKE THE IMAGE */}
+              {(activeTab === "previous" || isEditingAll) && (
+                <div className="absolute -top-12 right-0 z-20">
+                  {!showConfirm ? (
+                    <button
+                      onClick={() => setShowConfirm(true)}
+                      className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm border border-[#36454F]/5 text-[#36454F]/40 hover:text-red-500 transition-colors"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-2 bg-white p-1 rounded-full shadow-md border border-[#36454F]/5">
+                      <button onClick={() => deleteEntry(prevEditData.id)} className="p-2 bg-red-500 text-white rounded-full transition-transform active:scale-90">
+                        <CheckCircle2 size={16} />
+                      </button>
+                      <button onClick={() => setShowConfirm(false)} className="p-2 text-[#36454F]/40 hover:text-[#36454F] transition-colors">
+                        <X size={16} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* BACK BUTTON FOR ALL LIST */}
+              {isEditingAll && (
+                <button
+                  onClick={() => setIsEditingAll(false)}
+                  className="absolute -top-10 left-0 text-[12px] uppercase font-bold font-sans tracking-widest hover:opacity-100 transition-opacity"
+                >
+                  ‹ Back to list
+                </button>
+              )}
+
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col md:flex-row gap-8 justify-center">
+                {/* LEFT CARD: ORIENTATION */}
+                <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col items-center">
+                  <h2 className="text-2xl font-light italic text-center mb-1">Orientation Phase</h2>
+                  <p className="text-[14px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed text-center">Finding your direction</p>
+
+                  <div className="mb-10 opacity-[0.15] pointer-events-none">
+                    <svg width="180" height="180" viewBox="0 0 100 100" className="stroke-[#36454F] fill-none animate-pulse">
+                      <path d="M 85,50 C 85,75 70,88 50,88 C 25,88 12,70 12,50 C 12,25 30,12 55,12 C 70,12 82,22 84,35" strokeWidth="0.8" strokeLinecap="round" />
+                    </svg>
+                  </div>
+
+                  <div className="w-full">
+                    <label className="text-[14px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed text-center">Define Your North Star</label>
+                    <textarea
+                      value={activeTab === "new" ? northStar : prevEditData.north_star || ""}
+                      onChange={(e) => activeTab === "new" ? setNorthStar(e.target.value) : setPrevEditData({ ...prevEditData, north_star: e.target.value })}
+                      placeholder="What is your new direction?..."
+                      className="w-full h-[250px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4  outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 resize-none river-scroll shadow-inner"
+                    />
+                  </div>
+                </div>
+
+                {/* RIGHT CARD: JOURNEY MAPPING */}
+                <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col">
+                  <h2 className="text-2xl font-light italic text-center mb-1">Journey Mapping</h2>
+                  <p className="text-[14px] uppercase tracking-[0.2em] block mb-8 font-sans font-bold opacity-80 ml-1 leading-relaxed text-center">The shape of your journey</p>
+
+                  <div className="space-y-6 flex-grow">
+                    {labels.map((label, i) => (
+                      <div key={i}>
+                        <label className="text-[13px] uppercase tracking-[0.2em] block mb-2 font-sans font-bold opacity-80">{label}</label>
+                        <textarea
+                          value={activeTab === "new" ? steps[i] : (prevEditData.steps ? prevEditData.steps[i] : "")}
+                          onChange={(e) => {
+                            if (activeTab === "new") {
+                              const n = [...steps]; n[i] = e.target.value; setSteps(n);
+                            } else {
+                              const n = [...prevEditData.steps]; n[i] = e.target.value; setPrevEditData({ ...prevEditData, steps: n });
+                            }
+                          }}
+                          placeholder="..."
+                          className="w-full h-[80px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl p-4  outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 resize-none river-scroll"
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => activeTab === "new" ? handleSave() : handleUpdate(prevEditData.id, prevEditData)}
+                    disabled={loading}
+                    className="w-full bg-[#36454F] text-white py-5 mb-4 rounded-xl mt-8 font-sans tracking-[0.4em] uppercase text-[12px] font-bold shadow-lg hover:bg-black transition-all active:scale-95 disabled:opacity-50"
+                  >
+                    {loading ? <Loader2 size={16} className="animate-spin mx-auto" /> : activeTab === "new" ? "Commit to Path" : "Update Path"}
+                  </button>
+
+                  <div className="mt-4  flex items-center justify-between">
+                    <p className="text-[18px] italic leading-relaxed opacity-80">“Be the traveller, not just the map.”</p>
+                    <img src={redds} className="w-12 h-10 object-contain grayscale opacity-30 rounded-full" alt="icon" />
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
+
+          {/* ALL LIST VIEW */}
+          {activeTab === "all" && !isEditingAll && (
+            <motion.div key="all" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto w-full">
+              <div className="flex flex-col gap-1 mb-10 px-2">
+                <span className="text-[16px] uppercase tracking-[0.1em] font-sans font-bold">Captured</span>
+                <div className="flex items-baseline"><span className="text-2xl italic font-bold font-light">{entries.length}</span><span className="text-2xl italic font-light mx-2 ">/</span><span className="text-2xl italic font-light opacity-40">25</span></div>
               </div>
-            ))}
-          </div>
-
-          <button
-            onClick={saveData}
-            disabled={loading}
-            className="w-full bg-[#36454F] text-white py-5 rounded-xl flex items-center justify-center gap-3 hover:bg-black font-sans transition-all tracking-[0.4em] uppercase text-[12px] font-bold font-sans shadow-lg mt-8 active:scale-95 disabled:opacity-50">
-            {loading ? <Loader2 size={18} className="animate-spin" /> : <> Commit to Path </>}
-          </button>
-
-          {/* Footer Branding */}
-          <div className="flex items-center justify-between opacity-80 mt-6 px-2">
-            <p className="text-[18px] italic max-w-[280px] leading-relaxed font-serif">
-              “Be the traveller, not just the map.”
-            </p>
-            <div className="w-15 h-10 bg-[#36454F]/5 rounded-4xl flex items-center justify-center overflow-hidden">
-              <img src={redds} alt="Companion" className="w-full h-full object-contain grayscale opacity-50" />
-            </div>
-          </div>
-        </div>
+              <div className="space-y-3">
+                {currentEntries.map((entry) => (
+                  <div key={entry.id} onClick={() => { setPrevEditData({ ...entry, steps: [entry.step_1, entry.step_2, entry.step_3] }); setIsEditingAll(true); }} className="group bg-white/40 px-6 py-5 rounded-2xl border border-[#36454F]/5 flex items-center gap-6 cursor-pointer hover:bg-white hover:shadow-md transition-all">
+                    <div className="w-12 h-12 bg-[#F5F0E8] rounded-xl flex flex-col items-center justify-center group-hover:bg-[#36454F] group-hover:text-white transition-all">
+                      <span className="text-sm font-sans font-bold">{new Date(entry.created_at).getDate()}</span>
+                      <span className="text-[10px] font-sans uppercase font-bold opacity-40">{new Date(entry.created_at).toLocaleDateString('en-GB', { month: 'short' })}</span>
+                    </div>
+                    <div className="flex-1 truncate"><h3 className="text-[17px] italic truncate">{entry.north_star || "Journey"}</h3></div>
+                    <div className="w-2 h-2 rounded-full bg-[#36454F]/10 group-hover:bg-[#EAB308] transition-colors" />
+                  </div>
+                ))}
+              </div>
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-3 mt-12">
+                  {[...Array(totalPages)].map((_, i) => (
+                    <button key={i} onClick={() => { setCurrentPage(i + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`h-2 rounded-full transition-all duration-500 ${currentPage === i + 1 ? "bg-[#36454F] w-10" : "bg-[#36454F]/20 w-2 hover:bg-[#36454F]/40"}`} />
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
     </div>
   );

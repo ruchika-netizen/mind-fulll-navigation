@@ -60,7 +60,6 @@ const WellbeingPractices = () => {
       img: pikas,
       content: [
         "The Red Panda does not sit still for long. Movement does not require a plan or a programme — it requires only a willingness to begin. Walk outside when you can. Stretch when you remember. Let the body lead sometimes.",
-
       ],
       sutra: "Movement is the song of the soul.",
       author: "— The Red Panda"
@@ -71,7 +70,6 @@ const WellbeingPractices = () => {
       img: pikass,
       content: [
         "Reach out to one person without a reason. Listen more than you speak. Receive care gracefully when it is offered. The river does not flow in one direction only.",
-
       ],
       sutra: "A step taken in peace reaches the heart",
       author: ""
@@ -82,7 +80,6 @@ const WellbeingPractices = () => {
       img: pikass,
       content: [
         "Read something that has nothing to do with your work. Ask a question you do not know the answer to. Follow a thread of curiosity without needing it to lead anywhere. The mind that stays open stays alive.",
-
       ],
       sutra: "Be the traveller, not just the map.",
       author: "— "
@@ -93,7 +90,6 @@ const WellbeingPractices = () => {
       img: pikass,
       content: [
         "You cannot pour from an empty vessel. Rest is not laziness. Solitude is not loneliness. Saying no to one thing is saying yes to yourself. The mountain does not apologise for being still.",
-
       ],
       sutra: "The mountain does not seek the sun; it simply receives it.",
       author: ""
@@ -104,7 +100,6 @@ const WellbeingPractices = () => {
       img: pika,
       content: [
         "Show up. Be present. Do small things with great attention. The most profound acts of care are rarely grand gestures — they are the quiet, repeated choices to notice another person and let them know they have been seen.",
-
       ],
       sutra: "Every moment is a fresh start.”",
       author: "— The Pika"
@@ -119,68 +114,41 @@ const WellbeingPractices = () => {
       {/* HEADER */}
       <header className="relative w-full max-w-7xl mx-auto pt-10 pb-8 text-center">
         <div className="absolute top-6 md:top-12 left-0">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
-          >
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all">
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
             <span className="mt-0.5">Back</span>
           </button>
         </div>
         <div className="flex flex-col items-center pt-6 md:pt-0">
-          <h1 className="text-3xl md:text-4xl font-bold italic tracking-tight text-[#36454F]">
-            The Wellbeing Practices
-          </h1>
+          <h1 className="text-3xl md:text-4xl font-bold italic tracking-tight text-[#36454F]">The Wellbeing Practices</h1>
           <div className="w-12 h-[1px] bg-[#36454F]/10 mt-8" />
         </div>
       </header>
 
-      {/* MAIN BOOK SPREAD */}
+      {/* MAIN CONTENT */}
       <main className="flex-grow flex items-center justify-center px-4 md:px-10 pb-6">
-        <div key={currentSlide} className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 bg-white rounded-[2.5rem] overflow-hidden shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-1000 border border-[#36454F]/10">
-
-          {/* LEFT SIDE: IMAGE */}
-          <div className="p-6 md:p-8 flex flex-col items-center justify-center border-r border-[#36454F]/5">
-            <div className="w-full aspect-square md:aspect-[4/5] rounded-2xl overflow-hidden bg-[#FDFCFB]">
-              <img
-                src={practices[currentSlide].img}
-                alt="Practice Illustration"
-                className="w-full h-full object-cover grayscale-[0.2]"
-              />
+        <div key={currentSlide} className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-7 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+          <div className="flex flex-col items-center justify-center border-r border-[#36454F]/5">
+            <div className="w-full aspect-square md:aspect-[4/5] rounded-[2rem] overflow-hidden bg-[#FDFCFB]">
+              <img src={practices[currentSlide].img} alt="Practice" className="w-full h-full object-cover grayscale-[0.2]" />
             </div>
           </div>
-
-          {/* RIGHT SIDE: TEXT */}
-          <div className="p-8 md:p-8 flex flex-col justify-center bg-[#FDFCFB]">
-            <div className="max-w-md mx-auto space-y-8 text-center lg:text-left">
+          <div className="p-8 md:p-8 flex flex-col rounded-[2rem] justify-center bg-white/40">
+            <div className="max-w-lg mx-auto space-y-8 text-center lg:text-left">
               <header className="space-y-2">
-                <h2 className="text-4xl font-light italic leading-tight text-[#36454F]">
-                  {practices[currentSlide].title}
-                </h2>
-                <p className="text-[12px] uppercase tracking-widest font-sans font-bold ">
-                  {practices[currentSlide].subtitle}
-                </p>
+                <h2 className="text-4xl font-light italic leading-tight text-[#36454F]">{practices[currentSlide].title}</h2>
+                <p className="text-[12px] uppercase tracking-widest font-sans font-bold">{practices[currentSlide].subtitle}</p>
               </header>
-
               <div className="space-y-5">
                 {practices[currentSlide].content.map((para, i) => (
-                  <p key={i} className="text-[16px] md:text-[17px] italic leading-relaxed opacity-80">
-                    {para}
-                  </p>
+                  <p key={i} className="text-[16px] md:text-[17px] italic leading-relaxed opacity-80">{para}</p>
                 ))}
-
                 {practices[currentSlide].sutra && (
                   <div className="pt-6 border-t border-[#36454F]/10">
-                    <p className="text-[12px] uppercase tracking-widest font-sans font-bold mb-2 italic ">Sutra</p>
-                    <p className="text-xl italic font-light leading-snug">
-                      “{practices[currentSlide].sutra}”
-                    </p>
+                    <p className="text-[12px] uppercase tracking-widest font-sans font-bold mb-2 italic">Sutra</p>
+                    <p className="text-xl italic font-light leading-snug">“{practices[currentSlide].sutra}”</p>
                   </div>
                 )}
-
-                {/* <p className="text-[10px] uppercase tracking-[0.4em] font-sans font-bold pt-4 opacity-50">
-                  {practices[currentSlide].author}
-                </p> */}
               </div>
             </div>
           </div>
@@ -188,35 +156,26 @@ const WellbeingPractices = () => {
       </main>
 
       {/* FOOTER */}
-      <footer className="h-[12vh] flex flex-col items-center justify-center gap-6 px-10 mb-6">
-        {/* DOTS */}
-        <div className="flex gap-4">
-          {practices.map((_, idx) => (
-            <button key={idx} onClick={() => setCurrentSlide(idx)}
-              className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${currentSlide === idx ? "bg-[#36454F] w-8" : "bg-[#36454F]/20"}`}
-            />
-          ))}
-        </div>
+      <footer className="w-full max-w-[85rem] mx-auto px-6 md:px-12 h-[12vh] flex items-center justify-between  shrink-0 mb-4 mt-4">
 
-        <div className="max-w-7xl w-full flex justify-between px-4">
+        {/* Left Side: PREVIOUS Button */}
+        <button
+          onClick={() => currentSlide === 0 ? navigate("/well") : setCurrentSlide(s => s - 1)}
+          className="flex items-center gap-2 text-[12px] uppercase tracking-widest font-sans font-bold group"
+        >
+          <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> PREVIOUS
+        </button>
+
+        {/* Right Side: NEXT PRACTICE (Only shows if NOT on the last slide) */}
+        {currentSlide < practices.length - 1 && (
           <button
-            disabled={currentSlide === 0}
-            onClick={() => setCurrentSlide(prev => prev - 1)}
-            className={`flex items-center font-sans gap-2 text-[14px] uppercase tracking-widest font-bold transition-all ${currentSlide === 0 ? "invisible" : "hover:text-black"}`}
+            onClick={() => setCurrentSlide(s => s + 1)}
+            className="flex items-center gap-2 font-sans text-[12px] uppercase tracking-widest font-bold group"
           >
-            <ChevronLeft size={16} /> Previous
+            NEXT PRACTICE <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </button>
+        )}
 
-          {currentSlide === totalSlides - 1 ? (
-            <button onClick={() => navigate("/companionReadings")} className="px-10 py-4 bg-[#36454F] text-[#F5F0E8] text-[14px] uppercase tracking-[0.2em] font-sans font-bold rounded-full hover:bg-black transition-all shadow-lg active:scale-95">
-              Explore Readings
-            </button>
-          ) : (
-            <button onClick={() => setCurrentSlide(prev => prev + 1)} className="flex items-center font-sans gap-2 text-[14px] uppercase tracking-widest font-bold hover:text-black transition-all">
-              Next Practice <ChevronRight size={16} />
-            </button>
-          )}
-        </div>
       </footer>
     </div>
   );

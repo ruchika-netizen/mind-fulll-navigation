@@ -82,7 +82,7 @@ const CompanionReadings = () => {
     <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif flex flex-col overflow-x-hidden">
 
       {/* HEADER */}
-      <header className="relative w-full max-w-7xl mx-auto py-10 md:py-16 px-6 text-center">
+      <header className="relative w-full max-w-7xl mx-auto pt-10 pb-8 text-center">
         <div className="absolute top-6 md:top-12 left-0">
           <button
             onClick={() => navigate(-1)}
@@ -104,12 +104,12 @@ const CompanionReadings = () => {
       </header>
 
       {/* BOOK SPREAD AREA */}
-      <main className="flex-grow flex items-center justify-center px-4 md:px-10 pb-6">
-        <div key={currentSlide} className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 bg-white rounded-[3rem] overflow-hidden shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-1000 border border-[#36454F]/10">
+      <main className="flex-grow flex items-center justify-center px-4 pb-6">
+        <div key={currentSlide} className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-7   animate-in fade-in slide-in-from-bottom-4 duration-1000">
 
           {/* LEFT PAGE: Image (Standardized Size) */}
-          <div className="p-8 md:p-8 flex flex-col items-center justify-center border-r border-[#36454F]/10">
-            <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-inner bg-[#FDFCFB]">
+          <div className=" flex flex-col items-center justify-center">
+            <div className="w-full aspect-[4/5] rounded-[2rem] overflow-hidden shadow-inner bg-[#FDFCFB]">
               <img
                 src={readings[currentSlide].img}
                 alt="Reading Visual"
@@ -119,8 +119,8 @@ const CompanionReadings = () => {
           </div>
 
           {/* RIGHT PAGE: Text Content */}
-          <div className="p-8 md:p-8 flex flex-col justify-center bg-[#FDFCFB]">
-            <div className="max-w-md mx-auto space-y-8 text-center lg:text-left">
+          <div className="p-8 md:p-8 flex flex-col rounded-[2rem] justify-center bg-white/40">
+            <div className="max-w-lg  mx-auto space-y-8 text-center lg:text-left">
               <header className="space-y-2">
                 <h2 className="text-4xl font-light italic leading-tight">{readings[currentSlide].title}</h2>
                 <p className="text-[12px] uppercase tracking-widest font-sans font-bold">The Collection</p>

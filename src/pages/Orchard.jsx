@@ -1,25 +1,75 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
-import redpanda from "../assets/redanada fruits1.png";
-import redpandas from "../assets/pexels-flickr-148182.jpg";
-import { Sparkles, Loader2, CheckCircle2, AlertCircle, X } from "lucide-react";
+import redpandaImg from "../assets/redanada fruits1.png";
+import redpandasImg from "../assets/pexels-flickr-148182.jpg";
+import { Loader2, Plus, History, Waves, Trash2, X, CheckCircle2, AlertCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 function Orchard() {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("new");
+  const [loading, setLoading] = useState(false);
+  const [entries, setEntries] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
+  // Form States (New Entry)
   const [pruning, setPruning] = useState(["", "", ""]);
   const [harvest, setHarvest] = useState("");
-  const [loading, setLoading] = useState(false);
 
+  // Edit/Previous States
+  const [prevEditData, setPrevEditData] = useState({});
+  const [isEditingAll, setIsEditingAll] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentEntries = entries.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(entries.length / itemsPerPage);
+
+  useEffect(() => {
+    fetchEntries();
+  }, []);
+
+  // Sync Previous Tab with Latest Entry
+  useEffect(() => {
+    if (activeTab === "previous" && entries.length > 0) {
+      const latest = entries[0];
+      setPrevEditData({
+        ...latest,
+        pruning: latest.pruning || ["", "", ""]
+      });
+    }
+    setCurrentPage(1);
+  }, [entries, activeTab]);
+
+  const fetchEntries = async () => {
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from("orchard_data")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      if (!error && data) setEntries(data);
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
+  };
 
   const showToast = (message, type = "success") => {
     setToast({ show: true, message, type });
     setTimeout(() => setToast({ ...toast, show: false }), 4000);
   };
 
-  const saveOrchard = async () => {
+  const handleSave = async () => {
+    if (entries.length >= 25) {
+      showToast("Orchard is full (25/25).", "error");
+      return;
+    }
     if (!harvest.trim() && !pruning.some(p => p.trim())) {
       showToast("Please record your thoughts first.", "error");
       return;
@@ -28,149 +78,225 @@ function Orchard() {
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      const { error } = await supabase.from("orchard_data").insert([{
+      await supabase.from("orchard_data").insert([{
         user_id: user?.id,
         harvest: harvest,
         pruning: pruning,
         created_at: new Date().toISOString(),
       }]);
-
-      if (error) throw error;
-
-      showToast("Data has been successfully recorded. ", "success");
       setHarvest("");
       setPruning(["", "", ""]);
-    } catch (error) {
-      showToast(error.message, "error");
-    } finally {
-      setLoading(false);
-    }
+      await fetchEntries();
+      setActiveTab("all");
+      showToast("Harvest Recorded", "success");
+    } catch (err) { showToast(err.message, "error"); }
+    finally { setLoading(false); }
   };
 
+  const handleUpdate = async (id, updatedData) => {
+    setLoading(true);
+    try {
+      await supabase.from("orchard_data").update({
+        harvest: updatedData.harvest,
+        pruning: updatedData.pruning
+      }).eq("id", id);
+      await fetchEntries();
+      setIsEditingAll(false);
+      showToast("Updated Successfully", "success");
+    } catch (err) { showToast(err.message, "error"); }
+    finally { setLoading(false); }
+  };
+
+  const deleteEntry = async (id) => {
+    try {
+      await supabase.from("orchard_data").delete().eq("id", id);
+      await fetchEntries();
+      setIsEditingAll(false);
+      setShowConfirm(false);
+      if (activeTab === "previous") setActiveTab("new");
+      showToast("Entry Deleted", "success");
+    } catch (err) { console.error(err); }
+  };
+
+  const tabs = [
+    { id: "previous", label: "Previous", icon: <History size={12} /> },
+    { id: "new", label: "New", icon: <Plus size={12} /> },
+    { id: "all", label: "All", icon: <Waves size={12} /> },
+  ];
+
+  const pruningLabels = ["What I am letting go", "What I am nurturing", "What I am reaching toward"];
+
   return (
-    <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif flex flex-col selection:bg-[#36454F]/10 relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#F5F0E8] font-serif text-[#36454F] pb-20 selection:bg-[#36454F]/10">
 
-
-      <div
-        className={`fixed top-10 right-10 z-[100] flex items-center gap-4 p-5 rounded-2xl shadow-2xl border transition-all duration-500 transform ${toast.show ? "translate-x-0 opacity-100" : "translate-x-20 opacity-0 pointer-events-none"
-          } ${toast.type === "success"
-            ? "bg-white border-green-100 text-[#36454F]"
-            : "bg-[#36454F] border-white/10 text-[#F5F0E8]"
-          }`}
-      >
-        {toast.type === "success" ? (
-          <CheckCircle2 className="text-green-500" size={20} />
-        ) : (
-          <AlertCircle className="text-red-400" size={20} />
-        )}
-        <p className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold italic">
-          {toast.message}
-        </p>
-        <button onClick={() => setToast({ ...toast, show: false })} className="ml-4 opacity-30 hover:opacity-100">
-          <X size={14} />
-        </button>
+      {/* Toast */}
+      <div className={`fixed top-10 right-10 z-[100] flex items-center gap-4 p-5 rounded-2xl shadow-2xl border transition-all duration-500 transform ${toast.show ? "translate-x-0 opacity-100" : "translate-x-20 opacity-0 pointer-events-none"} ${toast.type === "success" ? "bg-white border-green-100" : "bg-[#36454F] text-white"}`}>
+        {toast.type === "success" ? <CheckCircle2 className="text-green-500" size={20} /> : <AlertCircle className="text-red-400" size={20} />}
+        <p className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold italic">{toast.message}</p>
       </div>
-      <header className="relative w-full max-w-7xl mx-auto pt-10 pb-7  text-center">
-        {/* Back Button Container */}
-        <div className="absolute top-6 md:top-12 left-0">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all"
-          >
+
+      <header className="relative w-full max-w-7xl mx-auto pt-10 pb-7 text-center">
+        <div className="absolute top-6 md:top-12 left-0 ">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all">
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
             <span className="mt-0.5">Back</span>
           </button>
         </div>
-
-        {/* Header Text */}
         <div className="flex flex-col items-center pt-6 md:pt-0">
-          <h1 className="text-3xl md:text-4xl font-bold italic tracking-tight text-[#36454F]">
-            The Orchard
-          </h1>
-
+          <h1 className="text-3xl md:text-4xl font-bold italic text-[#36454F]">The Orchard</h1>
           <div className="w-12 h-[1px] bg-[#36454F]/10 mt-8" />
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto w-full px-6 py-5 pb-20 flex flex-col lg:flex-row gap-8 items-stretch relative z-10 justify-center">
-
-
-        <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col transition-all hover:shadow-md overflow-hidden">
-
-          <div className="mb-8 text-center">
-            <h2 className="md:text-2xl font-light tracking-tight italic text-[#36454F]">Seasonal Pruning</h2>
-            <p className="text-[14px] uppercase tracking-[0.3em] font-bold opacity-80 mt-2 font-sans">Tending to your growth</p>
-          </div>
-
-          <div className="flex-grow space-y-6">
-            <div className="w-full h-78 mb-6 rounded-[2rem] overflow-hidden border border-[#36454F]/5 shadow-inner">
-              <img src={redpanda} alt="Red Panda" className="w-full h-full object-cover grayscale-[20%] opacity-90" />
-            </div>
-
-            {[
-              { label: "What I am letting go", val: pruning[0], idx: 0 },
-              { label: "What I am nurturing", val: pruning[1], idx: 1 },
-              { label: "What I am reaching toward", val: pruning[2], idx: 2 }
-            ].map((item) => (
-              <div key={item.idx} className="group">
-                <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed ">
-                  {item.label}
-                </label>
-                <textarea
-                  value={item.val}
-                  onChange={(e) => {
-                    const newP = [...pruning];
-                    newP[item.idx] = e.target.value;
-                    setPruning(newP);
-                  }}
-                  placeholder="..."
-                  className="w-full h-[85px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-3 py-2 outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 resize-none river-scroll shadow-sm"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* RIGHT PAGE: THE HARVEST */}
-        <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col transition-all hover:shadow-md relative overflow-hidden">
-
-          <div className="mb-10 text-center">
-            <h2 className="md:text-2xl font-light tracking-tight italic text-[#36454F]">The Harvest: What Has Grown</h2>
-            {/* <p className="text-[9px] uppercase tracking-[0.3em] font-bold opacity-30 mt-2 font-sans">Gathering what has grown</p> */}
-          </div>
-
-          <div className="flex-grow flex flex-col">
-            <label className="text-[13px] uppercase tracking-[0.3em] font-bold block mb-3 font-sans opacity-80 text-center italic">
-              “Three things that grew this season”
-            </label>
-
-            <textarea
-              value={harvest}
-              onChange={(e) => setHarvest(e.target.value)}
-              placeholder="Record what you are gathering..."
-              className="w-full flex-grow bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 resize-none river-scroll shadow-inner"
-            />
-          </div>
-
-          <div className="mt-8">
-            <button
-              onClick={saveOrchard}
-              disabled={loading}
-              className="w-full bg-[#36454F] text-white py-5 rounded-xl flex items-center justify-center gap-3 hover:bg-black transition-all tracking-[0.4em] font-sans uppercase text-[12px] font-bold font-sans shadow-lg active:scale-95 disabled:opacity-50"
-            >
-              {loading ? <Loader2 size={16} className="animate-spin" /> : <> SAVE NEW ENTRY </>}
+      {/* TABS */}
+      <div className="max-w-md mx-auto px-6 mb-12">
+        <div className="flex bg-white/40 p-1 rounded-full border border-[#36454F]/5 shadow-inner relative">
+          {tabs.map((tab) => (
+            <button key={tab.id} onClick={() => { setActiveTab(tab.id); setIsEditingAll(false); setShowConfirm(false); }}
+              className={`relative flex-1 flex items-center justify-center gap-2 py-3 rounded-full text-[12px] uppercase tracking-[0.2em] font-sans font-bold transition-colors duration-300 z-10 ${activeTab === tab.id ? "text-[#F5F0E8]" : "text-[#36454F]"}`}>
+              {tab.icon} {tab.label}
+              {activeTab === tab.id && <motion.div layoutId="activeTabOrchard" className="absolute inset-0 bg-[#36454F] rounded-full -z-10 shadow-md" transition={{ type: "spring", bounce: 0.2, duration: 0.6 }} />}
             </button>
-
-            <div className="flex items-center justify-between opacity-80 mt-6 px-2">
-              <p className="text-[18px] italic max-w-[280px] leading-relaxed font-serif">
-                “Tend to your orchard, and the fruit will follow.”
-              </p>
-              <div className="w-18 h-10 bg-[#36454F]/5 rounded-xl flex items-center justify-center overflow-hidden border border-[#36454F]/10">
-                <img src={redpandas} alt="Companion" className="w-full h-full object-contain grayscale" />
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
+      </div>
+
+      <main className="max-w-6xl mx-auto w-full px-6">
+        <AnimatePresence mode="wait">
+          {(activeTab === "new" || activeTab === "previous" || isEditingAll) && (
+            <div className="relative">
+
+              {/* DELETE ICON - RIGHT TOP */}
+              {(activeTab === "previous" || isEditingAll) && (
+                <div className="absolute -top-12 right-0 z-20">
+                  {!showConfirm ? (
+                    <button onClick={() => setShowConfirm(true)} className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm border border-[#36454F]/5 text-[#36454F]/40 hover:text-red-500 transition-colors">
+                      <Trash2 size={18} />
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-2 bg-white p-1 rounded-full shadow-md border border-[#36454F]/5">
+                      <button onClick={() => deleteEntry(prevEditData.id)} className="p-2 bg-red-500 text-white rounded-full transition-transform active:scale-90">
+                        <CheckCircle2 size={16} />
+                      </button>
+                      <button onClick={() => setShowConfirm(false)} className="p-2 text-[#36454F]/40 hover:text-[#36454F] transition-colors">
+                        <X size={16} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {isEditingAll && (
+                <button onClick={() => setIsEditingAll(false)} className="absolute -top-10 left-0 text-[12px] uppercase font-bold font-sans tracking-widest hover:opacity-100 transition-opacity">
+                  ‹ Back to list
+                </button>
+              )}
+
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col lg:flex-row gap-8 justify-center items-stretch">
+
+                {/* LEFT CARD: SEASONAL PRUNING */}
+                <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col transition-all hover:shadow-md">
+                  <div className="mb-8 text-center">
+                    <h2 className="text-2xl font-light italic text-[#36454F]">Seasonal Pruning</h2>
+                    <p className="text-[14px] uppercase tracking-[0.3em] font-bold opacity-80 mt-2 font-sans">Tending to your growth</p>
+                  </div>
+
+                  <div className="w-full h-78 mb-6 rounded-[2rem] overflow-hidden border border-[#36454F]/5 shadow-inner">
+                    <img src={redpandaImg} alt="Red Panda" className="w-full h-full object-cover grayscale-[20%] opacity-90" />
+                  </div>
+
+                  <div className="space-y-6">
+                    {pruningLabels.map((label, i) => (
+                      <div key={i}>
+                        <label className="text-[13px] uppercase tracking-[0.2em] block mb-2 font-sans font-bold opacity-80">{label}</label>
+                        <textarea
+                          value={activeTab === "new" ? pruning[i] : (prevEditData.pruning ? prevEditData.pruning[i] : "")}
+                          onChange={(e) => {
+                            if (activeTab === "new") {
+                              const newP = [...pruning]; newP[i] = e.target.value; setPruning(newP);
+                            } else {
+                              const newP = [...prevEditData.pruning]; newP[i] = e.target.value; setPrevEditData({ ...prevEditData, pruning: newP });
+                            }
+                          }}
+                          placeholder="..."
+                          className="w-full h-[85px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-4 py-3 outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 resize-none river-scroll shadow-sm"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* RIGHT CARD: THE HARVEST */}
+                <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col transition-all hover:shadow-md">
+                  <div className="text-center">
+                    <h2 className="text-2xl font-light italic text-[#36454F] mb-10 ">The Harvest: What Has Grown</h2>
+                    <p className="text-[14px] uppercase tracking-[0.3em] font-bold opacity-80 mt-2 font-sans italic mb-3">“Three things that grew this season”</p>
+                  </div>
+
+                  <div className="flex-grow flex flex-col">
+                    <textarea
+                      value={activeTab === "new" ? harvest : prevEditData.harvest || ""}
+                      onChange={(e) => activeTab === "new" ? setHarvest(e.target.value) : setPrevEditData({ ...prevEditData, harvest: e.target.value })}
+                      placeholder="Record what you are gathering..."
+                      className="w-full flex-grow bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 resize-none river-scroll shadow-inner min-h-[300px]"
+                    />
+                  </div>
+
+                  <div className="mt-8">
+                    <button
+                      onClick={activeTab === "new" ? handleSave : () => handleUpdate(prevEditData.id, prevEditData)}
+                      disabled={loading}
+                      className="w-full bg-[#36454F] text-white py-5 rounded-xl flex items-center justify-center gap-3 hover:bg-black transition-all tracking-[0.4em] font-sans uppercase text-[12px] font-bold shadow-lg active:scale-95 disabled:opacity-50"
+                    >
+                      {loading ? <Loader2 size={16} className="animate-spin" /> : activeTab === "new" ? "SAVE NEW ENTRY" : "UPDATE ENTRY"}
+                    </button>
+
+                    <div className="flex items-center justify-between opacity-80 mt-6 px-2">
+                      <p className="text-[18px] italic max-w-[280px] leading-relaxed font-serif">
+                        “Tend to your orchard, and the fruit will follow.”
+                      </p>
+                      <div className="w-18 h-10 bg-[#36454F]/5 rounded-xl flex items-center justify-center overflow-hidden border border-[#36454F]/10">
+                        <img src={redpandasImg} alt="Companion" className="w-full h-full object-contain grayscale" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
+
+          {/* ALL LIST VIEW */}
+          {activeTab === "all" && !isEditingAll && (
+            <motion.div key="all" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto w-full">
+              <div className="flex flex-col gap-1 mb-10 px-2">
+                <span className="text-[16px] uppercase tracking-[0.1em] font-sans font-bold">Captured</span>
+                <div className="flex items-baseline"><span className="text-2xl italic font-bold">{entries.length}</span><span className="text-2xl italic font-light mx-2 ">/</span><span className="text-2xl italic font-light opacity-40">25</span></div>
+              </div>
+              <div className="space-y-3">
+                {currentEntries.map((entry) => (
+                  <div key={entry.id} onClick={() => { setPrevEditData({ ...entry, pruning: entry.pruning || ["", "", ""] }); setIsEditingAll(true); }} className="group bg-white/40 px-6 py-5 rounded-2xl border border-[#36454F]/5 flex items-center gap-6 cursor-pointer hover:bg-white hover:shadow-md transition-all">
+                    <div className="w-12 h-12 bg-[#F5F0E8] rounded-xl flex flex-col items-center justify-center group-hover:bg-[#36454F] group-hover:text-white transition-all">
+                      <span className="text-sm font-sans font-bold">{new Date(entry.created_at).getDate()}</span>
+                      <span className="text-[10px] font-sans uppercase font-bold opacity-40">{new Date(entry.created_at).toLocaleDateString('en-GB', { month: 'short' })}</span>
+                    </div>
+                    <div className="flex-1 truncate">
+                      <h3 className="text-[17px] italic truncate">{entry.harvest || "A seasonal gathering..."}</h3>
+                    </div>
+                    <div className="w-2 h-2 rounded-full bg-[#36454F]/10 group-hover:bg-[#EAB308] transition-colors" />
+                  </div>
+                ))}
+              </div>
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-3 mt-12">
+                  {[...Array(totalPages)].map((_, i) => (
+                    <button key={i} onClick={() => { setCurrentPage(i + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`h-2 rounded-full transition-all duration-500 ${currentPage === i + 1 ? "bg-[#36454F] w-10" : "bg-[#36454F]/20 w-2 hover:bg-[#36454F]/40"}`} />
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
       <style jsx>{`

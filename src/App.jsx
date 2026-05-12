@@ -32,21 +32,21 @@ import "./index.css";
 import Invitations from "./pages/Invitations";
 // import Breaths from "./pages/Breaths";
 import Navigators from "./pages/Navigators";
+import PaymentSuccess from "./pages/PaymentSuccess";
+
+
 function App() {
   const [isAnimationLoading, setIsAnimationLoading] = useState(() => {
     const played = sessionStorage.getItem("enso_played");
     return played !== "true";
   });
-
   const [session, setSession] = useState(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-
   const isOnboarding = searchParams.get("mode") === "onboarding";
   const isVerified = searchParams.get("verified") === "true";
   const isAuthPage = ["/login", "/signup"].includes(location.pathname);
-
   const specialPages = ["/invitation", "/breath", "/navigator", "/navigatorguide"];
   const shouldHideNav = isAuthPage || (specialPages.includes(location.pathname) && isOnboarding);
 
@@ -57,7 +57,6 @@ function App() {
       setCheckingAuth(false);
     };
     checkUser();
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setCheckingAuth(false);
@@ -102,8 +101,6 @@ function App() {
           <Route path="/breath" element={session ? <Breath /> : <Navigate to="/login" />} />
           <Route path="/navigator" element={session ? <Navigator /> : <Navigate to="/login" />} />
           <Route path="/navigatorguide" element={session ? <NavigatorGuide /> : <Navigate to="/login" />} />
-
-          {/* ... Baaki routes wahi rahenge ... */}
           <Route path="/rituals" element={session ? <Rituals /> : <Navigate to="/login" />} />
           <Route path="/milestones" element={session ? <Milestones /> : <Navigate to="/login" />} />
           <Route path="/river" element={session ? <River /> : <Navigate to="/login" />} />
@@ -116,7 +113,6 @@ function App() {
           <Route path="/forge" element={session ? <Forge /> : <Navigate to="/login" />} />
           <Route path="/still-water" element={session ? <StillWater /> : <Navigate to="/login" />} />
           <Route path="/mark-moment" element={session ? <MarkMoment /> : <Navigate to="/login" />} />
-
           <Route path="/milestones/edit/:id" element={<MarkMoment />} />
           <Route path="/wellbeingpractices" element={session ? <WellbeingPractices /> : <Navigate to="/login" />} />
           <Route path="/companionReadings" element={session ? <CompanionReadings /> : <Navigate to="/login" />} />
@@ -125,6 +121,7 @@ function App() {
           <Route path="/invitations" element={session ? <Invitations /> : <Navigate to="/login" />} />
           {/* <Route path="/breaths" element={session ? <Breaths /> : <Navigate to="/login" />} /> */}
           <Route path="/navigators" element={session ? <Navigators /> : <Navigate to="/login" />} />
+          <Route path="/paymentsuccess" element={session ? <PaymentSuccess /> : <Navigate to="/login" />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>

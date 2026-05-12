@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // added useLocation
+import { useNavigate, useLocation } from "react-router-dom";
 import pikaIcon from "../assets/pexels-84328701-10035016.jpg";
 import mainHero from "../assets/bothredpikapandatogether.png";
 

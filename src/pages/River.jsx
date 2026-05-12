@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { Loader2, Plus, History, Waves, Trash2, X, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-// Assets
 import redpanda from "../assets/pexels-regan-dsouza-1315522347-30990826.jpg";
 import pika from "../assets/pfQpy9wSq4zFDCKwAg8gwf.jpg";
 
@@ -21,14 +19,12 @@ function River() {
   const [activeTab, setActiveTab] = useState("new");
   const [loading, setLoading] = useState(false);
   const [entries, setEntries] = useState([]);
-
-  // Form States
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const [morning, setMorning] = useState({ intentions: "", presence: "", firstSteps: "" });
   const [evening, setEvening] = useState("");
   const [prevEditData, setPrevEditData] = useState({});
   const [isEditingAll, setIsEditingAll] = useState(false);
-
-  // Sutra/Companion State
   const [currentSutra, setCurrentSutra] = useState("");
   const [companion, setCompanion] = useState(pika);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -44,6 +40,8 @@ function River() {
       updateSutraAndCompanion(0);
       setPrevEditData(entries[0]);
     }
+
+    setCurrentPage(1);
   }, [entries, activeTab]);
 
   const updateSutraAndCompanion = (indexInList, isNew = false) => {
@@ -53,10 +51,8 @@ function River() {
     } else {
       position = entries.length - indexInList;
     }
-
     const isRedPanda = position % 2 === 0;
     const sutraIdx = Math.floor((position - 1) / 2) % 25;
-
     if (isRedPanda) {
       setCurrentSutra(RED_PANDA_SUTRAS[sutraIdx]);
       setCompanion(redpanda);
@@ -75,7 +71,6 @@ function River() {
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
-
       if (!error && data) {
         setEntries(data);
       }
@@ -91,6 +86,12 @@ function River() {
   };
 
   const handleSave = async () => {
+
+    if (entries.length >= 100) {
+      alert("Your journal is full (100/100). Please purchase a refill from Etsy to continue your journey.");
+      return;
+    }
+
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -140,6 +141,11 @@ function River() {
     } catch (err) { console.error("Error deleting:", err); }
   };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentEntries = entries.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(entries.length / itemsPerPage);
+
   const tabs = [
     { id: "new", label: "New", icon: <Plus size={12} /> },
     { id: "previous", label: "Previous", icon: <History size={12} /> },
@@ -179,6 +185,7 @@ function River() {
         <AnimatePresence mode="wait">
           {activeTab === "new" && (
             <motion.div key="new" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col md:flex-row gap-8">
+              {/* Morning Section */}
               <div className="flex-1 bg-white rounded-[25px] p-10 shadow-sm border border-white/50 relative">
                 <h2 className="text-2xl font-light italic text-center pb-10">The Morning Current</h2>
                 <div className="space-y-10 relative z-10">
@@ -197,6 +204,7 @@ function River() {
                 </div>
                 <img src={companion} className="absolute bottom-6 right-6 w-20 opacity-[0.12] grayscale rounded-xl z-0 pointer-events-none" alt="companion" />
               </div>
+              {/* Evening Section */}
               <div className="flex-1 bg-white rounded-[2.5rem] p-10 shadow-sm border border-white/50 flex flex-col">
                 <h2 className="text-2xl font-light italic text-center pb-10">The Evening Reflection</h2>
                 <div className="flex-grow">
@@ -204,7 +212,7 @@ function River() {
                   <textarea value={evening} onChange={(e) => setEvening(e.target.value)} placeholder="How was the flow today?..." className="w-full min-h-[400px] bg-[#F5F0E8]/30 border border-[#36454F]/5 rounded-xl p-6 outline-none italic leading-loose focus:border-[#EAB308] focus:bg-white resize-none" />
                 </div>
                 <div className="mt-8">
-                  <button onClick={handleSave} disabled={loading} className="w-full bg-[#36454F] text-white py-5 mb-4 rounded-xl font-sans flex items-center justify-center gap-3 tracking-[0.4em] uppercase text-[12px] font-bold shadow-lg hover:bg-black transition-all active:scale-95">
+                  <button onClick={handleSave} disabled={loading} className="w-full bg-[#36454F] text-white py-5 mb-4 rounded-xl font-sans flex items-center justify-center gap-3 tracking-[0.4em] uppercase text-[12px] font-bold shadow-lg hover:bg-black transition-all active:scale-95 disabled:opacity-50">
                     {loading ? <Loader2 size={16} className="animate-spin" /> : "Record Journey"}
                   </button>
                   <p className="text-[18px] italic leading-relaxed opacity-80">"{currentSutra}"</p>
@@ -243,7 +251,7 @@ function River() {
                 </div>
                 <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col">
                   <h3 className="text-3xl italic text-center pb-10">The Evening Reflection</h3>
-                  <label class="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">Gratitude &amp; Observations &amp; Closing</label>
+                  <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">Gratitude &amp; Observations &amp; Closing</label>
                   <textarea value={prevEditData.evening_reflection || ""} onChange={(e) => setPrevEditData({ ...prevEditData, evening_reflection: e.target.value })} className="w-full min-h-[400px] bg-[#F5F0E8]/30 border border-[#36454F]/5 rounded-xl p-6 outline-none italic leading-loose focus:border-[#EAB308] focus:bg-white resize-none flex-grow" />
                   <div className="mt-12">
                     <button onClick={() => handleUpdate(prevEditData.id, prevEditData)} className="w-full bg-[#36454F] text-white py-6 rounded-2xl font-sans uppercase tracking-[0.5em] text-[12px] font-bold shadow-2xl active:scale-95">
@@ -263,44 +271,65 @@ function River() {
               animate={{ opacity: 1 }}
               className="max-w-3xl mx-auto"
             >
-              {/* --- NEW: Captured Counter Added Here --- */}
+              {/* Captured Counter */}
               <div className="flex flex-col gap-1 mb-8 px-2">
                 <span className="text-[16px] uppercase tracking-[0.1em] font-sans font-bold text-[#36454F]">
                   Captured
                 </span>
-
                 <div className="flex items-baseline">
                   <span className="text-2xl italic font-light text-[#36454F]">
                     {entries.length}
                   </span>
-                  <span className="text-2xl italic font-light mx-2">/</span>
-                  <span className="text-2xl italic font-light  text-[#36454F]">100</span>
+                  <span className="text-2xl italic font-light mx-2 opacity-20">/</span>
+                  <span className="text-2xl italic font-light text-[#36454F] opacity-40">100</span>
                 </div>
               </div>
 
-              {/* --- Your Existing Entries List --- */}
+              {/* Entries List with Pagination */}
               <div className="space-y-3">
-                {entries.map((entry, index) => (
-                  <div
-                    key={entry.id}
-                    onClick={() => handleEntryClick(entry, index)}
-                    className="group bg-white/40 px-6 py-5 rounded-2xl border border-[#36454F]/5 flex items-center gap-6 cursor-pointer hover:bg-white/60 transition-all"
-                  >
-                    <div className="w-12 h-12 bg-[#F5F0E8] rounded-xl flex flex-col items-center justify-center group-hover:bg-[#36454F] group-hover:text-white transition-colors">
-                      <span className="text-sm italic font-sans font-bold">{new Date(entry.created_at).getDate()}</span>
-                      <span className="text-[10px] uppercase font-bold opacity-40 font-sans">
-                        {new Date(entry.created_at).toLocaleDateString('en-GB', { month: 'short' })}
-                      </span>
+                {currentEntries.map((entry, index) => {
+                  const globalIndex = indexOfFirstItem + index;
+                  return (
+                    <div
+                      key={entry.id}
+                      onClick={() => handleEntryClick(entry, globalIndex)}
+                      className="group bg-white/40 px-6 py-5 rounded-2xl border border-[#36454F]/5 flex items-center gap-6 cursor-pointer hover:bg-white/60 transition-all"
+                    >
+                      <div className="w-12 h-12 bg-[#F5F0E8] rounded-xl flex flex-col items-center justify-center group-hover:bg-[#36454F] group-hover:text-white transition-colors">
+                        <span className="text-sm italic font-sans font-bold">{new Date(entry.created_at).getDate()}</span>
+                        <span className="text-[10px] uppercase font-bold opacity-40 font-sans">
+                          {new Date(entry.created_at).toLocaleDateString('en-GB', { month: 'short' })}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-[16px] italic text-[#36454F]">
+                          {entry.presence || `Flow of ${new Date(entry.created_at).toLocaleDateString()}`}
+                        </h3>
+                      </div>
+                      <div className="w-2 h-2 rounded-full bg-[#36454F]/10 group-hover:bg-[#EAB308] transition-colors" />
                     </div>
-                    <div className="flex-1">
-                      <h3 className="text-[16px] italic text-[#36454F]">
-                        {entry.presence || `Flow of ${new Date(entry.created_at).toLocaleDateString()}`}
-                      </h3>
-                    </div>
-                    <div className="w-2 h-2 rounded-full bg-[#36454F]/10 group-hover:bg-[#EAB308] transition-colors" />
-                  </div>
-                ))}
+                  );
+                })}
               </div>
+
+              {/* Pagination Dots */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-3 mt-10">
+                  {[...Array(totalPages)].map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        setCurrentPage(i + 1);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className={`h-2 rounded-full transition-all duration-500 ${currentPage === i + 1
+                        ? "bg-[#36454F] w-8"
+                        : "bg-[#36454F]/20 w-2 hover:bg-[#36454F]/40"
+                        }`}
+                    />
+                  ))}
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

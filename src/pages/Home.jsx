@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import {
   Waves, Compass, Trees, Droplets,
-  MailOpen, Flag, Heart, BookOpen, Layers
+  MailOpen, Flag, Heart, BookOpen, Layers, Sparkles
 } from "lucide-react";
 
 const sections = [
@@ -43,18 +43,12 @@ const sections = [
   },
   {
     id: "well",
-    title: "The Still Water",
+    title: "The Well",
     icon: <Droplets size={28} />,
     path: "/well",
     desc: "A living resource — wellness practices and reflections to draw from freely."
   },
-  {
-    id: "well-practices",
-    title: "The Practices",
-    icon: <Heart size={28} />,
-    path: "/wellbeingpractices",
-    desc: "Small, repeated choices to notice and be seen. The Pika's mountain path."
-  },
+
   {
     id: "readings",
     title: "Companion Readings",
@@ -68,6 +62,13 @@ const sections = [
     icon: <Layers size={28} />,
     path: "/gathering-place",
     desc: "Your collection of photographs and meaningful moments saved for later."
+  },
+  {
+    id: "closing-rituals",
+    title: "The Closing Rituals",
+    icon: <Sparkles size={28} />, // Changed to Sparkles
+    path: "/rituals",
+    desc: "A final moment of reflection to plant your intentions and find peace." // Updated description
   },
 ];
 

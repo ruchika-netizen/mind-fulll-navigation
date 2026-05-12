@@ -2,16 +2,36 @@
 overflow: hidden;
 } */
 
+/* Add this to your index.css or App.css */
+
+/* Hide Edge's default password reveal button */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none !important;
+}
+
+/* Hide Chrome's password manager icons if they interfere */
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+  visibility: hidden !important;
+  display: none !important;
+  pointer-events: none !important;
+}
+
+
 .river-scroll::-webkit-scrollbar {
   width: 2px;
 }
+
 .river-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .river-scroll::-webkit-scrollbar-thumb {
-  background: rgba(54, 69, 79, 0.2); 
+  background: rgba(54, 69, 79, 0.2);
   border-radius: 2px;
 }
+
 .river-scroll {
   scrollbar-width: thin;
   scrollbar-color: rgba(54, 69, 79, 0.2) transparent;
@@ -30,6 +50,7 @@ overflow: hidden;
   &:hover {
     border-color: var(--accent-border);
   }
+
   &:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
@@ -61,8 +82,7 @@ overflow: hidden;
     z-index: 1;
     top: 34px;
     height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
+    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg) scale(1.4);
   }
 
   .vite {
@@ -70,8 +90,7 @@ overflow: hidden;
     top: 107px;
     height: 26px;
     width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
+    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg) scale(0.8);
   }
 }
 
@@ -94,9 +113,10 @@ overflow: hidden;
   border-top: 1px solid var(--border);
   text-align: left;
 
-  & > div {
+  &>div {
     flex: 1 1 0;
     padding: 32px;
+
     @media (max-width: 1024px) {
       padding: 24px 20px;
     }
@@ -149,6 +169,7 @@ overflow: hidden;
     &:hover {
       box-shadow: var(--shadow);
     }
+
     .button-icon {
       height: 18px;
       width: 18px;
@@ -175,6 +196,7 @@ overflow: hidden;
 #spacer {
   height: 88px;
   border-top: 1px solid var(--border);
+
   @media (max-width: 1024px) {
     height: 48px;
   }
@@ -196,6 +218,7 @@ overflow: hidden;
     left: 0;
     border-left-color: var(--border);
   }
+
   &::after {
     right: 0;
     border-right-color: var(--border);
