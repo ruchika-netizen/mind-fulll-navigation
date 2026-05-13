@@ -78,7 +78,9 @@ function Compass() {
         north_star: northStar,
         step_1: steps[0],
         step_2: steps[1],
-        step_3: steps[2]
+        step_3: steps[2],
+        type: "General", // Ab NULL nahi aayega
+
       }]);
       setNorthStar("");
       setSteps(["", "", ""]);
@@ -92,19 +94,31 @@ function Compass() {
   };
 
   const handleUpdate = async (id, updatedData) => {
+    if (!id) return; // Safety check
     setLoading(true);
     try {
-      await supabase.from("compass_goals").update({
-        north_star: updatedData.north_star,
-        step_1: updatedData.steps[0],
-        step_2: updatedData.steps[1],
-        step_3: updatedData.steps[2]
-      }).eq("id", id);
-      await fetchEntries();
+      const { data: { user } } = await supabase.auth.getUser();
+
+      const { error } = await supabase
+        .from("compass_goals")
+        .update({
+          north_star: updatedData.north_star,
+          step_1: updatedData.steps[0],
+          step_2: updatedData.steps[1],
+          step_3: updatedData.steps[2]
+        })
+        .eq("id", id)
+        .eq("user_id", user.id); // Security filter
+
+      if (error) throw error;
+
+      await fetchEntries(); // Naya data fetch karein
       setIsEditingAll(false);
-      showToast("Updated", "success");
+      showToast("Path Updated Successfully", "success");
     } catch (err) {
-      console.error(err);
+      console.error("Update Error:", err.message);
+      showToast("Update Failed", "error");
+    } finally {
       setLoading(false);
     }
   };
@@ -112,14 +126,30 @@ function Compass() {
   const deleteEntry = async (id) => {
     setLoading(true);
     try {
-      await supabase.from("compass_goals").delete().eq("id", id);
+      const { data: { user } } = await supabase.auth.getUser(); // User ID lena zaruri hai
+
+      const { error } = await supabase
+        .from("compass_goals")
+        .delete()
+        .eq("id", id)
+        .eq("user_id", user.id); // Ye line safety ke liye add karein
+
+      if (error) {
+        console.error("Delete Error:", error.message);
+        showToast(error.message, "error");
+        setLoading(false);
+        return;
+      }
+
       await fetchEntries();
       setIsEditingAll(false);
       setShowConfirm(false);
+
       if (activeTab === "previous") setActiveTab("new");
       showToast("Entry Deleted", "success");
+
     } catch (err) {
-      console.error(err);
+      console.error("Catch Error:", err);
       setLoading(false);
     }
   };
@@ -211,7 +241,7 @@ function Compass() {
                   )}
 
                   {activeTab === "previous" && entries.length === 0 ? (
-                    <div className="text-center py-32 italic opacity-40">
+                    <div className="text-center py-32 italic ">
                       <p className="mb-6 text-xl">No previous path found. Start a new journey.</p>
                       <button onClick={() => setActiveTab("new")} className="text-[12px] border-b border-[#36454F]/20 pb-1 uppercase font-sans font-bold hover:border-[#36454F] transition-all tracking-[0.2em]">
                         Map a new journey

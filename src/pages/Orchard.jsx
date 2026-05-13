@@ -73,24 +73,23 @@ function Orchard() {
       showToast("Orchard is full (25/25).", "error");
       return;
     }
-    if (!harvest.trim() && !pruning.some(p => p.trim())) {
-      showToast("Please record your thoughts first.", "error");
-      return;
-    }
-
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      await supabase.from("orchard_data").insert([{
-        user_id: user?.id,
+      const { error } = await supabase.from("orchard_data").insert([{
+        user_id: user.id,
         harvest: harvest,
-        pruning: pruning,
-        created_at: new Date().toISOString(),
+        letting_go: pruning[0],
+        nurturing: pruning[1],
+        reaching_toward: pruning[2]
       }]);
+
+      if (error) throw error;
+
       setHarvest("");
       setPruning(["", "", ""]);
       await fetchEntries();
-      setActiveTab("previous");
+      setActiveTab("all"); // Save ke baad 'all' par bhejein taaki list dikhe
       showToast("Harvest Recorded", "success");
     } catch (err) {
       showToast(err.message, "error");
@@ -103,21 +102,22 @@ function Orchard() {
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      const { error } = await supabase.from("orchard_data").update({
-        harvest: updatedData.harvest,
-        pruning: updatedData.pruning
-      })
+      const { error } = await supabase
+        .from("orchard_data")
+        .update({
+          harvest: updatedData.harvest,
+          letting_go: updatedData.letting_go,
+          nurturing: updatedData.nurturing,
+          reaching_toward: updatedData.reaching_toward
+        })
         .eq("id", id)
-        .eq("user_id", user.id);
+        .eq("user_id", user.id); // Security check
 
       if (error) throw error;
 
-      // Optimistic Update
-      setEntries(prev => prev.map(entry => entry.id === id ? { ...entry, ...updatedData } : entry));
-
+      await fetchEntries();
       setIsEditingAll(false);
       showToast("Updated Successfully", "success");
-      await fetchEntries();
     } catch (err) {
       showToast(err.message, "error");
     } finally {
@@ -219,7 +219,7 @@ function Orchard() {
 
                   {/* Empty State vs Content */}
                   {activeTab === "previous" && entries.length === 0 ? (
-                    <div className="text-center py-32 italic opacity-40">
+                    <div className="text-center py-32 italic ">
                       <p className="mb-6 text-xl">The orchard is quiet. No previous harvests found.</p>
                       <button onClick={() => setActiveTab("new")} className="text-[12px] border-b border-[#36454F]/20 pb-1 uppercase font-sans font-bold hover:border-[#36454F] transition-all tracking-[0.2em]">
                         Plant something new

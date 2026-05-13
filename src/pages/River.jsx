@@ -33,14 +33,18 @@ function River() {
     fetchEntries();
   }, []);
 
+  // FIXED: Logic to sync Previous tab with latest data or clear it if empty
   useEffect(() => {
     if (activeTab === "new") {
       updateSutraAndCompanion(null, true);
-    } else if (activeTab === "previous" && entries.length > 0) {
-      updateSutraAndCompanion(0);
-      setPrevEditData(entries[0]);
+    } else if (activeTab === "previous") {
+      if (entries.length > 0) {
+        updateSutraAndCompanion(0);
+        setPrevEditData(entries[0]);
+      } else {
+        setPrevEditData({}); // Clear if no entries
+      }
     }
-
     setCurrentPage(1);
   }, [entries, activeTab]);
 
@@ -86,12 +90,10 @@ function River() {
   };
 
   const handleSave = async () => {
-
     if (entries.length >= 100) {
-      alert("Your journal is full (100/100). Please purchase a refill from Etsy to continue your journey.");
+      alert("Your journal is full (100/100).");
       return;
     }
-
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -110,9 +112,11 @@ function River() {
     finally { setLoading(false); }
   };
 
+  // FIXED: Added user_id filter for secure update
   const handleUpdate = async (id, updatedData) => {
     setLoading(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
       const { error } = await supabase
         .from("journal_entries")
         .update({
@@ -121,7 +125,8 @@ function River() {
           first_steps: updatedData.first_steps,
           evening_reflection: updatedData.evening_reflection
         })
-        .eq("id", id);
+        .eq("id", id)
+        .eq("user_id", user.id);
 
       if (!error) {
         await fetchEntries();
@@ -131,14 +136,23 @@ function River() {
     finally { setLoading(false); }
   };
 
+  // FIXED: Added manual state clear for immediate UI sync
   const deleteEntry = async (id) => {
+    setLoading(true);
     try {
-      await supabase.from("journal_entries").delete().eq("id", id);
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase.from("journal_entries").delete().eq("id", id).eq("user_id", user.id);
+
       await fetchEntries();
+      setPrevEditData({}); // Immediately clear state
       setIsEditingAll(false);
       setShowConfirm(false);
       if (activeTab === "previous") setActiveTab("new");
-    } catch (err) { console.error("Error deleting:", err); }
+    } catch (err) {
+      console.error("Error deleting:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -185,7 +199,6 @@ function River() {
         <AnimatePresence mode="wait">
           {activeTab === "new" && (
             <motion.div key="new" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col md:flex-row gap-8">
-              {/* Morning Section */}
               <div className="flex-1 bg-white rounded-[25px] p-10 shadow-sm border border-white/50 relative">
                 <h2 className="text-2xl font-light italic text-center pb-10">The Morning Current</h2>
                 <div className="space-y-10 relative z-10">
@@ -204,7 +217,6 @@ function River() {
                 </div>
                 <img src={companion} className="absolute bottom-6 right-6 w-20 opacity-[0.12] grayscale rounded-xl z-0 pointer-events-none" alt="companion" />
               </div>
-              {/* Evening Section */}
               <div className="flex-1 bg-white rounded-[2.5rem] p-10 shadow-sm border border-white/50 flex flex-col">
                 <h2 className="text-2xl font-light italic text-center pb-10">The Evening Reflection</h2>
                 <div className="flex-grow">
@@ -223,110 +235,90 @@ function River() {
 
           {(activeTab === "previous" || (activeTab === "all" && isEditingAll)) && (
             <motion.div key="edit" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="max-w-6xl mx-auto">
-              <div className="flex justify-between items-center mb-5 px-2">
-                {activeTab === "all" && <button onClick={() => setIsEditingAll(false)} className="text-[12px] uppercase font-bold  font-sans tracking-widest">‹ Back to List</button>}
-                <div className="ml-auto flex gap-1.5 bg-white/40 p-1.5 rounded-full border border-[#36454F]/5 shadow-sm">
-                  {!showConfirm ? <button onClick={() => setShowConfirm(true)} className="p-1 text-[#36454F] hover:text-red-500"><Trash2 size={18} /></button> :
-                    <div className="flex items-center gap-1"><button onClick={() => deleteEntry(prevEditData.id)} className="p-2 bg-red-500 text-white rounded-full"><CheckCircle2 size={16} /></button><button onClick={() => setShowConfirm(false)} className="p-2 text-[#36454F]/60"><X size={16} /></button></div>}
+              {Object.keys(prevEditData).length === 0 ? (
+                <div className="text-center py-32 italic ">
+                  <p className="mb-6 text-xl">No previous path found. Start a new journey.</p>
+                  <button onClick={() => setActiveTab("new")} className="text-[12px] border-b border-[#36454F]/20 pb-1 uppercase font-sans font-bold hover:border-[#36454F] transition-all tracking-[0.2em]">
+                    Map a new journey
+                  </button>
                 </div>
-              </div>
-              <div className="flex flex-col lg:flex-row gap-8 justify-center">
-                <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 relative">
-                  <h3 className="text-3xl italic text-center pb-10">The Morning Current</h3>
-                  <div className="space-y-12 relative z-10">
-                    <div>
-                      <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">Intentions — What matters most in this moment?</label>
-                      <textarea value={prevEditData.intentions || ""} onChange={(e) => setPrevEditData({ ...prevEditData, intentions: e.target.value })} className="w-full h-[125px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-5 py-4 outline-none italic focus:border-[#EAB308] focus:bg-white" />
-                    </div>
-                    <div>
-                      <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">Presence — A single word for your attention.</label>
-                      <input type="text" maxLength={16} value={prevEditData.presence || ""} onChange={(e) => setPrevEditData({ ...prevEditData, presence: e.target.value })} className="w-full bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-5 py-4 outline-none italic focus:border-[#EAB308] focus:bg-white" />
-                    </div>
-                    <div>
-                      <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">First Steps — Actions to move you forward.</label>
-                      <textarea value={prevEditData.first_steps || ""} onChange={(e) => setPrevEditData({ ...prevEditData, first_steps: e.target.value })} className="w-full h-[125px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-5 py-4 outline-none italic focus:border-[#EAB308] focus:bg-white" />
+              ) : (
+                <>
+                  <div className="flex justify-between items-center mb-5 px-2">
+                    {activeTab === "all" && <button onClick={() => setIsEditingAll(false)} className="text-[12px] uppercase font-bold font-sans tracking-widest">‹ Back to List</button>}
+                    <div className="ml-auto flex gap-1.5 bg-white/40 p-1.5 rounded-full border border-[#36454F]/5 shadow-sm">
+                      {!showConfirm ? <button onClick={() => setShowConfirm(true)} className="p-1 text-[#36454F] hover:text-red-500"><Trash2 size={18} /></button> :
+                        <div className="flex items-center gap-1"><button onClick={() => deleteEntry(prevEditData.id)} className="p-2 bg-red-500 text-white rounded-full"><CheckCircle2 size={16} /></button><button onClick={() => setShowConfirm(false)} className="p-2 text-[#36454F]/60"><X size={16} /></button></div>}
                     </div>
                   </div>
-                  <img src={companion} className="absolute bottom-4 right-6 w-20 opacity-[0.12] grayscale rounded-xl z-0 pointer-events-none" alt="companion" />
-                </div>
-                <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col">
-                  <h3 className="text-3xl italic text-center pb-10">The Evening Reflection</h3>
-                  <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">Gratitude &amp; Observations &amp; Closing</label>
-                  <textarea value={prevEditData.evening_reflection || ""} onChange={(e) => setPrevEditData({ ...prevEditData, evening_reflection: e.target.value })} className="w-full min-h-[400px] bg-[#F5F0E8]/30 border border-[#36454F]/5 rounded-xl p-6 outline-none italic leading-loose focus:border-[#EAB308] focus:bg-white resize-none flex-grow" />
-                  <div className="mt-12">
-                    <button onClick={() => handleUpdate(prevEditData.id, prevEditData)} className="w-full bg-[#36454F] text-white py-6 rounded-2xl font-sans uppercase tracking-[0.5em] text-[12px] font-bold shadow-2xl active:scale-95">
-                      {loading ? <Loader2 size={16} className="animate-spin mx-auto" /> : "UPDATE JOURNEY"}
-                    </button>
-                    <p className="text-[18px] italic opacity-80 mt-8">"{currentSutra}"</p>
+                  <div className="flex flex-col lg:flex-row gap-8 justify-center">
+                    <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 relative">
+                      <h3 className="text-3xl italic text-center pb-10">The Morning Current</h3>
+                      <div className="space-y-12 relative z-10">
+                        <div>
+                          <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">Intentions — What matters most in this moment?</label>
+                          <textarea value={prevEditData.intentions || ""} onChange={(e) => setPrevEditData({ ...prevEditData, intentions: e.target.value })} className="w-full h-[125px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-5 py-4 outline-none italic focus:border-[#EAB308] focus:bg-white resize-none" />
+                        </div>
+                        <div>
+                          <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">Presence — A single word for your attention.</label>
+                          <input type="text" maxLength={16} value={prevEditData.presence || ""} onChange={(e) => setPrevEditData({ ...prevEditData, presence: e.target.value })} className="w-full bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-5 py-4 outline-none italic focus:border-[#EAB308] focus:bg-white" />
+                        </div>
+                        <div>
+                          <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">First Steps — Actions to move you forward.
+                          </label>
+                          <textarea value={prevEditData.first_steps || ""} onChange={(e) => setPrevEditData({ ...prevEditData, first_steps: e.target.value })} className="w-full h-[125px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-5 py-4 outline-none italic focus:border-[#EAB308] focus:bg-white resize-none" />
+                        </div>
+                      </div>
+                      <img src={companion} className="absolute bottom-4 right-6 w-20 opacity-[0.12] grayscale rounded-xl z-0 pointer-events-none" alt="companion" />
+                    </div>
+                    <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col">
+                      <h3 className="text-3xl italic text-center pb-10">The Evening Reflection</h3>
+                      <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">Gratitude & Observations</label>
+                      <textarea value={prevEditData.evening_reflection || ""} onChange={(e) => setPrevEditData({ ...prevEditData, evening_reflection: e.target.value })} className="w-full min-h-[400px] bg-[#F5F0E8]/30 border border-[#36454F]/5 rounded-xl p-6 outline-none italic leading-loose focus:border-[#EAB308] focus:bg-white resize-none flex-grow" />
+                      <div className="mt-12">
+                        <button onClick={() => handleUpdate(prevEditData.id, prevEditData)} className="w-full bg-[#36454F] text-white py-6 rounded-2xl font-sans uppercase tracking-[0.5em] text-[12px] font-bold shadow-2xl active:scale-95">
+                          {loading ? <Loader2 size={16} className="animate-spin mx-auto" /> : "UPDATE JOURNEY"}
+                        </button>
+                        <p className="text-[18px] italic opacity-80 mt-8">"{currentSutra}"</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </>
+              )}
             </motion.div>
           )}
 
           {activeTab === "all" && !isEditingAll && (
-            <motion.div
-              key="all-tab-content"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="max-w-3xl mx-auto"
-            >
-              {/* Captured Counter */}
+            <motion.div key="all-tab-content" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto">
               <div className="flex flex-col gap-1 mb-8 px-2">
-                <span className="text-[16px] uppercase tracking-[0.1em] font-sans font-bold text-[#36454F]">
-                  Captured
-                </span>
+                <span className="text-[16px] uppercase tracking-[0.1em] font-sans font-bold text-[#36454F]">Captured</span>
                 <div className="flex items-baseline">
-                  <span className="text-2xl italic font-light text-[#36454F]">
-                    {entries.length}
-                  </span>
+                  <span className="text-2xl italic font-light text-[#36454F]">{entries.length}</span>
                   <span className="text-2xl italic font-light mx-2 opacity-20">/</span>
                   <span className="text-2xl italic font-light text-[#36454F] opacity-40">100</span>
                 </div>
               </div>
-
-              {/* Entries List with Pagination */}
               <div className="space-y-3">
                 {currentEntries.map((entry, index) => {
                   const globalIndex = indexOfFirstItem + index;
                   return (
-                    <div
-                      key={entry.id}
-                      onClick={() => handleEntryClick(entry, globalIndex)}
-                      className="group bg-white/40 px-6 py-5 rounded-2xl border border-[#36454F]/5 flex items-center gap-6 cursor-pointer hover:bg-white/60 transition-all"
-                    >
+                    <div key={entry.id} onClick={() => handleEntryClick(entry, globalIndex)} className="group bg-white/40 px-6 py-5 rounded-2xl border border-[#36454F]/5 flex items-center gap-6 cursor-pointer hover:bg-white/60 transition-all">
                       <div className="w-12 h-12 bg-[#F5F0E8] rounded-xl flex flex-col items-center justify-center group-hover:bg-[#36454F] group-hover:text-white transition-colors">
                         <span className="text-sm italic font-sans font-bold">{new Date(entry.created_at).getDate()}</span>
-                        <span className="text-[10px] uppercase font-bold opacity-40 font-sans">
-                          {new Date(entry.created_at).toLocaleDateString('en-GB', { month: 'short' })}
-                        </span>
+                        <span className="text-[10px] uppercase font-bold opacity-40 font-sans">{new Date(entry.created_at).toLocaleDateString('en-GB', { month: 'short' })}</span>
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-[16px] italic text-[#36454F]">
-                          {entry.presence || `Flow of ${new Date(entry.created_at).toLocaleDateString()}`}
-                        </h3>
+                        <h3 className="text-[16px] italic text-[#36454F]">{entry.presence || `Flow of ${new Date(entry.created_at).toLocaleDateString()}`}</h3>
                       </div>
                       <div className="w-2 h-2 rounded-full bg-[#36454F]/10 group-hover:bg-[#EAB308] transition-colors" />
                     </div>
                   );
                 })}
               </div>
-
-              {/* Pagination Dots */}
               {totalPages > 1 && (
                 <div className="flex justify-center items-center gap-3 mt-10">
                   {[...Array(totalPages)].map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => {
-                        setCurrentPage(i + 1);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                      className={`h-2 rounded-full transition-all duration-500 ${currentPage === i + 1
-                        ? "bg-[#36454F] w-8"
-                        : "bg-[#36454F]/20 w-2 hover:bg-[#36454F]/40"
-                        }`}
-                    />
+                    <button key={i} onClick={() => { setCurrentPage(i + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`h-2 rounded-full transition-all duration-500 ${currentPage === i + 1 ? "bg-[#36454F] w-8" : "bg-[#36454F]/20 w-2 hover:bg-[#36454F]/40"}`} />
                   ))}
                 </div>
               )}

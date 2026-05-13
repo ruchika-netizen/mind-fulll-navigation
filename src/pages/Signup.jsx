@@ -27,7 +27,7 @@ function Signup() {
     }
     setLoading(true);
 
-
+    // Supabase SignUp call
     const { data, error } = await supabase.auth.signUp({
       email: form.email.trim(),
       password: form.password,
@@ -42,6 +42,7 @@ function Signup() {
       recaptchaRef.current?.reset();
       setCaptchaToken(null);
     } else {
+      // CHECK HERE: Agar user pehle se registered hai toh identities array empty hota hai
       if (data?.user && data.user.identities && data.user.identities.length === 0) {
         triggerToast("This email is already registered. Try logging in.", "error");
         recaptchaRef.current?.reset();

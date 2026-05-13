@@ -93,7 +93,7 @@ function Milestones() {
 
         <div className="space-y-4">
           {milestones.length === 0 ? (
-            <div className="text-center py-32 opacity-20 italic text-lg font-light tracking-wide">Your river is still forming...</div>
+            <div className="text-center py-32 italic text-lg font-light tracking-wide">The milestone is quiet. No previous milestone found.</div>
           ) : (
             milestones.map((milestone) => (
               <div

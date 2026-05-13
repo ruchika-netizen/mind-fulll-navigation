@@ -58,27 +58,34 @@ function GatheringPlace() {
     }
   };
 
+  // ... baaki imports same rahenge ...
+
   const addItem = async () => {
-    // Validation
     if (activeTab === "photo" && !selectedFile) return;
     if (activeTab !== "photo" && !inputText.trim()) return;
 
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.error("No user found");
+        return;
+      }
+
       let finalContent = inputText;
 
-      // Agar photo hai toh pehle upload karo
       if (activeTab === "photo" && selectedFile) {
-        const fileName = `${Date.now()}-${selectedFile.name}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('scrapbook_photos')
+        const fileExt = selectedFile.name.split('.').pop();
+        const fileName = `${Math.random()}-${Date.now()}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("scrapbook_photos")
           .upload(fileName, selectedFile);
 
         if (uploadError) throw uploadError;
 
         const { data: { publicUrl } } = supabase.storage
-          .from('scrapbook_photos')
+          .from("scrapbook_photos")
           .getPublicUrl(fileName);
 
         finalContent = publicUrl;
@@ -92,25 +99,46 @@ function GatheringPlace() {
           type: activeTab
         }]);
 
-      if (!dbError) {
-        setInputText("");
-        setSelectedFile(null);
-        setPreviewUrl(null);
-        fetchItems();
-      }
+      if (dbError) throw dbError;
+
+      // SUCCESS: No browser alert, just reset states
+      setInputText("");
+      setSelectedFile(null);
+      setPreviewUrl(null);
+      fetchItems();
+
     } catch (err) {
-      console.error(err);
-      alert("Failed to save.");
+      console.error("Detailed Error:", err.message);
+      // alert() remove kar diya gaya hai
     } finally {
       setLoading(false);
     }
   };
 
   const removeItem = async (id) => {
-    const { error } = await supabase.from("gathering_items").delete().eq("id", id);
-    if (!error) fetchItems();
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Delete request mein user_id check karna zaroori hai RLS ke liye
+      const { error } = await supabase
+        .from("gathering_items")
+        .delete()
+
+        .eq("user_id", user.id) // Ye filter filter lagana zaroori hai!
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      // Local state update taaki bina refresh ke item gayab ho jaye
+      setItems(items.filter(item => item.id !== id));
+
+    } catch (err) {
+      console.error("Delete Error:", err.message);
+    }
   };
 
+  // ... baaki return statement same rahega ...
   if (pageLoading) return <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center animate-pulse"><Loader2 className="animate-spin text-[#36454F] opacity-20" /></div>;
 
   const filteredItems = items.filter(item => item.type === activeTab);
