@@ -171,7 +171,7 @@ function GatheringPlace() {
                       <div className="w-12 h-12 rounded-full bg-[#36454F]/5 flex items-center justify-center text-[#36454F]/20 group-hover:scale-110 transition-all">
                         <Plus size={24} />
                       </div>
-                      <p className="text-[#36454F]/40 italic text-sm">No photo captured yet...</p>
+                      <p className="text-[#36454F] italic text-xl ">Capture a Memory...</p>
                     </div>
                   )}
                 </div>
