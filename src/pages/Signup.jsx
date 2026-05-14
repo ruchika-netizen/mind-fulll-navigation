@@ -1,18 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link } from "react-router-dom";
 import { CheckCircle2, AlertCircle, Loader2, Eye, EyeOff } from "lucide-react";
-import ReCAPTCHA from "react-google-recaptcha";
 
 function Signup() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState(null);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
   const navigate = useNavigate();
-  const recaptchaRef = useRef();
 
   const triggerToast = (message, type = "success") => {
     setToast({ show: true, message, type });
@@ -21,37 +18,23 @@ function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    if (!captchaToken) {
-      triggerToast("Please verify the Google reCAPTCHA", "error");
-      return;
-    }
     setLoading(true);
 
-    // Supabase SignUp call
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email: form.email.trim(),
       password: form.password,
       options: {
-        captchaToken: captchaToken,
+
         emailRedirectTo: `${window.location.origin}/login?verified=true`,
       },
     });
 
     if (error) {
       triggerToast(error.message, "error");
-      recaptchaRef.current?.reset();
-      setCaptchaToken(null);
     } else {
-      // CHECK HERE: Agar user pehle se registered hai toh identities array empty hota hai
-      if (data?.user && data.user.identities && data.user.identities.length === 0) {
-        triggerToast("This email is already registered. Try logging in.", "error");
-        recaptchaRef.current?.reset();
-        setCaptchaToken(null);
-      } else {
-        triggerToast("Verification link sent! Check your email.", "success");
-        await supabase.auth.signOut();
-        setTimeout(() => navigate("/login"), 2500);
-      }
+      triggerToast("Verification link sent! Check your email.", "success");
+      await supabase.auth.signOut();
+      setTimeout(() => navigate("/login"), 2500);
     }
     setLoading(false);
   };
@@ -71,8 +54,6 @@ function Signup() {
         <h2 className="text-3xl text-center mb-10 italic text-[#36454F]">Create Account</h2>
 
         <form onSubmit={handleSignup} className="space-y-6" autoComplete="off">
-
-          {/* Email Field with Old Label */}
           <div className="space-y-2">
             <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold ml-1">Email Address</label>
             <input
@@ -84,7 +65,6 @@ function Signup() {
             />
           </div>
 
-          {/* Password Field with Old Label */}
           <div className="space-y-2">
             <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold ml-1">Create Password</label>
             <div className="relative group">
@@ -106,16 +86,7 @@ function Signup() {
             </div>
           </div>
 
-          {/* GOOGLE reCAPTCHA - Clean Center Design */}
-          <div className="flex justify-center py-2 overflow-hidden">
-            <div className="scale-[0.85] origin-center">
-              <ReCAPTCHA
-                ref={recaptchaRef}
-                sitekey="6LeH3NssAAAAAGpM5Uw9uM8XLWDTq_5a2qqR0fHA"
-                onChange={(token) => setCaptchaToken(token)}
-              />
-            </div>
-          </div>
+          {/* ReCAPTCHA wala poora div yahan se remove kar diya hai */}
 
           <button
             type="submit"

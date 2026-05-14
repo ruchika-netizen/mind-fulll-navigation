@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
-import { Loader2, Plus, History, Waves, Trash2, X, CheckCircle2 } from "lucide-react";
+import { Loader2, Plus, History, Waves, Trash2, X, CheckCircle2, Lock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import redpanda from "../assets/pexels-regan-dsouza-1315522347-30990826.jpg";
 import pika from "../assets/pfQpy9wSq4zFDCKwAg8gwf.jpg";
@@ -28,12 +28,14 @@ function River() {
   const [currentSutra, setCurrentSutra] = useState("");
   const [companion, setCompanion] = useState(pika);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+
+  const MAX_ENTRIES = 100;
 
   useEffect(() => {
     fetchEntries();
   }, []);
 
-  // FIXED: Logic to sync Previous tab with latest data or clear it if empty
   useEffect(() => {
     if (activeTab === "new") {
       updateSutraAndCompanion(null, true);
@@ -42,19 +44,14 @@ function River() {
         updateSutraAndCompanion(0);
         setPrevEditData(entries[0]);
       } else {
-        setPrevEditData({}); // Clear if no entries
+        setPrevEditData({});
       }
     }
     setCurrentPage(1);
   }, [entries, activeTab]);
 
   const updateSutraAndCompanion = (indexInList, isNew = false) => {
-    let position;
-    if (isNew) {
-      position = entries.length + 1;
-    } else {
-      position = entries.length - indexInList;
-    }
+    let position = isNew ? entries.length + 1 : entries.length - indexInList;
     const isRedPanda = position % 2 === 0;
     const sutraIdx = Math.floor((position - 1) / 2) % 25;
     if (isRedPanda) {
@@ -90,10 +87,7 @@ function River() {
   };
 
   const handleSave = async () => {
-    if (entries.length >= 100) {
-      alert("Your journal is full (100/100).");
-      return;
-    }
+    if (entries.length >= MAX_ENTRIES) return;
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -112,7 +106,6 @@ function River() {
     finally { setLoading(false); }
   };
 
-  // FIXED: Added user_id filter for secure update
   const handleUpdate = async (id, updatedData) => {
     setLoading(true);
     try {
@@ -130,29 +123,25 @@ function River() {
 
       if (!error) {
         await fetchEntries();
-        setIsEditingAll(false);
+        setUpdateSuccess(true);
+        setTimeout(() => setUpdateSuccess(false), 3000);
       }
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
   };
 
-  // FIXED: Added manual state clear for immediate UI sync
   const deleteEntry = async (id) => {
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       await supabase.from("journal_entries").delete().eq("id", id).eq("user_id", user.id);
-
       await fetchEntries();
-      setPrevEditData({}); // Immediately clear state
+      setPrevEditData({});
       setIsEditingAll(false);
       setShowConfirm(false);
       if (activeTab === "previous") setActiveTab("new");
-    } catch (err) {
-      console.error("Error deleting:", err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -168,9 +157,29 @@ function River() {
 
   return (
     <div className="min-h-screen bg-[#F5F0E8] font-serif text-[#36454F] selection:bg-[#36454F]/10 pb-20">
+
+      {/* COMPASS STYLE TOAST NOTIFICATION */}
+      <AnimatePresence>
+        {updateSuccess && (
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 50 }}
+            className="fixed top-10 right-10 z-[100] bg-white px-5 py-3 rounded-xl flex items-center gap-3  border border-[#36454F]/5"
+          >
+            <div className="bg-[#E1F5E8] p-1 rounded-full">
+              <CheckCircle2 size={14} className="text-[#22C55E]" strokeWidth={3} />
+            </div>
+            <span className="text-[11px] uppercase font-sans font-bold tracking-[0.15em] text-[#36454F]">
+              Path Updated Successfully
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <header className="relative w-full max-w-7xl mx-auto pt-10 pb-7 text-center">
         <div className="absolute top-6 md:top-12 left-0">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all px-6">
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
             <span className="mt-0.5">Back</span>
           </button>
@@ -224,9 +233,16 @@ function River() {
                   <textarea value={evening} onChange={(e) => setEvening(e.target.value)} placeholder="How was the flow today?..." className="w-full min-h-[400px] bg-[#F5F0E8]/30 border border-[#36454F]/5 rounded-xl p-6 outline-none italic leading-loose focus:border-[#EAB308] focus:bg-white resize-none" />
                 </div>
                 <div className="mt-8">
-                  <button onClick={handleSave} disabled={loading} className="w-full bg-[#36454F] text-white py-5 mb-4 rounded-xl font-sans flex items-center justify-center gap-3 tracking-[0.4em] uppercase text-[12px] font-bold shadow-lg hover:bg-black transition-all active:scale-95 disabled:opacity-50">
-                    {loading ? <Loader2 size={16} className="animate-spin" /> : "Record Journey"}
-                  </button>
+                  {entries.length >= MAX_ENTRIES ? (
+                    <div className="w-full bg-[#36454F]/10 text-[#36454F] py-5 mb-4 rounded-xl font-sans flex items-center justify-center gap-3 border border-[#36454F]/20">
+                      <Lock size={16} />
+                      <span className="tracking-[0.2em] uppercase text-[11px] font-bold">The River has reached its 100-flow limit</span>
+                    </div>
+                  ) : (
+                    <button onClick={handleSave} disabled={loading} className="w-full bg-[#36454F] text-white py-5 mb-4 rounded-xl font-sans flex items-center justify-center gap-3 tracking-[0.4em] uppercase text-[12px] font-bold shadow-lg hover:bg-black transition-all active:scale-95 disabled:opacity-50">
+                      {loading ? <Loader2 size={16} className="animate-spin" /> : "Record Journey"}
+                    </button>
+                  )}
                   <p className="text-[18px] italic leading-relaxed opacity-80">"{currentSutra}"</p>
                 </div>
               </div>
@@ -264,8 +280,7 @@ function River() {
                           <input type="text" maxLength={16} value={prevEditData.presence || ""} onChange={(e) => setPrevEditData({ ...prevEditData, presence: e.target.value })} className="w-full bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-5 py-4 outline-none italic focus:border-[#EAB308] focus:bg-white" />
                         </div>
                         <div>
-                          <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">First Steps — Actions to move you forward.
-                          </label>
+                          <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">First Steps — Actions to move you forward.</label>
                           <textarea value={prevEditData.first_steps || ""} onChange={(e) => setPrevEditData({ ...prevEditData, first_steps: e.target.value })} className="w-full h-[125px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl px-5 py-4 outline-none italic focus:border-[#EAB308] focus:bg-white resize-none" />
                         </div>
                       </div>
@@ -276,7 +291,7 @@ function River() {
                       <label className="text-[13px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 ml-1 leading-relaxed">Gratitude & Observations</label>
                       <textarea value={prevEditData.evening_reflection || ""} onChange={(e) => setPrevEditData({ ...prevEditData, evening_reflection: e.target.value })} className="w-full min-h-[400px] bg-[#F5F0E8]/30 border border-[#36454F]/5 rounded-xl p-6 outline-none italic leading-loose focus:border-[#EAB308] focus:bg-white resize-none flex-grow" />
                       <div className="mt-12">
-                        <button onClick={() => handleUpdate(prevEditData.id, prevEditData)} className="w-full bg-[#36454F] text-white py-6 rounded-2xl font-sans uppercase tracking-[0.5em] text-[12px] font-bold shadow-2xl active:scale-95">
+                        <button onClick={() => handleUpdate(prevEditData.id, prevEditData)} className="w-full bg-[#36454F] text-white py-6 rounded-2xl font-sans uppercase tracking-[0.5em] text-[12px] font-bold shadow-2xl active:scale-95 transition-all hover:bg-black">
                           {loading ? <Loader2 size={16} className="animate-spin mx-auto" /> : "UPDATE JOURNEY"}
                         </button>
                         <p className="text-[18px] italic opacity-80 mt-8">"{currentSutra}"</p>
@@ -295,7 +310,7 @@ function River() {
                 <div className="flex items-baseline">
                   <span className="text-2xl italic font-light text-[#36454F]">{entries.length}</span>
                   <span className="text-2xl italic font-light mx-2 opacity-20">/</span>
-                  <span className="text-2xl italic font-light text-[#36454F] opacity-40">100</span>
+                  <span className="text-2xl italic font-light text-[#36454F] opacity-40">{MAX_ENTRIES}</span>
                 </div>
               </div>
               <div className="space-y-3">

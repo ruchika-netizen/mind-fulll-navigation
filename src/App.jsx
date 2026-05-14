@@ -30,11 +30,10 @@ import Partners from "./pages/Partners";
 import FinalWord from "./pages/FinalWord";
 import "./index.css";
 import Invitations from "./pages/Invitations";
-// import Breaths from "./pages/Breaths";
 import Navigators from "./pages/Navigators";
 import PaymentSuccess from "./pages/PaymentSuccess";
-
-
+import Paymentriver from "./pages/Paymentriver";
+import ForgotPassword from "./pages/ForgotPassword";
 function App() {
   const [isAnimationLoading, setIsAnimationLoading] = useState(() => {
     const played = sessionStorage.getItem("enso_played");
@@ -122,6 +121,8 @@ function App() {
           {/* <Route path="/breaths" element={session ? <Breaths /> : <Navigate to="/login" />} /> */}
           <Route path="/navigators" element={session ? <Navigators /> : <Navigate to="/login" />} />
           <Route path="/paymentsuccess" element={session ? <PaymentSuccess /> : <Navigate to="/login" />} />
+          <Route path="/paymentriver" element={session ? <Paymentriver /> : <Navigate to="/login" />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
