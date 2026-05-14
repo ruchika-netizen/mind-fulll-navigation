@@ -40,7 +40,6 @@ function App() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
 
-  // URL States
   const isVerified = searchParams.get("verified") === "true";
   const isOnboarding = searchParams.get("mode") === "onboarding";
   const isAuthPage = ["/login", "/signup", "/forgot-password", "/reset-password"].includes(location.pathname);
@@ -49,10 +48,8 @@ function App() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-
   const [isAnimationLoading, setIsAnimationLoading] = useState(() => {
     const played = sessionStorage.getItem("enso_played");
-
     if (isAuthPage) return false;
     if (isVerified) return true;
     return played !== "true";
@@ -85,10 +82,10 @@ function App() {
     checkUser();
   }, []);
 
-
+  // 1. Auth check loading
   if (checkingAuth) return null;
 
-
+  // 2. Enso Loader Gate
   if (isAnimationLoading && !isAuthPage) {
     return (
       <EnsoLoader onComplete={() => {
@@ -98,23 +95,20 @@ function App() {
     );
   }
 
+  // 3. Transition Guard
   if (isTransitioning) return <div className="bg-[#F5F0E8] min-h-screen" />;
 
   return (
     <div className="bg-[#F5F0E8] min-h-screen flex flex-col font-serif">
       <ScrollToTop />
-
-
       {session && !shouldHideNav && <Header session={session} />}
 
       <main className="flex-grow">
         <Routes>
-          {/* Public Routes */}
           <Route path="/login" element={<AuthGuard requireAuth={false}><Login /></AuthGuard>} />
           <Route path="/signup" element={<AuthGuard requireAuth={false}><Signup /></AuthGuard>} />
           <Route path="/forgot-password" element={<AuthGuard requireAuth={false}><ForgotPassword /></AuthGuard>} />
           <Route path="/reset-password" element={<AuthGuard requireAuth={false}><ResetPassword /></AuthGuard>} />
-
 
           <Route
             path="/"
