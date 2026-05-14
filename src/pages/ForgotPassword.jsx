@@ -33,12 +33,12 @@ const ForgotPassword = () => {
         <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center font-serif text-[#36454F] px-4">
             <div className="bg-white border border-[#36454F]/5 rounded-[2.5rem] w-full max-w-md p-10 shadow-sm animate-in fade-in zoom-in duration-500">
 
-                <Link to="/login" className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] font-sans font-bold opacity-50 hover:opacity-100 transition-all mb-8">
+                <Link to="/login" className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] font-sans font-bold  transition-all mb-8">
                     <ArrowLeft size={14} /> Back to Login
                 </Link>
 
                 <h2 className="text-3xl text-center mb-4 italic">Reset Path</h2>
-                <p className="text-center text-[13px] opacity-60 mb-10 leading-relaxed">
+                <p className="text-center text-[16px] opacity-60 font-sans mb-10 leading-relaxed">
                     Enter your email and we'll send you a link to return to your journey.
                 </p>
 
@@ -56,7 +56,7 @@ const ForgotPassword = () => {
 
                 <form onSubmit={handleReset} className="space-y-7">
                     <div className="space-y-2">
-                        <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold ml-1">Email Address</label>
+                        <label className="text-[12px] uppercase tracking-[0.3em]  font-sans font-bold ml-1">Email Address</label>
                         <input
                             type="email"
                             placeholder="Enter your registered email"

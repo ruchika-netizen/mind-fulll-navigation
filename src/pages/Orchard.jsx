@@ -224,7 +224,7 @@ function Orchard() {
 
                   {/* Empty State */}
                   {activeTab === "previous" && entries.length === 0 ? (
-                    <div className="text-center py-32 italic opacity-40">
+                    <div className="text-center py-32 italic">
                       <p className="mb-6 text-xl">The orchard is quiet. No previous harvests found.</p>
                       <button onClick={() => setActiveTab("new")} className="text-[12px] border-b border-[#36454F]/20 pb-1 uppercase font-sans font-bold hover:border-[#36454F] transition-all tracking-[0.2em]">
                         Plant something new

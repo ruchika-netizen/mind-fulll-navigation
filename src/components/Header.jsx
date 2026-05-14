@@ -17,12 +17,13 @@ function Header() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => setSession(session));
     return () => subscription.unsubscribe();
   }, []);
-
   const confirmLogout = async () => {
-    await supabase.auth.signOut();
-    setShowLogoutModal(false);
-    setIsOpen(false);
-    navigate("/"); // Ya jahan aap bhejna chahein
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+      setShowLogoutModal(false);
+      setIsOpen(false);
+      // navigate yahan likhne ki zarurat nahi, Guard handle kar lega
+    }
   };
 
   const toggleSound = () => {

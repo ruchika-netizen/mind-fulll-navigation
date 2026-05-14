@@ -165,10 +165,10 @@ function River() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 50 }}
-            className="fixed top-10 right-10 z-[100] bg-white px-5 py-3 rounded-xl flex items-center gap-3  border border-[#36454F]/5"
+            className="fixed top-10 right-10 z-[100] bg-white px-4 py-4 rounded-xl flex items-center gap-3  border border-[#36454F]/5"
           >
-            <div className="bg-[#E1F5E8] p-1 rounded-full">
-              <CheckCircle2 size={14} className="text-[#22C55E]" strokeWidth={3} />
+            <div className=" p-1 rounded-full">
+              <CheckCircle2 size={20} className="text-[#22C55E]" strokeWidth={3} />
             </div>
             <span className="text-[11px] uppercase font-sans font-bold tracking-[0.15em] text-[#36454F]">
               Path Updated Successfully
@@ -179,7 +179,7 @@ function River() {
 
       <header className="relative w-full max-w-7xl mx-auto pt-10 pb-7 text-center">
         <div className="absolute top-6 md:top-12 left-0">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all px-6">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all ">
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
             <span className="mt-0.5">Back</span>
           </button>

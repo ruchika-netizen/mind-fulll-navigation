@@ -1,42 +1,73 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link } from "react-router-dom";
 import { CheckCircle2, AlertCircle, Loader2, Eye, EyeOff } from "lucide-react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 function Signup() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
   const navigate = useNavigate();
+  const recaptchaRef = useRef();
 
+  // Toast Trigger: reset ke waqt type change nahi hoga (No green flicker)
   const triggerToast = (message, type = "success") => {
     setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: "", type: "success" }), 4000);
+    setTimeout(() => {
+      setToast(prev => ({ ...prev, show: false }));
+    }, 4000);
   };
 
   const handleSignup = async (e) => {
     e.preventDefault();
+
+    if (!captchaToken) {
+      triggerToast("Please verify the Google reCAPTCHA", "error");
+      return;
+    }
+
     setLoading(true);
 
-    const { error } = await supabase.auth.signUp({
-      email: form.email.trim(),
-      password: form.password,
-      options: {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: form.email.trim(),
+        password: form.password,
+        options: {
+          captchaToken: captchaToken,
+          emailRedirectTo: `${window.location.origin}/login?verified=true`,
+        },
+      });
 
-        emailRedirectTo: `${window.location.origin}/login?verified=true`,
-      },
-    });
-
-    if (error) {
-      triggerToast(error.message, "error");
-    } else {
-      triggerToast("Verification link sent! Check your email.", "success");
-      await supabase.auth.signOut();
-      setTimeout(() => navigate("/login"), 2500);
+      if (error) {
+        // Rate limit error (429) handling
+        if (error.status === 429) {
+          triggerToast("Too many requests. Please wait a moment.", "error");
+        } else {
+          triggerToast(error.message, "error");
+        }
+        recaptchaRef.current?.reset();
+        setCaptchaToken(null);
+      } else {
+        // Check: Agar email already registered hai
+        if (data?.user && data.user.identities && data.user.identities.length === 0) {
+          triggerToast("This email is already registered. Try logging in.", "error");
+          recaptchaRef.current?.reset();
+          setCaptchaToken(null);
+        } else {
+          triggerToast("Verification link sent! Check your email.", "success");
+          await supabase.auth.signOut();
+          setTimeout(() => navigate("/login"), 2500);
+        }
+      }
+    } catch (err) {
+      triggerToast("An unexpected error occurred.", "error");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const fieldClasses = "w-full bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 outline-none italic text-md text-[#36454F] focus:border-[#EAB308] focus:bg-white transition-all duration-300 shadow-inner pr-14";
@@ -44,9 +75,16 @@ function Signup() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F5F0E8] px-4 font-serif text-[#36454F] relative">
 
-      {/* Toast Notification */}
-      <div className={`fixed top-10 right-1/2 translate-x-1/2 md:right-10 md:translate-x-0 z-[100] flex items-center gap-4 p-5 rounded-2xl shadow-2xl border transition-all duration-500 transform ${toast.show ? "translate-y-0 opacity-100" : "-translate-y-20 opacity-0 pointer-events-none"} ${toast.type === "success" ? "bg-white border-green-100" : "bg-[#36454F] border-white/10 text-[#F5F0E8]"}`}>
-        {toast.type === "success" ? <CheckCircle2 className="text-green-500" size={20} /> : <AlertCircle className="text-red-400" size={20} />}
+      {/* Toast Notification - Error case me dark theme */}
+      <div className={`fixed top-10 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-4 p-5 rounded-2xl shadow-2xl border transition-all duration-500 transform 
+        ${toast.show ? "translate-y-0 opacity-100" : "-translate-y-20 opacity-0 pointer-events-none"} 
+        ${toast.type === "success" ? "bg-white border-green-100" : "bg-[#36454F] border-white/10 text-[#F5F0E8]"}`}>
+
+        {toast.type === "success" ? (
+          <CheckCircle2 className="text-green-500" size={20} />
+        ) : (
+          <AlertCircle className="text-red-400" size={20} />
+        )}
         <p className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold italic">{toast.message}</p>
       </div>
 
@@ -86,7 +124,16 @@ function Signup() {
             </div>
           </div>
 
-          {/* ReCAPTCHA wala poora div yahan se remove kar diya hai */}
+          {/* reCAPTCHA - Scaled to fit design */}
+          <div className="flex justify-center py-2">
+            <div className="scale-[0.85] origin-center">
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey="6LeH3NssAAAAAGpM5Uw9uM8XLWDTq_5a2qqR0fHA"
+                onChange={(token) => setCaptchaToken(token)}
+              />
+            </div>
+          </div>
 
           <button
             type="submit"

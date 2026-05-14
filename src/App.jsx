@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { supabase } from "./supabaseClient";
+import { AuthGuard } from "./components/AuthGuard";
 import EnsoLoader from "./components/EnsoLoader";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -34,6 +35,8 @@ import Navigators from "./pages/Navigators";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Paymentriver from "./pages/Paymentriver";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+
 function App() {
   const [isAnimationLoading, setIsAnimationLoading] = useState(() => {
     const played = sessionStorage.getItem("enso_played");
@@ -41,11 +44,11 @@ function App() {
   });
   const [session, setSession] = useState(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
+
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const isOnboarding = searchParams.get("mode") === "onboarding";
-  const isVerified = searchParams.get("verified") === "true";
-  const isAuthPage = ["/login", "/signup"].includes(location.pathname);
+  const isAuthPage = ["/login", "/signup", "/forgot-password", "/reset-password"].includes(location.pathname);
   const specialPages = ["/invitation", "/breath", "/navigator", "/navigatorguide"];
   const shouldHideNav = isAuthPage || (specialPages.includes(location.pathname) && isOnboarding);
 
@@ -55,22 +58,26 @@ function App() {
       setSession(currentSession);
       setCheckingAuth(false);
     };
+
     checkUser();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+
+    // App.jsx ke useEffect ke andar bas itna rakhein
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setCheckingAuth(false);
+
+      // SIGNED_OUT par force redirect ki zarurat nahi, 
+      // AuthGuard khud hi user ko bhaga dega jab use session nahi milega.
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleAnimationComplete = () => {
-    sessionStorage.setItem("enso_played", "true");
-    setIsAnimationLoading(false);
-  };
-
   if (isAnimationLoading || checkingAuth) {
-    return <EnsoLoader onComplete={handleAnimationComplete} />;
+    return <EnsoLoader onComplete={() => {
+      sessionStorage.setItem("enso_played", "true");
+      setIsAnimationLoading(false);
+    }} />;
   }
 
   return (
@@ -79,50 +86,41 @@ function App() {
       {session && !shouldHideNav && <Header />}
 
       <main className="flex-grow">
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={!session ? <Signup /> : <Navigate to="/" />} />
+        <Routes location={location} key={location.pathname}>
+          {/* --- PUBLIC ROUTES (Logged-in user yahan nahi aa sakta) --- */}
+          <Route path="/login" element={<AuthGuard requireAuth={false}><Login /></AuthGuard>} />
+          <Route path="/signup" element={<AuthGuard requireAuth={false}><Signup /></AuthGuard>} />
+          <Route path="/forgot-password" element={<AuthGuard requireAuth={false}><ForgotPassword /></AuthGuard>} />
+          <Route path="/reset-password" element={<AuthGuard requireAuth={false}><ResetPassword /></AuthGuard>} />
 
-          {/* Root Logic Update */}
-          <Route
-            path="/"
-            element={
-              session ? (
+          {/* --- PRIVATE ROUTES (Bina login ke koi yahan nahi aa sakta) --- */}
+          <Route path="/" element={<AuthGuard requireAuth={true}><Home /></AuthGuard>} />
+          <Route path="/invitation" element={<AuthGuard requireAuth={true}><Invitation /></AuthGuard>} />
+          <Route path="/breath" element={<AuthGuard requireAuth={true}><Breath /></AuthGuard>} />
+          <Route path="/navigator" element={<AuthGuard requireAuth={true}><Navigator /></AuthGuard>} />
+          <Route path="/navigatorguide" element={<AuthGuard requireAuth={true}><NavigatorGuide /></AuthGuard>} />
+          <Route path="/rituals" element={<AuthGuard requireAuth={true}><Rituals /></AuthGuard>} />
+          <Route path="/milestones" element={<AuthGuard requireAuth={true}><Milestones /></AuthGuard>} />
+          <Route path="/river" element={<AuthGuard requireAuth={true}><River /></AuthGuard>} />
+          <Route path="/well" element={<AuthGuard requireAuth={true}><Well /></AuthGuard>} />
+          <Route path="/orchard" element={<AuthGuard requireAuth={true}><Orchard /></AuthGuard>} />
+          <Route path="/river-list" element={<AuthGuard requireAuth={true}><RiverList /></AuthGuard>} />
+          <Route path="/gathering-place" element={<AuthGuard requireAuth={true}><GatheringPlace /></AuthGuard>} />
+          <Route path="/compass" element={<AuthGuard requireAuth={true}><Compass /></AuthGuard>} />
+          <Route path="/settings" element={<AuthGuard requireAuth={true}><Settings /></AuthGuard>} />
+          <Route path="/forge" element={<AuthGuard requireAuth={true}><Forge /></AuthGuard>} />
+          <Route path="/still-water" element={<AuthGuard requireAuth={true}><StillWater /></AuthGuard>} />
+          <Route path="/mark-moment" element={<AuthGuard requireAuth={true}><MarkMoment /></AuthGuard>} />
+          <Route path="/milestones/edit/:id" element={<AuthGuard requireAuth={true}><MarkMoment /></AuthGuard>} />
+          <Route path="/wellbeingpractices" element={<AuthGuard requireAuth={true}><WellbeingPractices /></AuthGuard>} />
+          <Route path="/companionReadings" element={<AuthGuard requireAuth={true}><CompanionReadings /></AuthGuard>} />
+          <Route path="/partners" element={<AuthGuard requireAuth={true}><Partners /></AuthGuard>} />
+          <Route path="/finalword" element={<AuthGuard requireAuth={true}><FinalWord /></AuthGuard>} />
+          <Route path="/invitations" element={<AuthGuard requireAuth={true}><Invitations /></AuthGuard>} />
+          <Route path="/navigators" element={<AuthGuard requireAuth={true}><Navigators /></AuthGuard>} />
+          <Route path="/paymentsuccess" element={<AuthGuard requireAuth={true}><PaymentSuccess /></AuthGuard>} />
+          <Route path="/paymentriver" element={<AuthGuard requireAuth={true}><Paymentriver /></AuthGuard>} />
 
-                isVerified ? <Navigate to="/invitation?mode=onboarding" replace /> : <Home />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            }
-          />
-
-          <Route path="/invitation" element={session ? <Invitation /> : <Navigate to="/login" />} />
-          <Route path="/breath" element={session ? <Breath /> : <Navigate to="/login" />} />
-          <Route path="/navigator" element={session ? <Navigator /> : <Navigate to="/login" />} />
-          <Route path="/navigatorguide" element={session ? <NavigatorGuide /> : <Navigate to="/login" />} />
-          <Route path="/rituals" element={session ? <Rituals /> : <Navigate to="/login" />} />
-          <Route path="/milestones" element={session ? <Milestones /> : <Navigate to="/login" />} />
-          <Route path="/river" element={session ? <River /> : <Navigate to="/login" />} />
-          <Route path="/well" element={session ? <Well /> : <Navigate to="/login" />} />
-          <Route path="/orchard" element={session ? <Orchard /> : <Navigate to="/login" />} />
-          <Route path="/river-list" element={session ? <RiverList /> : <Navigate to="/login" />} />
-          <Route path="/gathering-place" element={session ? <GatheringPlace /> : <Navigate to="/login" />} />
-          <Route path="/compass" element={session ? <Compass /> : <Navigate to="/login" />} />
-          <Route path="/settings" element={session ? <Settings /> : <Navigate to="/login" />} />
-          <Route path="/forge" element={session ? <Forge /> : <Navigate to="/login" />} />
-          <Route path="/still-water" element={session ? <StillWater /> : <Navigate to="/login" />} />
-          <Route path="/mark-moment" element={session ? <MarkMoment /> : <Navigate to="/login" />} />
-          <Route path="/milestones/edit/:id" element={<MarkMoment />} />
-          <Route path="/wellbeingpractices" element={session ? <WellbeingPractices /> : <Navigate to="/login" />} />
-          <Route path="/companionReadings" element={session ? <CompanionReadings /> : <Navigate to="/login" />} />
-          <Route path="/partners" element={session ? <Partners /> : <Navigate to="/login" />} />
-          <Route path="/finalword" element={session ? <FinalWord /> : <Navigate to="/login" />} />
-          <Route path="/invitations" element={session ? <Invitations /> : <Navigate to="/login" />} />
-          {/* <Route path="/breaths" element={session ? <Breaths /> : <Navigate to="/login" />} /> */}
-          <Route path="/navigators" element={session ? <Navigators /> : <Navigate to="/login" />} />
-          <Route path="/paymentsuccess" element={session ? <PaymentSuccess /> : <Navigate to="/login" />} />
-          <Route path="/paymentriver" element={session ? <Paymentriver /> : <Navigate to="/login" />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>

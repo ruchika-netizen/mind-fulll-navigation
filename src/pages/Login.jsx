@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
 import EnsoLoader from "../components/EnsoLoader";
 import bansuriIntro from "../assets/segment_5s_to_95s (1).mp3";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,26 +13,42 @@ const Login = () => {
   const [showEnso, setShowEnso] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   const navigate = useNavigate();
   const location = useLocation();
+  const recaptchaRef = useRef();
   const searchParams = new URLSearchParams(location.search);
 
   const isVerifiedFlow = searchParams.get("verified") === "true";
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    // 1. Captcha Check
+    if (!captchaToken) {
+      setErrorMsg("Please verify that you are human");
+      return;
+    }
+
     setLoading(true);
     setErrorMsg("");
 
+    // 2. Supabase Login with Captcha Token
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
+      options: {
+        captchaToken: captchaToken,
+      },
     });
 
     if (error) {
       setErrorMsg(error.message);
       setLoading(false);
+      // Reset captcha on failure
+      recaptchaRef.current?.reset();
+      setCaptchaToken(null);
     } else if (data?.user) {
       if (isVerifiedFlow) {
         navigate("/invitation?mode=onboarding");
@@ -71,23 +88,22 @@ const Login = () => {
         )}
 
         <form onSubmit={handleLogin} className="space-y-7" autoComplete="off">
+          {/* Email Field */}
           <div className="space-y-2">
             <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold ml-1">Email Address</label>
             <input
               type="email"
-              name={`email_login_${Math.random()}`}
               placeholder="Enter Email"
               className={fieldClasses}
               onChange={(e) => setEmail(e.target.value)}
               required
-              autoComplete="off"
             />
           </div>
 
+          {/* Password Field */}
           <div className="space-y-2">
             <div className="flex justify-between items-center px-1">
               <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold">Password</label>
-              {/* FORGOT PASSWORD LINK ADDED HERE */}
               <Link
                 to="/forgot-password"
                 className="text-[10px] uppercase tracking-[0.2em] opacity-60 hover:opacity-100 transition-opacity font-sans font-bold"
@@ -97,9 +113,7 @@ const Login = () => {
             </div>
             <div className="relative">
               <input
-                type="text"
-                style={!showPassword ? { WebkitTextSecurity: "disc" } : {}}
-                name={`pass_login_${Math.random()}`}
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter Password"
                 className={fieldClasses}
                 onChange={(e) => setPassword(e.target.value)}
@@ -112,16 +126,27 @@ const Login = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-[#36454F]/30 hover:text-[#36454F] transition-colors p-1"
               >
-                {showPassword ? (
-                  <EyeOff size={18} strokeWidth={1.5} />
-                ) : (
-                  <Eye size={18} strokeWidth={1.5} />
-                )}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>
 
-          <button type="submit" disabled={loading} className="w-full bg-[#36454F] text-white py-5 rounded-2xl uppercase text-[10px] tracking-[0.5em] font-bold font-sans shadow-lg hover:bg-black active:scale-95 transition-all flex justify-center items-center gap-3 mt-4">
+          {/* ReCAPTCHA Container */}
+          <div className="flex justify-center py-2 overflow-hidden">
+            <div className="scale-[0.85] origin-center">
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey="6LeH3NssAAAAAGpM5Uw9uM8XLWDTq_5a2qqR0fHA"
+                onChange={(token) => setCaptchaToken(token)}
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-[#36454F] text-white py-5 rounded-2xl uppercase text-[10px] tracking-[0.5em] font-bold font-sans shadow-lg hover:bg-black active:scale-95 transition-all flex justify-center items-center gap-3 mt-4"
+          >
             {loading ? <Loader2 className="animate-spin" size={18} /> : "Sign In"}
           </button>
         </form>
