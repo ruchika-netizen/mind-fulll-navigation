@@ -85,9 +85,9 @@ function Signup() {
               We've sent a verification link to <br /> <strong>{form.email}</strong>. <br />
               Please confirm your email to activate your account.
             </p>
-            <Link to="/login" className="text-[10px] uppercase tracking-widest font-bold font-sans underline opacity-60 hover:opacity-100">
+            {/* <Link to="/login" className="text-[10px] uppercase tracking-widest font-bold font-sans underline opacity-60 hover:opacity-100">
               Back to Login
-            </Link>
+            </Link> */}
           </div>
         ) : (
           // --- SIGNUP FORM ---

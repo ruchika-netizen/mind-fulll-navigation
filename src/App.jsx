@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import { AuthGuard } from "./components/AuthGuard";
 import EnsoLoader from "./components/EnsoLoader";
@@ -38,20 +38,26 @@ import "./index.css";
 
 function App() {
   const location = useLocation();
+  const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
 
   const isVerified = searchParams.get("verified") === "true";
   const isOnboarding = searchParams.get("mode") === "onboarding";
   const isAuthPage = ["/login", "/signup", "/forgot-password", "/reset-password"].includes(location.pathname);
 
+  // Hash check (Supabase confirmation sends data in hash #access_token=...)
+  const hasAccessToken = location.hash.includes("access_token");
+
   const [session, setSession] = useState(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
+  // Loader logic
   const [isAnimationLoading, setIsAnimationLoading] = useState(() => {
     const played = sessionStorage.getItem("enso_played");
     if (isAuthPage) return false;
-    if (isVerified) return true;
+    // Agar confirmation chal rahi hai toh loader dikhao
+    if (isVerified || hasAccessToken) return true;
     return played !== "true";
   });
 
@@ -60,18 +66,25 @@ function App() {
 
   useLayoutEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
+      setSession(s);
+
+      // --- REDIRECTION LOGIC FOR CONFIRM EMAIL ---
+      if (event === "SIGNED_IN" && (isVerified || hasAccessToken)) {
+        // Confirmation ke baad seedha onboarding par bhejo
+        navigate("/invitation?mode=onboarding", { replace: true });
+      }
+
       if (event === "SIGNED_OUT") {
         setIsTransitioning(true);
         setSession(null);
         sessionStorage.setItem("enso_played", "true");
       } else {
-        setSession(s);
         setIsTransitioning(false);
       }
       setCheckingAuth(false);
     });
     return () => subscription.unsubscribe();
-  }, []);
+  }, [isVerified, hasAccessToken, navigate]);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -82,10 +95,8 @@ function App() {
     checkUser();
   }, []);
 
-  // 1. Auth check loading
   if (checkingAuth) return null;
 
-  // 2. Enso Loader Gate
   if (isAnimationLoading && !isAuthPage) {
     return (
       <EnsoLoader onComplete={() => {
@@ -95,7 +106,6 @@ function App() {
     );
   }
 
-  // 3. Transition Guard
   if (isTransitioning) return <div className="bg-[#F5F0E8] min-h-screen" />;
 
   return (
@@ -107,22 +117,26 @@ function App() {
         <Routes>
           <Route path="/login" element={<AuthGuard requireAuth={false}><Login /></AuthGuard>} />
           <Route path="/signup" element={<AuthGuard requireAuth={false}><Signup /></AuthGuard>} />
-          <Route path="/forgot-password" element={<AuthGuard requireAuth={false}><ForgotPassword /></AuthGuard>} />
-          <Route path="/reset-password" element={<AuthGuard requireAuth={false}><ResetPassword /></AuthGuard>} />
 
+          {/* ROOT ROUTE: Verification and normal Home logic */}
           <Route
             path="/"
             element={
-              isVerified ? (
-                <Navigate to="/invitation?mode=onboarding" replace />
+              session ? (
+                (isVerified || hasAccessToken) ? (
+                  <Navigate to="/invitation?mode=onboarding" replace />
+                ) : (
+                  <Home />
+                )
               ) : (
-                <AuthGuard requireAuth={true}><Home /></AuthGuard>
+                <Navigate to="/login" replace />
               )
             }
           />
 
           {/* Private Routes */}
           <Route path="/invitation" element={<AuthGuard requireAuth={true}><Invitation /></AuthGuard>} />
+          {/* ... baki routes wahi rahenge jo aapne diye hain ... */}
           <Route path="/navigator" element={<AuthGuard requireAuth={true}><Navigator /></AuthGuard>} />
           <Route path="/settings" element={<AuthGuard requireAuth={true}><Settings /></AuthGuard>} />
           <Route path="/navigatorguide" element={<AuthGuard requireAuth={true}><NavigatorGuide /></AuthGuard>} />
@@ -145,11 +159,12 @@ function App() {
           <Route path="/navigators" element={<AuthGuard requireAuth={true}><Navigators /></AuthGuard>} />
           <Route path="/paymentsuccess" element={<AuthGuard requireAuth={true}><PaymentSuccess /></AuthGuard>} />
           <Route path="/paymentriver" element={<AuthGuard requireAuth={true}><Paymentriver /></AuthGuard>} />
+          <Route path="/forgot-password" element={<AuthGuard requireAuth={false}><ForgotPassword /></AuthGuard>} />
+          <Route path="/reset-password" element={<AuthGuard requireAuth={false}><ResetPassword /></AuthGuard>} />
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
-
       {session && !shouldHideNav && <Footer />}
     </div>
   );
