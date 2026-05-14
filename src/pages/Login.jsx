@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
 import EnsoLoader from "../components/EnsoLoader";
 import bansuriIntro from "../assets/segment_5s_to_95s (1).mp3";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,9 +13,11 @@ const Login = () => {
   const [showEnso, setShowEnso] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   const navigate = useNavigate();
   const location = useLocation();
+  const recaptchaRef = useRef();
   const searchParams = new URLSearchParams(location.search);
 
   const isVerifiedFlow = searchParams.get("verified") === "true";
@@ -22,17 +25,30 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
+
+    if (!captchaToken) {
+      setErrorMsg("Please verify that you are human");
+      return;
+    }
+
     setLoading(true);
     setErrorMsg("");
+
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
+      options: {
+        captchaToken: captchaToken,
+      },
     });
 
     if (error) {
       setErrorMsg(error.message);
       setLoading(false);
+
+      recaptchaRef.current?.reset();
+      setCaptchaToken(null);
     } else if (data?.user) {
       if (isVerifiedFlow) {
         navigate("/invitation?mode=onboarding");
@@ -90,7 +106,7 @@ const Login = () => {
               <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold">Password</label>
               <Link
                 to="/forgot-password"
-                className="text-[10px] uppercase tracking-[0.2em] transition-opacity font-sans font-bold"
+                className="text-[10px] uppercase tracking-[0.2em]  transition-opacity font-sans font-bold"
               >
                 Forgot Password?
               </Link>
@@ -112,6 +128,17 @@ const Login = () => {
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
+            </div>
+          </div>
+
+          {/* ReCAPTCHA Container */}
+          <div className="flex justify-center py-2 overflow-hidden">
+            <div className="scale-[0.85] origin-center">
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey="6LeH3NssAAAAAGpM5Uw9uM8XLWDTq_5a2qqR0fHA"
+                onChange={(token) => setCaptchaToken(token)}
+              />
             </div>
           </div>
 
