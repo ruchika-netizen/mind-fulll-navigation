@@ -106,7 +106,7 @@ const Login = () => {
               <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold">Password</label>
               <Link
                 to="/forgot-password"
-                className="text-[10px] uppercase tracking-[0.2em] opacity-60 hover:opacity-100 transition-opacity font-sans font-bold"
+                className="text-[10px] uppercase tracking-[0.2em]  transition-opacity font-sans font-bold"
               >
                 Forgot Password?
               </Link>

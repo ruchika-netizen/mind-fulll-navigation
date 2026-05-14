@@ -16,6 +16,7 @@ const ForgotPassword = () => {
         setMessage("");
 
         const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+            // Isse user seedha naya password dalne wale page par jayega
             redirectTo: `${window.location.origin}/reset-password`,
         });
 
