@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react"; // useLayoutEffect added
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import { AuthGuard } from "./components/AuthGuard";
@@ -39,6 +39,8 @@ import "./index.css";
 function App() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+  const isVerified = searchParams.get("verified") === "true";
+  const isOnboarding = searchParams.get("mode") === "onboarding";
 
   const [session, setSession] = useState(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -47,30 +49,27 @@ function App() {
   const [isAnimationLoading, setIsAnimationLoading] = useState(() => {
     const played = sessionStorage.getItem("enso_played");
     const isAuth = ["/login", "/signup", "/forgot-password", "/reset-password"].includes(location.pathname);
+    // Verified user ke liye loader hamesha force karo glitch chhupane ke liye
+    if (isVerified) return true;
     return played !== "true" && !isAuth;
   });
 
-  const isOnboarding = searchParams.get("mode") === "onboarding";
-  const isVerified = searchParams.get("verified") === "true";
   const isAuthPage = ["/login", "/signup", "/forgot-password", "/reset-password"].includes(location.pathname);
   const specialPages = ["/invitation", "/navigator", "/navigatorguide"];
   const shouldHideNav = isAuthPage || (specialPages.includes(location.pathname) && isOnboarding);
 
-  // useLayoutEffect use kar rahe hain taaki screen paint hone se pehle state change ho
   useLayoutEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
       if (event === "SIGNED_OUT") {
         setIsTransitioning(true);
         setSession(null);
         sessionStorage.setItem("enso_played", "true");
-        // Redirect logic already window.location se handle ho rahi hai Header mein
       } else {
         setSession(s);
         setIsTransitioning(false);
       }
       setCheckingAuth(false);
     });
-
     return () => subscription.unsubscribe();
   }, []);
 
@@ -83,7 +82,7 @@ function App() {
     checkUser();
   }, []);
 
-  // 1. Initial Loading
+  // 1. Loading & Verification Gate (Strict)
   if (checkingAuth || isAnimationLoading) {
     return (
       <EnsoLoader onComplete={() => {
@@ -93,16 +92,12 @@ function App() {
     );
   }
 
-  // 2. Glitch Guard: Agar logout ho raha hai toh pura UI block kar do
-  if (isTransitioning) {
-    return <div className="bg-[#F5F0E8] min-h-screen" />; // Plain background, no grid
-  }
+  // 2. Transition Guard
+  if (isTransitioning) return <div className="bg-[#F5F0E8] min-h-screen" />;
 
   return (
     <div className="bg-[#F5F0E8] min-h-screen flex flex-col font-serif">
       <ScrollToTop />
-
-      {/* 3. Strict Session Check for Header */}
       {session && !shouldHideNav && <Header session={session} />}
 
       <main className="flex-grow">
@@ -115,23 +110,18 @@ function App() {
           <Route
             path="/"
             element={
-              <AuthGuard requireAuth={true}>
-                {isVerified ? (
-                  <Navigate to="/invitation?mode=onboarding" replace />
-                ) : (
-                  <Home />
-                )}
-              </AuthGuard>
+              isVerified ? (
+                // FIX: AuthGuard ko render hi mat karo agar verified hai
+                <Navigate to="/invitation?mode=onboarding" replace />
+              ) : (
+                <AuthGuard requireAuth={true}><Home /></AuthGuard>
+              )
             }
           />
 
-          {/* --- PRIVATE ROUTES --- */}
-          {/* In sab routes ko AuthGuard automatically protect karega */}
           <Route path="/invitation" element={<AuthGuard requireAuth={true}><Invitation /></AuthGuard>} />
           <Route path="/navigator" element={<AuthGuard requireAuth={true}><Navigator /></AuthGuard>} />
           <Route path="/settings" element={<AuthGuard requireAuth={true}><Settings /></AuthGuard>} />
-
-          {/* ... baaki saare routes same rahenge ... */}
           <Route path="/navigatorguide" element={<AuthGuard requireAuth={true}><NavigatorGuide /></AuthGuard>} />
           <Route path="/rituals" element={<AuthGuard requireAuth={true}><Rituals /></AuthGuard>} />
           <Route path="/milestones" element={<AuthGuard requireAuth={true}><Milestones /></AuthGuard>} />
