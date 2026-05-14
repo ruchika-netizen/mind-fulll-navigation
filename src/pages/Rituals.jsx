@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { Check, Loader2 } from "lucide-react";
@@ -8,9 +8,10 @@ import bellSound from "../assets/universfield-clear-bell-chime-487898.mp3";
 const JourneyEnd = () => {
   const navigate = useNavigate();
   const [intention, setIntention] = useState("");
-  const [status, setStatus] = useState("idle"); // Sirf 'idle' aur 'completed' use hoga
+  const [status, setStatus] = useState("idle");
   const [sendSeedCard, setSendSeedCard] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [recordId, setRecordId] = useState(null);
   const bellRef = useRef(new Audio(bellSound));
 
   const handlePlant = async () => {
@@ -18,46 +19,85 @@ const JourneyEnd = () => {
     setLoading(true);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.from("rituals").insert([{
+      // 1. Check User Session
+      const { data: { session }, error: authError } = await supabase.auth.getSession();
+
+      if (authError || !session) {
+        alert("Session error! Please logout and login again.");
+        return;
+      }
+
+      const user = session.user;
+
+      // 2. Insert Data
+      const { data, error } = await supabase
+        .from("rituals")
+        .insert([{
           user_id: user.id,
           intention: intention,
           seed_card_requested: sendSeedCard
-        }]);
+        }])
+        .select();
+
+      if (error) {
+        console.error("Supabase Insert Error:", error.message);
+        throw error;
       }
 
-      // Seedha Success State pe bhej rahe hain
+      // 3. Store Record ID for Checkbox Update
+      if (data && data.length > 0) {
+        setRecordId(data[0].id);
+        console.log("Data saved successfully with ID:", data[0].id);
+      }
+
+      // 4. Instant Transition
       if (bellRef.current) bellRef.current.play().catch(() => { });
       setStatus("completed");
+
     } catch (e) {
-      console.error("Error:", e.message);
+      alert("Database error: " + e.message);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleCheckboxChange = async (checked) => {
+    setSendSeedCard(checked);
+    if (!recordId) return;
+
+    try {
+      const { error } = await supabase
+        .from("rituals")
+        .update({ seed_card_requested: checked })
+        .eq('id', recordId);
+
+      if (error) throw error;
+      console.log("DB Updated: Seed card requested =", checked);
+    } catch (e) {
+      console.error("Checkbox Update Error:", e.message);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif flex flex-col items-center py-10 px-4 md:px-8 overflow-x-hidden selection:bg-[#36454F]/10">
+    <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif flex flex-col items-center py-10 px-4 md:px-8">
 
       {/* BACK BUTTON */}
       <div className="w-full max-w-7xl mb-8">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all">
-          <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
+        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold group">
+          <span className="text-lg group-hover:-translate-x-1 transition-transform inline-block">‹</span>
           <span className="mt-0.5">Back</span>
         </button>
       </div>
 
-      {/* MAIN CARD CONTAINER */}
-      <div className="max-w-7xl w-full flex flex-col md:grid md:grid-cols-2 gap-12 items-center bg-white/40 rounded-[2rem] p-8 md:p-14 border border-white/60 shadow-2xl relative min-h-[600px]">
+      {/* MAIN CARD */}
+      <div className="max-w-7xl w-full flex flex-col md:grid md:grid-cols-2 gap-12 items-center bg-white/40 rounded-[2rem] p-8 md:p-14 border border-white/60 shadow-2xl min-h-[700px] relative">
 
-        {/* LEFT SIDE - Hide on completion */}
         {status !== 'completed' && (
           <div className="flex flex-col justify-center animate-in fade-in duration-500">
             <div className="space-y-6">
               <div className="space-y-4 text-md md:text-xl font-light italic leading-relaxed opacity-80 max-w-prose">
                 <p>When the day feels long and the path feels uncertain, offer a smile to the next person you meet.</p>
-                <p>Not because they deserve it.</p><p> Not because you have it to spare.</p>
+                <p>Not because they deserve it. Not because you have it to spare.</p>
                 <p>But because in that single moment, you will both be a little less alone.</p>
               </div>
               <p className="text-[14px] uppercase font-sans font-bold tracking-widest pt-4">This is the way of the Mindful Navigator.</p>
@@ -68,13 +108,11 @@ const JourneyEnd = () => {
           </div>
         )}
 
-        {/* RIGHT SIDE - Full width on completion */}
         <div className={`flex flex-col items-center justify-center text-center w-full ${status === 'completed' ? 'md:col-span-2' : ''}`}>
-
           <div className="w-full flex flex-col items-center py-4">
 
-            {/* ENSO CIRCLE - No more animation delay */}
-            <div className={`relative flex items-center justify-center transition-all duration-500 ${status === 'completed' ? 'w-44 h-44 md:w-56 md:h-56 mb-8' : 'w-32 h-32 md:w-44 md:h-44 mb-8'}`}>
+            {/* ENZO CIRCLE */}
+            <div className={`relative flex items-center justify-center transition-all duration-500 ${status === 'completed' ? 'w-48 h-48 md:w-64 md:h-64 mb-8' : 'w-32 h-32 md:w-44 md:h-44 mb-8'}`}>
               <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
                 <circle cx="50" cy="50" r="48" fill="none" stroke="#36454F" strokeWidth="1" opacity="0.1" />
                 <circle
@@ -88,13 +126,12 @@ const JourneyEnd = () => {
               </svg>
             </div>
 
-            {/* INTERACTIVE CONTENT AREA */}
             <div className="w-full max-w-lg mx-auto">
               {status === "idle" ? (
                 <div className="space-y-8 animate-in fade-in duration-500">
                   <div className="space-y-3">
                     <h3 className="text-[14px] uppercase font-sans font-bold tracking-widest">The Closing Ritual</h3>
-                    <p className="text-lg font-light italic">Write one intention you are ready to plant in the world.</p>
+                    <p className="text-xl font-light italic">Write one intention you are ready<br /> to plant in the world.</p>
                   </div>
                   <textarea
                     value={intention}
@@ -111,10 +148,9 @@ const JourneyEnd = () => {
                   </button>
                 </div>
               ) : (
-                /* DIRECT SUCCESS STATE (image_a190c1.png style) */
-                <div className="flex flex-col items-center space-y-8 animate-in fade-in zoom-in-95 duration-300">
+                <div className="flex flex-col items-center space-y-8 animate-in fade-in zoom-in-95 duration-500">
                   <div className="space-y-4">
-                    <h3 className="text-5xl md:text-6xl font-light italic text-[#36454F]">It is planted.</h3>
+                    <h3 className="text-5xl md:text-7xl font-light italic text-[#36454F]">It is planted.</h3>
                     <p className="text-xl font-light italic opacity-60">Go in peace.</p>
                   </div>
 
@@ -127,12 +163,12 @@ const JourneyEnd = () => {
                         <input
                           type="checkbox"
                           checked={sendSeedCard}
-                          onChange={(e) => setSendSeedCard(e.target.checked)}
-                          className="peer appearance-none w-5 h-5 border-2 border-[#36454F]/20 rounded checked:bg-[#36454F] transition-all"
+                          onChange={(e) => handleCheckboxChange(e.target.checked)}
+                          className="peer appearance-none w-6 h-6 border-2 border-[#36454F]/20 rounded checked:bg-[#36454F] transition-all"
                         />
-                        <Check className="absolute text-white opacity-0 peer-checked:opacity-100 transition-opacity" size={14} strokeWidth={4} />
+                        <Check className="absolute text-white opacity-0 peer-checked:opacity-100 transition-opacity" size={16} strokeWidth={4} />
                       </div>
-                      <span className="text-[14px] uppercase tracking-widest font-sans font-bold  leading-tight">
+                      <span className="text-[14px] uppercase tracking-widest font-sans font-bold opacity-70 group-hover:opacity-100">
                         Please send me a seed card — $6 CAD plus postage
                       </span>
                     </label>
