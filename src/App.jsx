@@ -47,9 +47,15 @@ function App() {
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+
+  // URL se onboarding aur verification check karna
   const isOnboarding = searchParams.get("mode") === "onboarding";
+  const isVerified = searchParams.get("verified") === "true";
+
   const isAuthPage = ["/login", "/signup", "/forgot-password", "/reset-password"].includes(location.pathname);
   const specialPages = ["/invitation", "/breath", "/navigator", "/navigatorguide"];
+
+  // Navbar tabhi chupao jab onboarding chal rahi ho ya login page ho
   const shouldHideNav = isAuthPage || (specialPages.includes(location.pathname) && isOnboarding);
 
   useEffect(() => {
@@ -61,13 +67,9 @@ function App() {
 
     checkUser();
 
-    // App.jsx ke useEffect ke andar bas itna rakhein
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setCheckingAuth(false);
-
-      // SIGNED_OUT par force redirect ki zarurat nahi, 
-      // AuthGuard khud hi user ko bhaga dega jab use session nahi milega.
     });
 
     return () => subscription.unsubscribe();
@@ -86,15 +88,28 @@ function App() {
       {session && !shouldHideNav && <Header />}
 
       <main className="flex-grow">
-        <Routes location={location} key={location.pathname}>
-          {/* --- PUBLIC ROUTES (Logged-in user yahan nahi aa sakta) --- */}
+        <Routes>
+          {/* --- PUBLIC ROUTES --- */}
           <Route path="/login" element={<AuthGuard requireAuth={false}><Login /></AuthGuard>} />
           <Route path="/signup" element={<AuthGuard requireAuth={false}><Signup /></AuthGuard>} />
           <Route path="/forgot-password" element={<AuthGuard requireAuth={false}><ForgotPassword /></AuthGuard>} />
           <Route path="/reset-password" element={<AuthGuard requireAuth={false}><ResetPassword /></AuthGuard>} />
 
-          {/* --- PRIVATE ROUTES (Bina login ke koi yahan nahi aa sakta) --- */}
-          <Route path="/" element={<AuthGuard requireAuth={true}><Home /></AuthGuard>} />
+          {/* --- ROOT ROUTE (Logic for Onboarding Redirect) --- */}
+          <Route
+            path="/"
+            element={
+              <AuthGuard requireAuth={true}>
+                {isVerified ? (
+                  <Navigate to="/invitation?mode=onboarding" replace />
+                ) : (
+                  <Home />
+                )}
+              </AuthGuard>
+            }
+          />
+
+          {/* --- PRIVATE ROUTES --- */}
           <Route path="/invitation" element={<AuthGuard requireAuth={true}><Invitation /></AuthGuard>} />
           <Route path="/breath" element={<AuthGuard requireAuth={true}><Breath /></AuthGuard>} />
           <Route path="/navigator" element={<AuthGuard requireAuth={true}><Navigator /></AuthGuard>} />
@@ -110,9 +125,9 @@ function App() {
           <Route path="/settings" element={<AuthGuard requireAuth={true}><Settings /></AuthGuard>} />
           <Route path="/forge" element={<AuthGuard requireAuth={true}><Forge /></AuthGuard>} />
           <Route path="/still-water" element={<AuthGuard requireAuth={true}><StillWater /></AuthGuard>} />
+          <Route path="/wellbeingpractices" element={<AuthGuard requireAuth={true}><WellbeingPractices /></AuthGuard>} />
           <Route path="/mark-moment" element={<AuthGuard requireAuth={true}><MarkMoment /></AuthGuard>} />
           <Route path="/milestones/edit/:id" element={<AuthGuard requireAuth={true}><MarkMoment /></AuthGuard>} />
-          <Route path="/wellbeingpractices" element={<AuthGuard requireAuth={true}><WellbeingPractices /></AuthGuard>} />
           <Route path="/companionReadings" element={<AuthGuard requireAuth={true}><CompanionReadings /></AuthGuard>} />
           <Route path="/partners" element={<AuthGuard requireAuth={true}><Partners /></AuthGuard>} />
           <Route path="/finalword" element={<AuthGuard requireAuth={true}><FinalWord /></AuthGuard>} />
