@@ -8,7 +8,6 @@ export const AuthGuard = ({ children, requireAuth = true }) => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
 
-    // Agar URL mein verified=true hai toh humein kuch nahi dikhana
     const isVerified = searchParams.get("verified") === "true";
 
     useEffect(() => {
@@ -16,7 +15,6 @@ export const AuthGuard = ({ children, requireAuth = true }) => {
             const { data: { session } } = await supabase.auth.getSession();
             const isAuth = !!session;
 
-            // Strict Bypass for Verification and Reset Password
             if (isVerified || location.pathname === "/reset-password") {
                 setLoading(false);
                 return;
@@ -33,7 +31,6 @@ export const AuthGuard = ({ children, requireAuth = true }) => {
         checkAuth();
     }, [requireAuth, navigate, location.pathname, isVerified]);
 
-    // Jab tak loading ho ya verification chal rahi ho, screen blank rakho
     if (loading || isVerified) return null;
 
     return children;

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft } from "lucide-react"; // Arrow icon ke liye
+import { ArrowLeft } from "lucide-react";
 import pikaIcon from "../assets/pexels-84328701-10035016.jpg";
 import mainHero from "../assets/bothredpikapandatogether.png";
 
@@ -17,7 +17,7 @@ function Invitation() {
 
     return (
         <div className="min-h-screen bg-[#F5F0E8] items-center justify-center py-8 px-4 font-serif text-[#36454F] selection:bg-[#EAB308]/20">
-            {/* Back Button Container */}
+
             <div className="max-w-[1300px] mx-auto mb-6">
                 <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all">
                     <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
@@ -25,7 +25,7 @@ function Invitation() {
                 </button>
             </div>
 
-            {/* MAIN CARD - Yahan mx-auto aur mt-12 add kiya hai */}
+
             <div className="max-w-[1300px] mx-auto w-full bg-white rounded-[2rem] shadow-sm flex flex-col lg:flex-row items-stretch animate-in fade-in zoom-in duration-1000 mt-4">
 
                 {/* LEFT COLUMN */}
@@ -49,7 +49,7 @@ function Invitation() {
 
                 {/* RIGHT COLUMN */}
                 <div className="flex-1 p-8 md:p-8 flex flex-col rounded-[3.5rem] bg-white min-h-full">
-                    {/* ... baaki content same rahega */}
+
                     <div className="flex-grow">
                         <div className="w-full h-44 md:h-[350px] overflow-hidden rounded-[2.5rem] shadow-inner border border-[#36454F]/5 mb-8">
                             <img

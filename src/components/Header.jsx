@@ -13,13 +13,12 @@ function Header({ session }) {
 
   const confirmLogout = async () => {
     await supabase.auth.signOut();
-    // Saara data clear karo taaki purana state na bache
     sessionStorage.clear();
     localStorage.clear();
-    // Logout ke baad seedha login pe bina loader ke bhejne ke liye flag
+
     sessionStorage.setItem("enso_played", "true");
 
-    // UI reset ke liye modal band karo aur hard redirect karo
+
     setShowLogoutModal(false);
     window.location.href = "/login";
   };
@@ -54,7 +53,7 @@ function Header({ session }) {
         <div className="flex items-center gap-2 sm:gap-4 lg:gap-8 flex-shrink-0">
           <div className="hidden lg:flex items-center gap-8 font-sans">
             {navLinks.map((item) => (
-              <Link key={item.name} to={item.path} className="hover:opacity-60 transition text-[13px] uppercase tracking-[0.3em] text-[#36454F] font-bold">
+              <Link key={item.name} to={item.path} className=" transition text-[13px] uppercase tracking-[0.3em] text-[#000] font-bold">
                 {item.name}
               </Link>
             ))}

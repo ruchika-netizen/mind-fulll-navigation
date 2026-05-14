@@ -66,9 +66,9 @@ const sections = [
   {
     id: "closing-rituals",
     title: "The Closing Rituals",
-    icon: <Sparkles size={28} />, // Changed to Sparkles
+    icon: <Sparkles size={28} />,
     path: "/rituals",
-    desc: "A final moment of reflection to plant your intentions and find peace." // Updated description
+    desc: "A final moment of reflection to plant your intentions and find peace."
   },
 ];
 
@@ -81,7 +81,7 @@ function Home() {
         <div className="h-[1px] w-16 bg-[#36454F]/30 mx-auto mt-6" />
       </header>
 
-      {/* Main Grid: 3 Boxes per row on Desktop */}
+
       <main className="flex-grow w-full max-w-6xl mx-auto px-6 pb-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-10">
         {sections.map((section) => (
           <Link
@@ -89,12 +89,12 @@ function Home() {
             to={section.path}
             className="group bg-white/60 border border-[#36454F]/10 rounded-[2.5rem] flex flex-col items-center justify-center text-center p-7 transition-all duration-500 hover:bg-white hover:shadow-[0_20px_50px_rgba(54,69,79,0.1)] hover:-translate-y-2"
           >
-            {/* Icon Container Bada Kiya */}
+
             <div className="w-15 h-15 bg-white rounded-3xl flex items-center justify-center mb-6 shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-500 text-[#36454F]/80 group-hover:text-[#EAB308]">
               {section.icon}
             </div>
 
-            {/* Title Font Size Bada Kiya aur Opacity Hata di */}
+
             <h2 className="text-[14px] tracking-[0.25em] uppercase font-sans font-bold mb-4 text-[#36454F] group-hover:text-black transition-colors">
               {section.title}
             </h2>
@@ -102,7 +102,6 @@ function Home() {
             {/* Divider */}
             <div className="w-8 h-[2px] bg-[#36454F]/20 mb-5 group-hover:w-16 group-hover:bg-[#EAB308] transition-all duration-500" />
 
-            {/* Description Text Bada kiya */}
             <p className="text-[18px] font-sans italic text-[#36454F]/80 leading-relaxed transition-colors">
               {section.desc}
             </p>

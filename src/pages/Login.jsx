@@ -25,7 +25,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // 1. Captcha Check
+
     if (!captchaToken) {
       setErrorMsg("Please verify that you are human");
       return;
@@ -34,7 +34,7 @@ const Login = () => {
     setLoading(true);
     setErrorMsg("");
 
-    // 2. Supabase Login with Captcha Token
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
@@ -46,7 +46,7 @@ const Login = () => {
     if (error) {
       setErrorMsg(error.message);
       setLoading(false);
-      // Reset captcha on failure
+
       recaptchaRef.current?.reset();
       setCaptchaToken(null);
     } else if (data?.user) {

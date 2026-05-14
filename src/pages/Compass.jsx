@@ -55,7 +55,7 @@ function Compass() {
     } catch (err) {
       console.error(err);
     } finally {
-      // Thoda delay taaki transition smooth lage
+
       setTimeout(() => setLoading(false), 500);
     }
   };
@@ -79,7 +79,7 @@ function Compass() {
         step_1: steps[0],
         step_2: steps[1],
         step_3: steps[2],
-        type: "General", // Ab NULL nahi aayega
+        type: "General",
 
       }]);
       setNorthStar("");
@@ -108,11 +108,11 @@ function Compass() {
           step_3: updatedData.steps[2]
         })
         .eq("id", id)
-        .eq("user_id", user.id); // Security filter
+        .eq("user_id", user.id);
 
       if (error) throw error;
 
-      await fetchEntries(); // Naya data fetch karein
+      await fetchEntries();
       setIsEditingAll(false);
       showToast("Path Updated Successfully", "success");
     } catch (err) {
@@ -126,13 +126,12 @@ function Compass() {
   const deleteEntry = async (id) => {
     setLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser(); // User ID lena zaruri hai
-
+      const { data: { user } } = await supabase.auth.getUser();
       const { error } = await supabase
         .from("compass_goals")
         .delete()
         .eq("id", id)
-        .eq("user_id", user.id); // Ye line safety ke liye add karein
+        .eq("user_id", user.id);
 
       if (error) {
         console.error("Delete Error:", error.message);

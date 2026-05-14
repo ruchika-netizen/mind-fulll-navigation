@@ -10,7 +10,7 @@ function Invitation() {
   const isOnboarding = searchParams.get("mode") === "onboarding";
 
   const handleContinue = () => {
-    // Breath page ko skip karke seedha Navigator par
+
     const nextPath = isOnboarding ? "/navigator?mode=onboarding" : "/navigator";
     navigate(nextPath);
   };
@@ -18,7 +18,7 @@ function Invitation() {
     <div className=" bg-[#F5F0E8] flex items-center justify-center py-20 px-4 font-serif text-[#36454F] selection:bg-[#EAB308]/20">
       <div className="max-w-[1400px] w-full bg-white rounded-[3.5rem] shadow-sm flex flex-col lg:flex-row items-stretch overflow-hidden animate-in fade-in zoom-in duration-1000">
 
-        {/* LEFT COLUMN */}
+
         <div className="flex-[0.8] p-8 md:p-8 flex flex-col justify-center text-center border-b lg:border-b-0 lg:border-r border-[#36454F]/5">
           <header className="mb-8">
             <h1 className="text-4xl md:text-5xl font-light italic tracking-tight mb-4 leading-tight">
@@ -37,7 +37,7 @@ function Invitation() {
           </div>
         </div>
 
-        {/* RIGHT COLUMN */}
+
         <div className="flex-1 p-8 md:p-8 flex flex-col bg-white min-h-full">
           <div className="flex-grow">
             <div className="w-full h-44 md:h-[350px] overflow-hidden rounded-[2.5rem] shadow-inner border border-[#36454F]/5 mb-8">

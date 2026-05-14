@@ -14,7 +14,7 @@ function Signup() {
   const navigate = useNavigate();
   const recaptchaRef = useRef();
 
-  // Toast Trigger: reset ke waqt type change nahi hoga (No green flicker)
+
   const triggerToast = (message, type = "success") => {
     setToast({ show: true, message, type });
     setTimeout(() => {
@@ -43,7 +43,7 @@ function Signup() {
       });
 
       if (error) {
-        // Rate limit error (429) handling
+
         if (error.status === 429) {
           triggerToast("Too many requests. Please wait a moment.", "error");
         } else {
@@ -52,7 +52,7 @@ function Signup() {
         recaptchaRef.current?.reset();
         setCaptchaToken(null);
       } else {
-        // Check: Agar email already registered hai
+
         if (data?.user && data.user.identities && data.user.identities.length === 0) {
           triggerToast("This email is already registered. Try logging in.", "error");
           recaptchaRef.current?.reset();
@@ -75,7 +75,7 @@ function Signup() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F5F0E8] px-4 font-serif text-[#36454F] relative">
 
-      {/* Toast Notification - Error case me dark theme */}
+
       <div className={`fixed top-10 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-4 p-5 rounded-2xl shadow-2xl border transition-all duration-500 transform 
         ${toast.show ? "translate-y-0 opacity-100" : "-translate-y-20 opacity-0 pointer-events-none"} 
         ${toast.type === "success" ? "bg-white border-green-100" : "bg-[#36454F] border-white/10 text-[#F5F0E8]"}`}>
@@ -124,7 +124,7 @@ function Signup() {
             </div>
           </div>
 
-          {/* reCAPTCHA - Scaled to fit design */}
+
           <div className="flex justify-center py-2">
             <div className="scale-[0.85] origin-center">
               <ReCAPTCHA
