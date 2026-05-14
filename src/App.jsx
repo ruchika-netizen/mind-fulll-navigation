@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react"; // useLayoutEffect added
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import { AuthGuard } from "./components/AuthGuard";
@@ -10,7 +10,6 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Rituals from "./pages/Rituals";
 import Invitation from "./pages/Invitation";
-import Breath from "./pages/Breath";
 import NavigatorGuide from "./pages/NavigatorGuide";
 import Navigator from "./pages/Navigator";
 import River from "./pages/River";
@@ -29,73 +28,90 @@ import CompanionReadings from "./pages/Compagionreading";
 import ScrollToTop from "./components/ScrollToTop";
 import Partners from "./pages/Partners";
 import FinalWord from "./pages/FinalWord";
-import "./index.css";
 import Invitations from "./pages/Invitations";
 import Navigators from "./pages/Navigators";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Paymentriver from "./pages/Paymentriver";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import "./index.css";
 
 function App() {
-  const [isAnimationLoading, setIsAnimationLoading] = useState(() => {
-    const played = sessionStorage.getItem("enso_played");
-    return played !== "true";
-  });
-  const [session, setSession] = useState(null);
-  const [checkingAuth, setCheckingAuth] = useState(true);
-
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
 
-  // URL se onboarding aur verification check karna
+  const [session, setSession] = useState(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const [isAnimationLoading, setIsAnimationLoading] = useState(() => {
+    const played = sessionStorage.getItem("enso_played");
+    const isAuth = ["/login", "/signup", "/forgot-password", "/reset-password"].includes(location.pathname);
+    return played !== "true" && !isAuth;
+  });
+
   const isOnboarding = searchParams.get("mode") === "onboarding";
   const isVerified = searchParams.get("verified") === "true";
-
   const isAuthPage = ["/login", "/signup", "/forgot-password", "/reset-password"].includes(location.pathname);
   const specialPages = ["/invitation", "/navigator", "/navigatorguide"];
-
-  // Navbar tabhi chupao jab onboarding chal rahi ho ya login page ho
   const shouldHideNav = isAuthPage || (specialPages.includes(location.pathname) && isOnboarding);
 
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
-      setSession(currentSession);
-      setCheckingAuth(false);
-    };
-
-    checkUser();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+  // useLayoutEffect use kar rahe hain taaki screen paint hone se pehle state change ho
+  useLayoutEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
+      if (event === "SIGNED_OUT") {
+        setIsTransitioning(true);
+        setSession(null);
+        sessionStorage.setItem("enso_played", "true");
+        // Redirect logic already window.location se handle ho rahi hai Header mein
+      } else {
+        setSession(s);
+        setIsTransitioning(false);
+      }
       setCheckingAuth(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  if (isAnimationLoading || checkingAuth) {
-    return <EnsoLoader onComplete={() => {
-      sessionStorage.setItem("enso_played", "true");
-      setIsAnimationLoading(false);
-    }} />;
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session: s } } = await supabase.auth.getSession();
+      setSession(s);
+      setCheckingAuth(false);
+    };
+    checkUser();
+  }, []);
+
+  // 1. Initial Loading
+  if (checkingAuth || isAnimationLoading) {
+    return (
+      <EnsoLoader onComplete={() => {
+        sessionStorage.setItem("enso_played", "true");
+        setIsAnimationLoading(false);
+      }} />
+    );
+  }
+
+  // 2. Glitch Guard: Agar logout ho raha hai toh pura UI block kar do
+  if (isTransitioning) {
+    return <div className="bg-[#F5F0E8] min-h-screen" />; // Plain background, no grid
   }
 
   return (
     <div className="bg-[#F5F0E8] min-h-screen flex flex-col font-serif">
       <ScrollToTop />
-      {session && !shouldHideNav && <Header />}
+
+      {/* 3. Strict Session Check for Header */}
+      {session && !shouldHideNav && <Header session={session} />}
 
       <main className="flex-grow">
         <Routes>
-          {/* --- PUBLIC ROUTES --- */}
           <Route path="/login" element={<AuthGuard requireAuth={false}><Login /></AuthGuard>} />
           <Route path="/signup" element={<AuthGuard requireAuth={false}><Signup /></AuthGuard>} />
           <Route path="/forgot-password" element={<AuthGuard requireAuth={false}><ForgotPassword /></AuthGuard>} />
           <Route path="/reset-password" element={<AuthGuard requireAuth={false}><ResetPassword /></AuthGuard>} />
 
-          {/* --- ROOT ROUTE (Logic for Onboarding Redirect) --- */}
           <Route
             path="/"
             element={
@@ -110,9 +126,12 @@ function App() {
           />
 
           {/* --- PRIVATE ROUTES --- */}
+          {/* In sab routes ko AuthGuard automatically protect karega */}
           <Route path="/invitation" element={<AuthGuard requireAuth={true}><Invitation /></AuthGuard>} />
-          <Route path="/breath" element={<AuthGuard requireAuth={true}><Breath /></AuthGuard>} />
           <Route path="/navigator" element={<AuthGuard requireAuth={true}><Navigator /></AuthGuard>} />
+          <Route path="/settings" element={<AuthGuard requireAuth={true}><Settings /></AuthGuard>} />
+
+          {/* ... baaki saare routes same rahenge ... */}
           <Route path="/navigatorguide" element={<AuthGuard requireAuth={true}><NavigatorGuide /></AuthGuard>} />
           <Route path="/rituals" element={<AuthGuard requireAuth={true}><Rituals /></AuthGuard>} />
           <Route path="/milestones" element={<AuthGuard requireAuth={true}><Milestones /></AuthGuard>} />
@@ -122,12 +141,10 @@ function App() {
           <Route path="/river-list" element={<AuthGuard requireAuth={true}><RiverList /></AuthGuard>} />
           <Route path="/gathering-place" element={<AuthGuard requireAuth={true}><GatheringPlace /></AuthGuard>} />
           <Route path="/compass" element={<AuthGuard requireAuth={true}><Compass /></AuthGuard>} />
-          <Route path="/settings" element={<AuthGuard requireAuth={true}><Settings /></AuthGuard>} />
           <Route path="/forge" element={<AuthGuard requireAuth={true}><Forge /></AuthGuard>} />
           <Route path="/still-water" element={<AuthGuard requireAuth={true}><StillWater /></AuthGuard>} />
           <Route path="/wellbeingpractices" element={<AuthGuard requireAuth={true}><WellbeingPractices /></AuthGuard>} />
           <Route path="/mark-moment" element={<AuthGuard requireAuth={true}><MarkMoment /></AuthGuard>} />
-          <Route path="/milestones/edit/:id" element={<AuthGuard requireAuth={true}><MarkMoment /></AuthGuard>} />
           <Route path="/companionReadings" element={<AuthGuard requireAuth={true}><CompanionReadings /></AuthGuard>} />
           <Route path="/partners" element={<AuthGuard requireAuth={true}><Partners /></AuthGuard>} />
           <Route path="/finalword" element={<AuthGuard requireAuth={true}><FinalWord /></AuthGuard>} />

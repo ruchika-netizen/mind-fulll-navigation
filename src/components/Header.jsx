@@ -1,37 +1,28 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from "../supabaseClient";
-import { Volume2, VolumeX, Menu, X, Settings, CircleHelp, LogOut } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion"; // Animation ke liye
+import { Volume2, VolumeX, Menu, X, Settings, LogOut } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import bansuriIntro from "../assets/trimmed_output.mp3";
 
-function Header() {
-  const [session, setSession] = useState(null);
+function Header({ session }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false); // Popup state
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isSoundOn, setIsSoundOn] = useState(localStorage.getItem("soundEnabled") !== "false");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => setSession(session));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => setSession(session));
-    return () => subscription.unsubscribe();
-  }, []);
-
-
-
   const confirmLogout = async () => {
     await supabase.auth.signOut();
-
-    // Isse next refresh par EnsoLoader nahi chalega
-    sessionStorage.setItem("enso_played", "true");
+    // Saara data clear karo taaki purana state na bache
+    sessionStorage.clear();
     localStorage.clear();
+    // Logout ke baad seedha login pe bina loader ke bhejne ke liye flag
+    sessionStorage.setItem("enso_played", "true");
 
-    // Seedha login page par redirect
+    // UI reset ke liye modal band karo aur hard redirect karo
+    setShowLogoutModal(false);
     window.location.href = "/login";
   };
-
-
 
   const toggleSound = () => {
     const newState = !isSoundOn;
@@ -41,8 +32,11 @@ function Header() {
       newState ? window.currentAppAudio.play() : window.currentAppAudio.pause();
     } else if (newState) {
       const audio = new Audio(bansuriIntro);
-      audio.loop = true; audio.volume = 0.5;
-      audio.play().then(() => { window.currentAppAudio = audio; }).catch(() => setIsSoundOn(false));
+      audio.loop = true;
+      audio.volume = 0.5;
+      audio.play().then(() => {
+        window.currentAppAudio = audio;
+      }).catch(() => setIsSoundOn(false));
     }
   };
 
@@ -97,14 +91,12 @@ function Header() {
       <AnimatePresence>
         {showLogoutModal && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setShowLogoutModal(false)}
               className="fixed inset-0 bg-[#36454F]/20 backdrop-blur-sm"
             />
 
-            {/* Modal Card */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }}
               className="relative bg-[#F5F0E8] border border-[#36454F]/10 p-8 rounded-[2rem] shadow-2xl max-w-sm w-full text-center"
@@ -112,7 +104,6 @@ function Header() {
               <div className="w-12 h-12 bg-[#36454F]/5 rounded-full flex items-center justify-center mx-auto mb-4">
                 <LogOut size={20} className="text-[#36454F]" />
               </div>
-              {/* <h3 className="text-xl italic font-medium mb-2">Pause for a moment?</h3> */}
               <p className="text-[18px] text-[#36454F] mb-8 font-sans leading-relaxed">
                 Are you sure you want to conclude your current session?
               </p>
