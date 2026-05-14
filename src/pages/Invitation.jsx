@@ -10,11 +10,10 @@ function Invitation() {
   const isOnboarding = searchParams.get("mode") === "onboarding";
 
   const handleContinue = () => {
-
-    const nextPath = isOnboarding ? "/breath?mode=onboarding" : "/breath";
+    // Breath page ko skip karke seedha Navigator par
+    const nextPath = isOnboarding ? "/navigator?mode=onboarding" : "/navigator";
     navigate(nextPath);
   };
-
   return (
     <div className=" bg-[#F5F0E8] flex items-center justify-center py-20 px-4 font-serif text-[#36454F] selection:bg-[#EAB308]/20">
       <div className="max-w-[1400px] w-full bg-white rounded-[3.5rem] shadow-sm flex flex-col lg:flex-row items-stretch overflow-hidden animate-in fade-in zoom-in duration-1000">
@@ -76,7 +75,7 @@ function Invitation() {
 
           <div className="flex justify-end pt-3 ">
             <button
-              onClick={() => navigate("/navigator?mode=onboarding")}
+              onClick={handleContinue}
               className="group flex items-center gap-4 bg-[#36454F] text-[#F5F0E8] pl-7 pr-6 py-3.5 rounded-full text-[10px] uppercase tracking-[0.3em] font-sans font-bold transition-all duration-300 hover:bg-black hover:shadow-xl active:scale-95 shadow-md">
               Continue
               <span className="text-lg transition-transform duration-300 group-hover:translate-x-1">›</span>
