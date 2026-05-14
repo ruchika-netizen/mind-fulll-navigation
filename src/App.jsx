@@ -10,7 +10,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Rituals from "./pages/Rituals";
 import Invitation from "./pages/Invitation";
-// import Breath from "./pages/Breath";
+import Breath from "./pages/Breath";
 import NavigatorGuide from "./pages/NavigatorGuide";
 import Navigator from "./pages/Navigator";
 import River from "./pages/River";
@@ -111,7 +111,7 @@ function App() {
 
           {/* --- PRIVATE ROUTES --- */}
           <Route path="/invitation" element={<AuthGuard requireAuth={true}><Invitation /></AuthGuard>} />
-          {/* <Route path="/breath" element={<AuthGuard requireAuth={true}><Breath /></AuthGuard>} /> */}
+          <Route path="/breath" element={<AuthGuard requireAuth={true}><Breath /></AuthGuard>} />
           <Route path="/navigator" element={<AuthGuard requireAuth={true}><Navigator /></AuthGuard>} />
           <Route path="/navigatorguide" element={<AuthGuard requireAuth={true}><NavigatorGuide /></AuthGuard>} />
           <Route path="/rituals" element={<AuthGuard requireAuth={true}><Rituals /></AuthGuard>} />

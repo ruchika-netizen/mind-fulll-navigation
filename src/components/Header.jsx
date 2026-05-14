@@ -17,14 +17,21 @@ function Header() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => setSession(session));
     return () => subscription.unsubscribe();
   }, []);
+
+
+
   const confirmLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (!error) {
-      setShowLogoutModal(false);
-      setIsOpen(false);
-      // navigate yahan likhne ki zarurat nahi, Guard handle kar lega
-    }
+    await supabase.auth.signOut();
+
+    // Isse next refresh par EnsoLoader nahi chalega
+    sessionStorage.setItem("enso_played", "true");
+    localStorage.clear();
+
+    // Seedha login page par redirect
+    window.location.href = "/login";
   };
+
+
 
   const toggleSound = () => {
     const newState = !isSoundOn;
