@@ -16,7 +16,7 @@ const ExpandableNote = ({ content }) => {
       {content.length > 80 && (
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] font-bold text-[#36454F]/40 hover:text-[#36454F] transition-colors"
+          className="flex items-center gap-1 text-[12px] font-sans uppercase tracking-[0.2em] font-bold text-[#36454F] hover:text-[#36454F] transition-colors"
         >
           {isExpanded ? (
             <>Read Less <ChevronUp size={12} /></>
@@ -256,7 +256,7 @@ function GatheringPlace() {
               </div>
             ) : (
               <div key={item.id} className="bg-white rounded-[2rem] border border-[#36454F]/5 overflow-hidden shadow-sm hover:shadow-md transition-all">
-                <div className="bg-[#F5F0E8]/50 px-6 py-3 border-b border-[#36454F]/5 flex justify-between items-center text-[10px] uppercase tracking-widest font-sans font-bold ">
+                <div className="bg-[#F5F0E8]/50 px-6 py-3 border-b border-[#36454F]/5 flex justify-between items-center text-[12px] uppercase tracking-widest font-sans font-bold ">
                   {new Date(item.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
 
                   {/* --- NOTE/LINK DELETE (COMPASS STYLE) --- */}
