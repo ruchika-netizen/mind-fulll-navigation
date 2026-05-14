@@ -39,7 +39,7 @@ const ForgotPassword = () => {
 
                 <h2 className="text-3xl text-center mb-4 italic">Reset Password</h2>
                 <p className="text-center text-[16px] opacity-60 font-sans mb-10 leading-relaxed">
-                    Enter your email and we'll send you a link to return to your journey.
+                    {/* Enter your email and we'll send you a link to return to your journey. */}
                 </p>
 
                 {errorMsg && (
