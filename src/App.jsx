@@ -49,12 +49,11 @@ function App() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // --- LOADER LOGIC ---
+
   const [isAnimationLoading, setIsAnimationLoading] = useState(() => {
     const played = sessionStorage.getItem("enso_played");
-    // Login/Signup par loader kabhi mat dikhao
+
     if (isAuthPage) return false;
-    // Verification link se aa rahe ho toh loader dikhao (glitch rokne ke liye)
     if (isVerified) return true;
     return played !== "true";
   });
@@ -86,12 +85,10 @@ function App() {
     checkUser();
   }, []);
 
-  // --- RENDERING GATES ---
 
-  // 1. Auth check loading (Blank state)
   if (checkingAuth) return null;
 
-  // 2. Enso Loader Gate (Auth pages pe skip hoga)
+
   if (isAnimationLoading && !isAuthPage) {
     return (
       <EnsoLoader onComplete={() => {
@@ -101,14 +98,13 @@ function App() {
     );
   }
 
-  // 3. Logout transition guard
   if (isTransitioning) return <div className="bg-[#F5F0E8] min-h-screen" />;
 
   return (
     <div className="bg-[#F5F0E8] min-h-screen flex flex-col font-serif">
       <ScrollToTop />
 
-      {/* Header logic fixed for Auth pages */}
+
       {session && !shouldHideNav && <Header session={session} />}
 
       <main className="flex-grow">
@@ -119,7 +115,7 @@ function App() {
           <Route path="/forgot-password" element={<AuthGuard requireAuth={false}><ForgotPassword /></AuthGuard>} />
           <Route path="/reset-password" element={<AuthGuard requireAuth={false}><ResetPassword /></AuthGuard>} />
 
-          {/* Root Route with Verification Guard */}
+
           <Route
             path="/"
             element={
