@@ -5,6 +5,7 @@ import { supabase } from "../supabaseClient";
 import { motion, AnimatePresence } from "framer-motion";
 import fixedImg from "../assets/pikastone.png";
 
+// Prompts array same rahega...
 const prompts = [
   { id: 1, title: "The Shadow Self", text: "Which part of your personality do you work hardest to hide from others? What happens if you bring it into the light?" },
   { id: 2, title: "The Architecture of Joy", text: "Strip away your titles, your possessions, and your roles. What remains that cannot be taken?" },
@@ -66,49 +67,54 @@ function Well() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#F5F0E8] font-serif text-[#36454F]">
+    <div className="relative min-h-screen bg-[#F5F0E8] font-serif text-[#36454F] flex flex-col">
 
-      {/* 1. INITIAL LOADING OVERLAY */}
-      <AnimatePresence>
-        {!imageLoaded && (
-          <motion.div
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
-            className="fixed inset-0 z-[1000] bg-[#F5F0E8] flex flex-col items-center justify-center gap-4"
-          >
-            <Loader2 size={40} className="animate-spin text-[#36454F]/20" strokeWidth={1} />
-            <p className="text-[10px] uppercase tracking-[0.5em] font-sans font-bold opacity-40">Summoning the Well...</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Toast Notification */}
+      <div className={`fixed top-10 right-10 z-[600] flex items-center gap-4 p-5 rounded-2xl shadow-2xl border transition-all duration-500 transform ${toast.show ? "translate-x-0 opacity-100" : "translate-x-20 opacity-0 pointer-events-none"} ${toast.type === "success" ? "bg-white border-green-100" : "bg-[#36454F] border-white/10 text-[#F5F0E8]"}`}>
+        <p className="text-[11px] uppercase tracking-widest font-sans font-bold">{toast.message}</p>
+      </div>
 
-      {/* MAIN PAGE CONTENT */}
-      <div className={`flex flex-col min-h-screen transition-opacity duration-1000 ${imageLoaded ? "opacity-100" : "opacity-0"}`}>
-
-        {/* Toast Notification */}
-        <div className={`fixed top-10 right-10 z-[600] flex items-center gap-4 p-5 rounded-2xl shadow-2xl border transition-all duration-500 transform ${toast.show ? "translate-x-0 opacity-100" : "translate-x-20 opacity-0 pointer-events-none"} ${toast.type === "success" ? "bg-white border-green-100" : "bg-[#36454F] border-white/10 text-[#F5F0E8]"}`}>
-          <p className="text-[11px] uppercase tracking-widest font-sans font-bold">{toast.message}</p>
+      {/* HEADER - HAMESHA VISIBLE RAHEGA */}
+      <header className="w-full max-w-7xl mx-auto pt-10 pb-5 shrink-0 relative text-center z-10">
+        <div className="absolute top-12 left-6 md:left-12">
+          <button onClick={() => navigate("/")} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold transition-all group">
+            <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span> Back
+          </button>
         </div>
+        <h1 className="text-3xl md:text-4xl font-bold italic">The Well</h1>
+        <div className="max-w-2xl mx-auto text-center mb-5 mt-5">
+          <p className="text-[18px] italic leading-relaxed opacity-80 px-4">
+            "The Well is a living resource — a quiet place the writer returns to whenever they need grounding, a prompt, or a practice."
+          </p>
+        </div>
+      </header>
 
-        <header className="w-full max-w-7xl mx-auto pt-10 pb-5 shrink-0 relative text-center">
-          <div className="absolute top-12 ">
-            <button onClick={() => navigate("/")} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold transition-all group">
-              <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span> Back
-            </button>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold italic">The Well</h1>
-          <div className="max-w-2xl mx-auto text-center mb-5 mt-5">
-            <p className="text-[18px] italic leading-relaxed opacity-80 px-4">
-              "The Well is a living resource — a quiet place the writer returns to whenever they need grounding, a prompt, or a practice."
-            </p>
-          </div>
-        </header>
+      {/* LOWER SECTION WRAPPER */}
+      <div className="relative flex-grow flex flex-col overflow-hidden">
 
-        {/* MAIN CONTAINER */}
-        <main className="w-full max-w-[85rem] h-[700px] mx-auto px-6 md:px-12 flex-grow pb-4 flex gap-8 items-stretch">
+        {/* 1. LOADING OVERLAY - SIRF CONTENT AREA KE LIYE */}
+        <AnimatePresence>
+          {!imageLoaded && (
+            <motion.div
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6 }}
+              className="absolute inset-0 z-[50] bg-[#F5F0E8] flex flex-col items-center justify-center gap-4"
+            >
+              <Loader2 size={30} className="animate-spin text-[#36454F]/20" strokeWidth={1} />
+              <p className="text-[9px] uppercase tracking-[0.4em] font-sans font-bold opacity-30">Filling the Well...</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* MAIN CONTAINER - Fade in hoga jab image load ho jaye */}
+        <motion.main
+          initial={{ opacity: 0 }}
+          animate={{ opacity: imageLoaded ? 1 : 0 }}
+          transition={{ duration: 0.8 }}
+          className="w-full max-w-[85rem] h-[700px] mx-auto px-6 md:px-12 flex-grow pb-4 flex gap-8 items-stretch"
+        >
           <div className="hidden lg:block w-[450px] xl:w-[550px] shrink-0">
-            {/* IMAGE WITH LOAD HANDLER */}
             <img
               src={fixedImg}
               alt="Well"
@@ -134,14 +140,13 @@ function Well() {
                         {p.title}
                       </h3>
                     </div>
-
                     <p className="text-[18px] italic leading-relaxed text-[#36454F]/90">{p.text}</p>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-        </main>
+        </motion.main>
 
         <footer className="w-full max-w-[85rem] mx-auto px-6 md:px-12 h-[12vh] flex flex-col items-center justify-center shrink-0 mb-4">
           <div className="w-full flex justify-end">
@@ -152,7 +157,7 @@ function Well() {
         </footer>
       </div>
 
-      {/* POPUP SECTION */}
+      {/* POPUP SECTION - (Popup logic same rahegi) */}
       <AnimatePresence>
         {isPopupOpen && (
           <div className="fixed inset-0 z-[500] flex items-center justify-center p-6">
