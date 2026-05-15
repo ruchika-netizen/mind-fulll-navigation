@@ -157,7 +157,8 @@ function App() {
           <Route path="/finalword" element={<AuthGuard requireAuth={true}><FinalWord /></AuthGuard>} />
           <Route path="/invitations" element={<AuthGuard requireAuth={true}><Invitations /></AuthGuard>} />
           <Route path="/navigators" element={<AuthGuard requireAuth={true}><Navigators /></AuthGuard>} />
-          <Route path="/paymentsuccess" element={<AuthGuard requireAuth={true}><PaymentSuccess /></AuthGuard>} />
+          {/* AuthGuard hata diya taaki session load hone ka time mile */}
+          <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/paymentriver" element={<AuthGuard requireAuth={true}><Paymentriver /></AuthGuard>} />
           <Route path="/forgot-password" element={<AuthGuard requireAuth={false}><ForgotPassword /></AuthGuard>} />
           <Route path="/reset-password" element={<AuthGuard requireAuth={false}><ResetPassword /></AuthGuard>} />

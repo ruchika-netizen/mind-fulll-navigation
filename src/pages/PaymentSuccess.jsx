@@ -1,74 +1,101 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { Home, Loader2 } from "lucide-react";
+import { Loader2, CheckCircle2 } from "lucide-react";
 
 const PaymentSuccess = () => {
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
-    const [isCleaning, setIsCleaning] = useState(true); // Loader state
+    const [status, setStatus] = useState("verifying");
 
     useEffect(() => {
-        const sessionId = searchParams.get("session_id");
+        let isMounted = true;
 
-        const updatePaymentStatus = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user && sessionId) {
-                // 1. Database update
-                await supabase
-                    .from("rituals")
-                    .update({
-                        payment_status: 'completed',
-                        stripe_id: sessionId
-                    })
-                    .eq('user_id', user.id)
-                    .eq('payment_status', 'pending')
-                    .order('created_at', { ascending: false })
-                    .limit(1);
+        const syncPayment = async (userId) => {
+            try {
+                // Get current profile count
+                const { data: profile, error: fetchError } = await supabase
+                    .from("profiles")
+                    .select("payment_count")
+                    .eq("id", userId)
+                    .single();
 
-                // 2. URL Clean
-                window.history.replaceState({}, document.title, "/payment-success");
+                if (fetchError) throw fetchError;
 
-                // 3. Thoda sa delay taaki smooth lage
-                setTimeout(() => setIsCleaning(false), 800);
-            } else {
-                // Agar session_id nahi hai toh turant loader hatao
-                setIsCleaning(false);
+                const currentCount = parseInt(profile?.payment_count || 0);
+                const newCount = currentCount + 1;
+
+                // Update database
+                const { error: updateError } = await supabase
+                    .from("profiles")
+                    .update({ payment_count: newCount })
+                    .eq("id", userId);
+
+                if (updateError) throw updateError;
+
+                if (isMounted) setStatus("success");
+            } catch (err) {
+                console.error("Sync error:", err);
+                if (isMounted) setStatus("error");
             }
         };
 
-        updatePaymentStatus();
-    }, [searchParams]);
+        const checkSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session?.user) {
+                syncPayment(session.user.id);
+            } else {
+                const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+                    if (session?.user && status === "verifying") {
+                        syncPayment(session.user.id);
+                        subscription.unsubscribe();
+                    }
+                });
 
-    // Jab tak URL clean ho raha hai, tab tak ye dikhega
-    if (isCleaning) {
-        return (
-            <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center">
-                <Loader2 className="animate-spin text-[#36454F] opacity-20" size={40} />
-            </div>
-        );
-    }
+                setTimeout(() => {
+                    if (isMounted && status === "verifying") setStatus("no_session");
+                }, 10000);
+            }
+        };
 
-    // Final Design (URL ab clean ho chuka hai)
+        checkSession();
+        return () => { isMounted = false; };
+    }, []);
+
     return (
-        <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center p-6 font-serif">
-            <div className="max-w-md w-full text-center space-y-8 animate-in fade-in duration-1000">
-                <div className="flex justify-center">
-                    <div className="w-20 h-20 rounded-full border-2 border-[#4CAF50] flex items-center justify-center text-[#4CAF50]">
-                        <svg viewBox="0 0 24 24" className="w-10 h-10 fill-none stroke-current stroke-[3]">
-                            <polyline points="20 6 9 17 4 12" />
-                        </svg>
+        <div className="min-h-screen bg-[#F5F0E8] flex flex-col items-center justify-center p-6 text-center font-serif">
+            <div className="max-w-md w-full bg-white/70 p-12 rounded-[3rem] border border-white shadow-2xl backdrop-blur-lg">
+                {status === "verifying" && (
+                    <div className="space-y-6">
+                        <Loader2 className="mx-auto animate-spin text-[#36454F]" size={48} />
+                        <h2 className="text-2xl italic">Deepening the River...</h2>
+                        <p className="text-sm opacity-60 italic">Updating your journey...</p>
                     </div>
-                </div>
-                <div className="space-y-4">
-                    <h1 className="text-[#36454F] text-4xl md:text-5xl italic font-light">Payment Confirmed.</h1>
-                    <p className="text-[#36454F]/70 text-lg leading-relaxed max-w-[400px] mx-auto">
-                        Your intention is now moving through the physical world.
-                    </p>
-                </div>
-                <button onClick={() => navigate("/")} className="mt-8 inline-flex items-center gap-3 bg-[#36454F] text-white px-10 py-4 rounded-full text-[11px] uppercase tracking-[0.2em] font-bold font-sans">
-                    <Home size={14} /> Return to Home
-                </button>
+                )}
+
+                {status === "success" && (
+                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                        <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8">
+                            <CheckCircle2 size={40} className="text-green-600" strokeWidth={1.5} />
+                        </div>
+                        <h2 className="text-4xl italic mb-4">The Gate is Open</h2>
+                        <p className="opacity-70 italic mb-10 leading-relaxed">Your path has expanded by 100 entries.</p>
+                        <button onClick={() => navigate("/river")} className="w-full py-5 bg-[#36454F] text-white rounded-2xl font-sans uppercase tracking-[0.4em] text-[10px] font-bold shadow-xl">Continue the Flow</button>
+                    </div>
+                )}
+
+                {status === "error" && (
+                    <div className="space-y-6">
+                        <h2 className="text-2xl italic text-red-500">Error Occurred</h2>
+                        <button onClick={() => window.location.reload()} className="underline text-[10px] uppercase font-bold tracking-widest">Retry Sync</button>
+                    </div>
+                )}
+
+                {status === "no_session" && (
+                    <div className="space-y-6">
+                        <h2 className="text-2xl italic text-red-600">Session Missing</h2>
+                        <button onClick={() => navigate("/login")} className="w-full py-4 border border-[#36454F] rounded-full text-[10px] uppercase font-bold tracking-widest">Login to Sync</button>
+                    </div>
+                )}
             </div>
         </div>
     );

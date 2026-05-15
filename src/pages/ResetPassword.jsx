@@ -26,10 +26,10 @@ const ResetPassword = () => {
         } else {
             setSuccess(true);
             await supabase.auth.signOut();
-     
+
             setTimeout(() => {
                 navigate("/login", { replace: true });
-            }, 3000);
+            }, 1200);
         }
     };
 
