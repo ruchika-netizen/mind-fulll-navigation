@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import { Loader2, AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
+import { Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
 
 const ResetPassword = () => {
     const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState(""); // Naya state
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const [success, setSuccess] = useState(false);
@@ -13,10 +14,17 @@ const ResetPassword = () => {
 
     const handleUpdatePassword = async (e) => {
         e.preventDefault();
+
+
+        if (newPassword !== confirmPassword) {
+            setErrorMsg("Passwords do not match");
+            return;
+        }
+
         setLoading(true);
         setErrorMsg("");
 
-        // 1. Password update karo
+
         const { error } = await supabase.auth.updateUser({
             password: newPassword,
         });
@@ -27,14 +35,10 @@ const ResetPassword = () => {
             return;
         }
 
-        // 2. Success state set karo
         setSuccess(true);
 
-        // 3. Sabse important: SignOut karke turant navigate karo bina setTimeout ke
-        // Taaki Supabase listener redirect se pehle state clean karle
+        // 3. SignOut aur Navigate
         await supabase.auth.signOut();
-
-        // replace: true zaroori hai taaki user back karke wapas reset page par na aa sake
         navigate("/login", { replace: true });
     };
 
@@ -44,8 +48,8 @@ const ResetPassword = () => {
         <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center font-serif text-[#36454F] px-4">
             <div className="bg-white border border-[#36454F]/5 rounded-[2.5rem] w-full max-w-md p-10 shadow-sm animate-in fade-in duration-700">
                 <h2 className="text-3xl text-center mb-4 italic">New Path</h2>
-                <p className="text-center text-[14px] opacity-60 mb-10 font-sans leading-relaxed">
-                    Create a strong new password to secure your journey.
+                <p className="text-center text-[18px]  mb-10 font-sans leading-relaxed">
+                    Secure your journey with a new password.
                 </p>
 
                 {errorMsg && (
@@ -54,11 +58,10 @@ const ResetPassword = () => {
                     </div>
                 )}
 
-                {/* Success message UI par glitch deta hai redirect ke time, 
-                    isliye hum loading spinner hi rakhenge update ke baad */}
-                <form onSubmit={handleUpdatePassword} className="space-y-7">
+                <form onSubmit={handleUpdatePassword} className="space-y-6">
+                    {/* New Password Field */}
                     <div className="space-y-2">
-                        <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold ml-1">New Password</label>
+                        <label className="text-[12px] uppercase tracking-[0.3em] font-sans font-bold ml-1">New Password</label>
                         <div className="relative">
                             <input
                                 type={showPassword ? "text" : "password"}
@@ -78,12 +81,32 @@ const ResetPassword = () => {
                         </div>
                     </div>
 
+                    {/* Confirm Password Field */}
+                    <div className="space-y-2">
+                        <label className="text-[12px] uppercase tracking-[0.3em]  font-sans font-bold ml-1">Confirm Password</label>
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Re-enter password"
+                                className={fieldClasses}
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+                        {/* Real-time mismatch hint */}
+                        {confirmPassword && newPassword !== confirmPassword && (
+                            <p className="text-[10px] text-red-400 font-sans font-bold uppercase tracking-wider ml-1 mt-1">
+                                Passwords do not match
+                            </p>
+                        )}
+                    </div>
+
                     <button
                         type="submit"
-                        disabled={loading || success}
-                        className="w-full bg-[#36454F] text-white py-5 rounded-2xl uppercase text-[10px] tracking-[0.5em] font-bold font-sans shadow-lg hover:bg-black active:scale-95 transition-all flex justify-center items-center gap-3"
+                        disabled={loading || success || (newPassword !== confirmPassword)}
+                        className="w-full bg-[#36454F] text-white py-5 rounded-2xl uppercase text-[10px] tracking-[0.5em] font-bold font-sans shadow-lg hover:bg-black active:scale-95 transition-all flex justify-center items-center gap-3 disabled:opacity-30 disabled:scale-100"
                     >
-                        {/* Jab tak navigate nahi hota, loading dikhao taaki UI stable rahe */}
                         {loading || success ? (
                             <div className="flex items-center gap-2">
                                 <Loader2 className="animate-spin" size={18} />

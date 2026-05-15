@@ -5,7 +5,7 @@ import { supabase } from "../supabaseClient";
 import { motion, AnimatePresence } from "framer-motion";
 import fixedImg from "../assets/pikastone.png";
 
-// Prompts array same rahega...
+
 const prompts = [
   { id: 1, title: "The Shadow Self", text: "Which part of your personality do you work hardest to hide from others? What happens if you bring it into the light?" },
   { id: 2, title: "The Architecture of Joy", text: "Strip away your titles, your possessions, and your roles. What remains that cannot be taken?" },
@@ -76,7 +76,7 @@ function Well() {
 
       {/* HEADER - HAMESHA VISIBLE RAHEGA */}
       <header className="w-full max-w-7xl mx-auto pt-10 pb-5 shrink-0 relative text-center z-10">
-        <div className="absolute top-12 left-6 md:left-12">
+        <div className="absolute top-12 ">
           <button onClick={() => navigate("/")} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold transition-all group">
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span> Back
           </button>

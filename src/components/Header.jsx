@@ -19,7 +19,6 @@ function Header({ session }) {
 
     localStorage.removeItem("soundEnabled");
 
-
     window.location.href = "/login";
   };
 

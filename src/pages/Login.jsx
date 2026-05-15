@@ -96,7 +96,7 @@ const Login = () => {
 
         <form onSubmit={handleLogin} className="space-y-7" autoComplete="off">
           <div className="space-y-2">
-            <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold ml-1">Email Address</label>
+            <label className="text-[12px] uppercase tracking-[0.3em] font-sans font-bold ml-1">Email Address</label>
             <input
               type="email"
               placeholder="Enter Email"
@@ -108,7 +108,7 @@ const Login = () => {
 
           <div className="space-y-2">
             <div className="flex justify-between items-center px-1">
-              <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold">Password</label>
+              <label className="text-[12px] uppercase tracking-[0.3em] font-sans font-bold">Password</label>
               <Link to="/forgot-password" size={10} className="text-[10px] uppercase tracking-[0.2em] transition-opacity font-sans font-bold">
                 Forgot Password?
               </Link>
@@ -153,7 +153,7 @@ const Login = () => {
         </form>
 
         {!isVerifiedFlow && (
-          <p className="text-center mt-8 text-[11px] uppercase tracking-[0.2em] opacity-40 font-bold font-sans">
+          <p className="text-center mt-8 text-[11px] uppercase tracking-[0.2em] font-bold font-sans">
             Don't have an account? <Link to="/signup" className="underline font-bold opacity-100">signup</Link>
           </p>
         )}

@@ -59,7 +59,7 @@ function Settings() {
   return (
     <div className="min-h-screen bg-[#FDFCFB] text-[#36454F] font-sans selection:bg-[#36454F]/5">
       {/* NAVIGATION */}
-      <nav className="max-w-7xl mx-auto py-10 ">
+      <nav className="max-w-7xl mx-auto py-6 ">
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-bold group text-[#36454F] hover:text-[#36454F] transition-all">
           <span className="text-xl group-hover:-translate-x-1 transition-transform inline-block">‹</span>
           <span className="mt-0.5">Back</span>
@@ -73,7 +73,7 @@ function Settings() {
           animate={{ opacity: 1, y: 0 }}
           // Inline style use kar rahe hain taaki koi bhi CSS file ise override na kar sake
           style={{ backgroundColor: '#ffffff' }}
-          className="rounded-[3rem] shadow-xl border border-[#36454F]/5 overflow-hidden p-12 space-y-20"
+          className="rounded-[3rem] shadow-xl border border-[#36454F]/5 overflow-hidden p-12 space-y-10"
         >
           {/* HEADER SECTION */}
           <header>
@@ -81,7 +81,7 @@ function Settings() {
             <p className="text-[14px] font-sans font-bold uppercase tracking-[0.3em] ">Personalize your environment</p>
           </header>
 
-          <div className="space-y-20">
+          <div className="space-y-10">
             {/* PREFERENCES */}
             <section>
               <div className="flex items-center gap-3 mb-8 ">
