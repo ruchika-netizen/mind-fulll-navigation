@@ -12,16 +12,14 @@ function Header({ session }) {
   const navigate = useNavigate();
 
   const confirmLogout = async () => {
-    // Loader skip karne ka flag set karo
     sessionStorage.setItem("enso_played", "true");
 
-    // Supabase se logout
+
     await supabase.auth.signOut();
 
-    // Sirf zaroori data clear karo, sessionStorage ko turant mat chhedo
     localStorage.removeItem("soundEnabled");
 
-    // Direct redirect
+
     window.location.href = "/login";
   };
 

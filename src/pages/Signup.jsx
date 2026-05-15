@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link } from "react-router-dom";
-import { CheckCircle2, AlertCircle, Loader2, Eye, EyeOff, MailCheck } from "lucide-react"; // MailCheck added
+import { CheckCircle2, AlertCircle, Loader2, Eye, EyeOff, MailCheck } from "lucide-react";
 import ReCAPTCHA from "react-google-recaptcha";
 
 function Signup() {
@@ -10,7 +10,7 @@ function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [captchaToken, setCaptchaToken] = useState(null);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
-  const [isSignedUp, setIsSignedUp] = useState(false); // Success state tracking
+  const [isSignedUp, setIsSignedUp] = useState(false);
 
   const navigate = useNavigate();
   const recaptchaRef = useRef();
@@ -45,11 +45,9 @@ function Signup() {
         recaptchaRef.current?.reset();
         setCaptchaToken(null);
       } else {
-        // Agar user already exist karta hai (Supabase behavior)
         if (data?.user && data.user.identities?.length === 0) {
           triggerToast("Email already registered. Try logging in.", "error");
         } else {
-          // SUCCESS: Show success UI instead of blank or instant redirect
           setIsSignedUp(true);
           triggerToast("Verification link sent! Check your email.", "success");
         }

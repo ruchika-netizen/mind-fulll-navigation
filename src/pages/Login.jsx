@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react"; // Added useEffect
+import React, { useState, useRef, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
@@ -54,7 +54,6 @@ const Login = () => {
     if (error) {
       setErrorMsg(error.message);
       setLoading(false);
-      // Error hone par captcha reset karna zaroori hai
       recaptchaRef.current?.reset();
       setCaptchaToken(null);
     } else if (data?.user) {
@@ -138,7 +137,7 @@ const Login = () => {
             <div className="scale-[0.85] origin-center">
               <ReCAPTCHA
                 ref={recaptchaRef}
-                sitekey="6LeH3NssAAAAAGpM5Uw9uM8XLWDTq_5a2qqR0fHA" // Make sure this key is correct for your domain
+                sitekey="6LeH3NssAAAAAGpM5Uw9uM8XLWDTq_5a2qqR0fHA"
                 onChange={(token) => setCaptchaToken(token)}
               />
             </div>

@@ -12,14 +12,14 @@ function PaymentSuccess() {
             try {
                 const { data: { user } } = await supabase.auth.getUser();
                 if (user) {
-                    // Profile table mein premium true kar do
+
                     await supabase
                         .from("profiles")
                         .update({ is_premium: true })
                         .eq("id", user.id);
 
                     setTimeout(() => {
-                        navigate("/river"); // 2 second baad wapas bhej do
+                        navigate("/river");
                     }, 2000);
                 }
             } catch (err) {
