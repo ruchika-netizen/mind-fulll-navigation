@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react"; // Added useEffect
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
@@ -22,9 +22,20 @@ const Login = () => {
 
   const isVerifiedFlow = searchParams.get("verified") === "true";
 
+  // FIX: Agar confirm email ke baad user login page par aaye, 
+  // toh usey automatic navigate karne ke liye logic
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate("/invitation?mode=onboarding");
+      }
+    };
+    checkSession();
+  }, [navigate]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
-
 
     if (!captchaToken) {
       setErrorMsg("Please verify that you are human");
@@ -33,7 +44,6 @@ const Login = () => {
 
     setLoading(true);
     setErrorMsg("");
-
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
@@ -46,7 +56,7 @@ const Login = () => {
     if (error) {
       setErrorMsg(error.message);
       setLoading(false);
-
+      // Error hone par captcha reset karna zaroori hai
       recaptchaRef.current?.reset();
       setCaptchaToken(null);
     } else if (data?.user) {
@@ -88,7 +98,6 @@ const Login = () => {
         )}
 
         <form onSubmit={handleLogin} className="space-y-7" autoComplete="off">
-          {/* Email Field */}
           <div className="space-y-2">
             <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold ml-1">Email Address</label>
             <input
@@ -100,14 +109,10 @@ const Login = () => {
             />
           </div>
 
-          {/* Password Field */}
           <div className="space-y-2">
             <div className="flex justify-between items-center px-1">
               <label className="text-[12px] uppercase tracking-[0.3em] opacity-40 font-sans font-bold">Password</label>
-              <Link
-                to="/forgot-password"
-                className="text-[10px] uppercase tracking-[0.2em]  transition-opacity font-sans font-bold"
-              >
+              <Link to="/forgot-password" size={10} className="text-[10px] uppercase tracking-[0.2em] transition-opacity font-sans font-bold">
                 Forgot Password?
               </Link>
             </div>
@@ -120,7 +125,6 @@ const Login = () => {
                 required
                 autoComplete="current-password"
               />
-
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -131,12 +135,12 @@ const Login = () => {
             </div>
           </div>
 
-          {/* ReCAPTCHA Container */}
+          {/* ReCAPTCHA */}
           <div className="flex justify-center py-2 overflow-hidden">
             <div className="scale-[0.85] origin-center">
               <ReCAPTCHA
                 ref={recaptchaRef}
-                sitekey="6LeH3NssAAAAAGpM5Uw9uM8XLWDTq_5a2qqR0fHA"
+                sitekey="6LeH3NssAAAAAGpM5Uw9uM8XLWDTq_5a2qqR0fHA" // Make sure this key is correct for your domain
                 onChange={(token) => setCaptchaToken(token)}
               />
             </div>
