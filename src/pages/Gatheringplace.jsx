@@ -4,26 +4,35 @@ import { supabase } from "../supabaseClient";
 import { Trash2, Link as LinkIcon, Loader2, Plus, X, Maximize2, ChevronDown, ChevronUp, CheckCircle2, MoreHorizontal } from "lucide-react";
 import "../index.css";
 
-// --- CUSTOM NOTE COMPONENT ---
+
 const ExpandableNote = ({ content }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="space-y-3">
-      <p className={`text-[16px] italic text-[#36454F] leading-relaxed whitespace-pre-wrap transition-all duration-500 ${!isExpanded ? "line-clamp-2" : ""}`}>
+
+    <div className="flex flex-col w-full overflow-hidden">
+
+      <p className={`text-[16px] italic text-[#36454F] leading-relaxed break-words whitespace-pre-wrap transition-all duration-500 ease-in-out ${isExpanded ? "line-clamp-none" : "line-clamp-2"
+        }`}>
         {content}
       </p>
+
       {content.length > 80 && (
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-1 text-[12px] font-sans uppercase tracking-[0.2em] font-bold text-[#36454F] hover:text-[#36454F] transition-colors"
-        >
-          {isExpanded ? (
-            <>Read Less <ChevronUp size={12} /></>
-          ) : (
-            <>Read More <ChevronDown size={12} /></>
-          )}
-        </button>
+        <div className="flex justify-end mt-3">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsExpanded(!isExpanded);
+            }}
+            className="flex items-center gap-1 text-[11px] font-sans uppercase tracking-[0.2em] font-bold text-[#36454F] hover:text-[#36454F] transition-all py-1"
+          >
+            {isExpanded ? (
+              <>Read Less <ChevronUp size={12} /></>
+            ) : (
+              <>Read More <ChevronDown size={12} /></>
+            )}
+          </button>
+        </div>
       )}
     </div>
   );
