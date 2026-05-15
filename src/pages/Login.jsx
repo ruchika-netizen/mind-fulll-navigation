@@ -36,7 +36,7 @@ const Login = () => {
     e.preventDefault();
 
     if (!captchaToken) {
-      setErrorMsg("Please verify that you are human");
+      setErrorMsg("Please verify reCAPTCHA that you are human");
       return;
     }
 
