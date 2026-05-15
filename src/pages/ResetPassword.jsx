@@ -39,7 +39,7 @@ const ResetPassword = () => {
         <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center font-serif text-[#36454F] px-4">
             <div className="bg-white border border-[#36454F]/5 rounded-[2.5rem] w-full max-w-md p-10 shadow-sm animate-in fade-in duration-700">
                 <h2 className="text-3xl text-center mb-4 italic">New Path</h2>
-                <p className="text-center text-[13px] opacity-60 mb-10 leading-relaxed">
+                <p className="text-center text-[14px] opacity-60 mb-10 font-sans leading-relaxed">
                     Create a strong new password to secure your journey.
                 </p>
 

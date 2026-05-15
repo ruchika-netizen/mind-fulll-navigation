@@ -22,8 +22,6 @@ const Login = () => {
 
   const isVerifiedFlow = searchParams.get("verified") === "true";
 
-  // FIX: Agar confirm email ke baad user login page par aaye, 
-  // toh usey automatic navigate karne ke liye logic
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
