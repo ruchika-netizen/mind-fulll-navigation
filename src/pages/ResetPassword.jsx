@@ -29,7 +29,7 @@ const ResetPassword = () => {
 
             setTimeout(() => {
                 navigate("/login", { replace: true });
-            }, 1200);
+            }, 1000);
         }
     };
 
