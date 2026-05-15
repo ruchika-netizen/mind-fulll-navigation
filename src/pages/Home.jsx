@@ -11,7 +11,7 @@ const sections = [
     title: "The Invitations",
     icon: <MailOpen size={28} />,
     path: "/invitations",
-    desc: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    desc: "Let's embark on this journey !"
   },
   {
     id: "compass",

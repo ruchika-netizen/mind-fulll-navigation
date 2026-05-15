@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { ShieldCheck, Bell, ChevronDown, Eye, EyeOff, Check, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import sound from "../assets/milanwulf-toggle-button-on-166329.mp3";
 import "../App.css";
 
@@ -35,7 +36,7 @@ function Settings() {
   };
 
   const playToggleSound = () => {
-    if (audioRef.current) {
+    if (audioRef.current && soundEnabled) {
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch(() => { });
     }
@@ -45,7 +46,6 @@ function Settings() {
     if (!newPassword) return;
     setLoading(true);
     try {
-      // Alert removed as per your request
       await supabase.auth.updateUser({ password: newPassword });
       setNewPassword("");
       setShowPassword(false);
@@ -57,131 +57,134 @@ function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFCFB] text-[#36454F] font-sans">
+    <div className="min-h-screen bg-[#FDFCFB] text-[#36454F] font-sans selection:bg-[#36454F]/5">
+      {/* NAVIGATION */}
       <nav className="max-w-7xl mx-auto py-10 ">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-bold group">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-bold group text-[#36454F] hover:text-[#36454F] transition-all">
           <span className="text-xl group-hover:-translate-x-1 transition-transform inline-block">‹</span>
           <span className="mt-0.5">Back</span>
         </button>
       </nav>
 
-      <main className="max-w-2xl mx-auto px-6 pb-24">
-        <header className="mb-20">
-          <h1 className="text-5xl font-serif italic mb-2">Settings</h1>
-          <p className="text-[15px] font-sans font-bold uppercase tracking-[0.2em]">Personalize your environment</p>
-        </header>
+      <main className="max-w-3xl mx-auto px-6 pb-24">
+        {/* SINGLE SEAMLESS WHITE CARD */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          // Inline style use kar rahe hain taaki koi bhi CSS file ise override na kar sake
+          style={{ backgroundColor: '#ffffff' }}
+          className="rounded-[3rem] shadow-xl border border-[#36454F]/5 overflow-hidden p-12 space-y-20"
+        >
+          {/* HEADER SECTION */}
+          <header>
+            <h1 className="text-5xl font-serif italic mb-3 text-[#36454F]">Settings</h1>
+            <p className="text-[14px] font-sans font-bold uppercase tracking-[0.3em] ">Personalize your environment</p>
+          </header>
 
-        <div className="space-y-16">
-          {/* PREFERENCES */}
-          <section>
-            <div className="flex items-center gap-3 mb-8">
-              <Bell size={30} />
-              <h2 className="text-[15px] uppercase tracking-[0.2em] font-bold">Preferences</h2>
-            </div>
-            <div className="bg-white/50 border border-[#36454F]/5 rounded-[2rem] p-8 flex items-center justify-between shadow-sm">
-              <div>
-                <p className="text-lg font-serif italic">Interface Ambience</p>
-                <p className="text-[14px] font-sans font-bold uppercase tracking-widest mt-1">Audio feedback</p>
+          <div className="space-y-20">
+            {/* PREFERENCES */}
+            <section>
+              <div className="flex items-center gap-3 mb-8 ">
+                <Bell size={24} strokeWidth={1.5} />
+                <h2 className="text-[14px] uppercase tracking-[0.2em] font-bold">Preferences</h2>
               </div>
-              <button
-                onClick={() => { playToggleSound(); setSoundEnabled(!soundEnabled); }}
-                className={`w-14 h-7 rounded-full flex items-center px-1.5 transition-all duration-500 ${soundEnabled ? "bg-[#36454F]" : "bg-[#36454F]/10"}`}
-              >
-                <div className={`w-4 h-4 bg-white rounded-full transition-all duration-300 transform ${soundEnabled ? "translate-x-7" : "translate-x-0"}`} />
-              </button>
-            </div>
-          </section>
-
-          {/* SECURITY - FIXED SECTION */}
-          {/* SECURITY SECTION - BROWSER EYE ICON FIXED */}
-          <section className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
-            <div className="flex items-center gap-3 mb-8">
-              <ShieldCheck size={30} />
-              <h2 className="text-[15px] uppercase tracking-[0.2em] font-bold">Security</h2>
-            </div>
-
-            <div className="space-y-8 px-2">
-              <div className="flex flex-col gap-2">
-                <label className="text-[14px] font-sans font-bold uppercase tracking-widest">User ID (Email)</label>
-                <input
-                  type="text"
-                  value={email}
-                  disabled
-                  className="bg-transparent border-b border-[#36454F]/5 py-3 text-md font-sans opacity-50 italic outline-none cursor-not-allowed"
-                />
+              <div className="bg-[#FDFCFB]/60 border border-[#36454F]/5 rounded-[2rem] p-8 flex items-center justify-between transition-all hover:bg-[#FDFCFB] shadow-sm">
+                <div>
+                  <p className="text-xl font-serif italic text-[#36454F]">Interface Ambience</p>
+                  <p className="text-[12px] font-sans font-bold uppercase tracking-widest mt-1">Audio feedback</p>
+                </div>
+                <button
+                  onClick={() => { playToggleSound(); setSoundEnabled(!soundEnabled); }}
+                  className={`w-14 h-7 rounded-full flex items-center px-1.5 transition-all duration-500 ${soundEnabled ? "bg-[#36454F]" : "bg-[#36454F]/10"}`}
+                >
+                  <div className={`w-4 h-4 bg-white rounded-full transition-all duration-300 transform shadow-sm ${soundEnabled ? "translate-x-7" : "translate-x-0"}`} />
+                </button>
               </div>
+            </section>
 
-              <div className="flex flex-col gap-6 w-full">
-                <label className="text-[14px] font-sans font-bold uppercase tracking-widest">Reset Password</label>
+            {/* SECURITY */}
+            <section>
+              <div className="flex items-center gap-3 mb-8 ">
+                <ShieldCheck size={24} strokeWidth={1.5} />
+                <h2 className="text-[14px] uppercase tracking-[0.2em] font-bold">Security</h2>
+              </div>
+              <div className="space-y-8 max-w-xl">
+                <div className="flex flex-col gap-2 border-b border-[#36454F]/10 pb-4">
+                  <span className="text-[11px] uppercase tracking-widest font-bold  text-[#36454F]">User ID (Email)</span>
+                  <span className="text-lg font-serif italic  text-[#36454F]">{email}</span>
+                </div>
 
-                <div className="relative flex items-center bg-white border border-[#36454F]/5 rounded-[1.5rem] px-6 py-2 transition-all duration-500 focus-within:border-[#D4AF37]/40 shadow-sm">
+                <div className="relative flex items-center bg-[#FDFCFB]/60 border border-[#36454F]/5 rounded-[1.8rem] px-7 py-4 shadow-sm focus-within:bg-[#FDFCFB] transition-all">
                   <input
                     type={showPassword ? "text" : "password"}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="••••••"
-                    /* Added specific Edge/Chrome browser override classes */
-                    className="flex-1 bg-transparent py-3 text-md italic font-serif outline-none text-[#36454F] [::-ms-reveal]:hidden [::-ms-clear]:hidden"
-                    autoComplete="new-password"
+                    placeholder="Update Password"
+                    className="flex-1 bg-transparent  text-lg italic font-serif outline-none text-[#36454F] "
                   />
-
-                  <div className="flex items-center gap-3">
-                    {/* Your Custom React Icon */}
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="text-[#36454F]/30 hover:text-[#36454F] transition-colors flex items-center justify-center w-6"
-                    >
-                      {showPassword ? (
-                        <EyeOff size={18} key="hide-pass" />
-                      ) : (
-                        <Eye size={18} key="show-pass" />
-                      )}
+                  <div className="flex items-center gap-4">
+                    <button onClick={() => setShowPassword(!showPassword)} className="text-[#36454F]/30 hover:text-[#36454F] transition-colors">
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
-
-                    {/* Submit Button */}
                     <button
                       onClick={handlePasswordChange}
-                      disabled={loading || !newPassword}
-                      className={`w-9 h-9 flex items-center justify-center rounded-full transition-all duration-500 ${newPassword
-                        ? "bg-[#D4AF37] text-white shadow-md hover:scale-105"
-                        : "bg-[#36454F]/5 text-[#36454F]/10"
-                        }`}
+                      disabled={!newPassword || loading}
+                      className={`w-8 h-8 flex items-center justify-center rounded-full transition-all ${newPassword ? "bg-[#36454F] text-white shadow-lg hover:scale-105" : "bg-[#36454F]/5 text-[#36454F]/10"}`}
                     >
-                      {loading ? (
-                        <Loader2 size={16} className="animate-spin" />
-                      ) : (
-                        <Check size={18} strokeWidth={3} />
-                      )}
+                      {loading ? <Loader2 size={18} className="animate-spin" /> : <Check size={20} strokeWidth={3} />}
                     </button>
                   </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
 
-          {/* FAQ */}
-          <section className="pb-10">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-8 rounded-full border border-[#36454F] flex items-center justify-center font-bold">?</div>
-              <h2 className="text-[14px] font-sans font-bold uppercase tracking-widest">FAQ</h2>
-            </div>
-            <div className="space-y-3">
-              {faqs.map((faq, index) => {
-                const isOpen = openIndex === index;
-                return (
-                  <div key={index} className={`bg-white/20 border border-[#36454F]/5 rounded-[1.2rem] p-4 transition-all ${isOpen ? 'bg-white/40' : ''}`}>
-                    <button onClick={() => setOpenIndex(isOpen ? null : index)} className="w-full flex items-center justify-between text-left outline-none">
-                      <p className="text-[18px] font-serif italic">{faq.question}</p>
-                      <ChevronDown size={14} className={`transition-transform duration-500 ${isOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                    {isOpen && <p className="mt-3 pt-3 border-t border-[#36454F]/5 text-[16px] animate-in fade-in slide-in-from-top-1">{faq.answer}</p>}
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        </div>
+            {/* FAQ SECTION */}
+            <section className="pb-10">
+              <div className="flex items-center gap-3 mb-6 ">
+                <div className="w-5 h-5 rounded-full border border-[#36454F] flex items-center justify-center text-[9px] font-bold">?</div>
+                <h2 className="text-[12px] uppercase tracking-[0.2em] font-bold">FAQ</h2>
+              </div>
+              <div className="space-y-3">
+                {faqs.map((faq, index) => {
+                  const isOpen = openIndex === index;
+                  return (
+                    <div
+                      key={index}
+                      className={`border rounded-[1.5rem] transition-all duration-500 overflow-hidden ${isOpen ? 'bg-[#FDFCFB] border-[#36454F]/10 shadow-sm' : 'bg-transparent border-[#36454F]/5 hover:bg-[#FDFCFB]/20'
+                        }`}
+                    >
+                      <button
+                        onClick={() => setOpenIndex(isOpen ? null : index)}
+                        className="w-full flex items-center justify-between text-left px-6 py-4 outline-none"
+                      >
+                        {/* Font size 19px se 16px kar diya */}
+                        <p className="text-[16px] font-serif italic text-[#36454F]">{faq.question}</p>
+                        <ChevronDown size={14} className={`transition-transform duration-500 text-[#36454F]/30 ${isOpen ? 'rotate-180 text-[#36454F]' : ''}`} />
+                      </button>
+
+                      <AnimatePresence>
+                        {isOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                          >
+                            {/* Answer ka font 17px se 14px kar diya */}
+                            <div className="px-6 pb-5 pt-0 text-[16px] font-sans italic text-[#36454F] leading-relaxed">
+                              <div className="w-6 h-[1px] bg-[#36454F]/10 mb-3" />
+                              {faq.answer}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          </div>
+        </motion.div>
       </main>
     </div>
   );

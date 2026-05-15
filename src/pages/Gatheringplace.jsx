@@ -3,20 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { Trash2, Link as LinkIcon, Loader2, Plus, X, Maximize2, ChevronDown, ChevronUp, CheckCircle2, MoreHorizontal } from "lucide-react";
 import "../index.css";
-
-
+import { motion } from "framer-motion";
+// --- CUSTOM NOTE COMPONENT ---
 const ExpandableNote = ({ content }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-
     <div className="flex flex-col w-full overflow-hidden">
-
       <p className={`text-[16px] italic text-[#36454F] leading-relaxed break-words whitespace-pre-wrap transition-all duration-500 ease-in-out ${isExpanded ? "line-clamp-none" : "line-clamp-2"
         }`}>
         {content}
       </p>
-
       {content.length > 80 && (
         <div className="flex justify-end mt-3">
           <button
@@ -24,7 +21,7 @@ const ExpandableNote = ({ content }) => {
               e.stopPropagation();
               setIsExpanded(!isExpanded);
             }}
-            className="flex items-center gap-1 text-[11px] font-sans uppercase tracking-[0.2em] font-bold text-[#36454F] hover:text-[#36454F] transition-all py-1"
+            className="flex items-center gap-1 text-[11px] font-sans uppercase tracking-[0.2em] font-bold text-[#36454F]/40 hover:text-[#36454F] transition-all py-1"
           >
             {isExpanded ? (
               <>Read Less <ChevronUp size={12} /></>
@@ -52,7 +49,6 @@ function GatheringPlace() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // PAGINATION & DELETE CONFIRMATION
   const [visibleCount, setVisibleCount] = useState(5);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
@@ -108,7 +104,6 @@ function GatheringPlace() {
       if (!user) return;
 
       let finalContent = inputText;
-
       if (activeTab === "photo" && selectedFile) {
         const fileExt = selectedFile.name.split('.').pop();
         const fileName = `${Math.random()}-${Date.now()}.${fileExt}`;
@@ -165,10 +160,17 @@ function GatheringPlace() {
   const filteredItems = items.filter(item => item.type === activeTab);
   const paginatedItems = filteredItems.slice(0, visibleCount);
 
+  // Dynamic Placeholder Logic
+  const getPlaceholder = () => {
+    if (activeTab === "note") return "A note worth keeping.";
+    if (activeTab === "link") return "A link worth keeping.";
+    if (activeTab === "photo") return "A photo worth keeping.";
+    return "";
+  };
+
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif pb-20 animate-in fade-in duration-1000">
 
-      {/* IMAGE MODAL POPUP */}
       {selectedImage && (
         <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedImage(null)}>
           <button className="absolute top-6 right-6 text-white hover:rotate-90 transition-transform duration-300">
@@ -190,20 +192,34 @@ function GatheringPlace() {
 
       <main className="max-w-3xl mx-auto px-6">
         {/* INPUT BOX */}
-        <div className="bg-white rounded-[2rem] shadow-xl border border-[#36454F]/5 mb-12 max-w-lg mx-auto overflow-hidden">
-          <div className="flex bg-[#F5F0E8] p-1.5 border-b border-[#36454F]/5">
+        <div className=" rounded-[1rem] shadow-xl border border-[#36454F]/5 mb-12 max-w-lg mx-auto overflow-hidden">
+          {/* TABS: Black removed, using soft charcoal #36454F */}
+          {/* TABS CONTAINER - Compass/The River se exact match kiya gaya hai */}
+          {/* TABS CONTAINER - Compass/The River se exact match kiya gaya hai */}
+          <div className="flex bg-white/40 p-1.5 border-b border-[#36454F]/5 shadow-inner relative overflow-hidden rounded-t-[1.2rem]">
             {["note", "link", "photo"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => handleTabChange(tab)}
-                className={`flex-1 py-2.5 text-[13px] uppercase tracking-[0.2em] font-sans font-bold rounded-xl transition-all ${activeTab === tab ? "bg-[#36454F] text-white shadow-lg" : "hover:bg-[#36454F]/5"}`}
+                className={`relative flex-1 py-2.5 text-[13px] uppercase tracking-[0.2em] font-sans font-bold transition-all duration-300 z-10 ${activeTab === tab
+                  ? "text-[#F5F0E8]"
+                  : "text-[#36454F]"
+                  }`}
               >
+                {/* Sliding Background Effect */}
+                {activeTab === tab && (
+                  <motion.div
+                    layoutId="activeTabGathering"
+                    className="absolute inset-0 bg-[#36454F] rounded-xl shadow-lg -z-10"
+                    transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+                  />
+                )}
                 {tab}
               </button>
             ))}
           </div>
 
-          <div className={`p-8 transition-all duration-500 ${isTransitioning ? "opacity-0" : "opacity-100"}`}>
+          <div className={`p-8  bg-white transition-all duration-500 ${isTransitioning ? "opacity-0" : "opacity-100"}`}>
             {activeTab === "photo" ? (
               <div className="space-y-6">
                 <div onClick={() => fileInputRef.current.click()} className="group cursor-pointer relative w-full h-[180px] bg-[#F5F0E8]/30 border-2 border-dashed border-[#36454F]/10 rounded-2xl flex flex-col items-center justify-center overflow-hidden">
@@ -212,26 +228,42 @@ function GatheringPlace() {
                   ) : (
                     <div className="flex flex-col items-center gap-3">
                       <Plus size={24} className="opacity-20" />
-                      <p className="italic text-xl text-[#36454F]/40">Capture a Memory...</p>
+                      <p className="italic text-xl text-[#36454F]/40">{getPlaceholder()}</p>
                     </div>
                   )}
                 </div>
                 <input type="file" ref={fileInputRef} onChange={handleImageSelect} className="hidden" accept="image/*" />
-                <button onClick={addItem} disabled={loading || !selectedFile} className="w-full py-4 rounded-xl font-sans font-bold uppercase tracking-[0.4em] text-[12px] bg-[#36454F] text-white flex items-center justify-center gap-3">
-                  {loading ? <Loader2 size={18} className="animate-spin" /> : "Save to Gathering"}
-                </button>
+
+                {/* Save Button: Same height/style as tabs */}
+                <div className="flex justify-center">
+                  <button
+                    onClick={addItem}
+                    disabled={loading || !selectedFile}
+                    className="w-full py-4 rounded-xl font-sans font-bold uppercase tracking-[0.4em] text-[12px] bg-[#36454F] text-white flex items-center justify-center gap-3"
+                  >
+                    {loading ? <Loader2 size={18} className="animate-spin" /> : "Save"}
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="space-y-6">
                 <textarea
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  placeholder={`Capture a ${activeTab}...`}
-                  className="w-full bg-transparent outline-none italic text-xl resize-none h-[100px] leading-snug"
+                  placeholder={getPlaceholder()}
+                  className="w-full bg-transparent outline-none italic text-xl resize-none h-[100px] leading-snug placeholder:text-[#36454F]/30"
                 />
-                <button onClick={addItem} disabled={loading || !inputText.trim()} className="w-full py-4 rounded-xl font-sans font-bold uppercase tracking-[0.4em] text-[12px] bg-[#36454F] text-white flex items-center justify-center gap-3">
-                  {loading ? <Loader2 size={18} className="animate-spin" /> : `Save to Gathering`}
-                </button>
+
+                {/* Save Button: Same height/style as tabs */}
+                <div className="flex justify-center">
+                  <button
+                    onClick={addItem}
+                    disabled={loading || !inputText.trim()}
+                    className="w-full py-4 rounded-xl font-sans font-bold uppercase tracking-[0.4em] text-[12px] bg-[#36454F] text-white flex items-center justify-center gap-3"
+                  >
+                    {loading ? <Loader2 size={18} className="animate-spin" /> : "Save"}
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -245,7 +277,6 @@ function GatheringPlace() {
                 <img src={item.content} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Memory" onClick={() => setSelectedImage(item.content)} />
                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none"><Maximize2 className="text-white" size={20} /></div>
 
-                {/* --- PHOTO DELETE (COMPASS STYLE) --- */}
                 <div className="absolute top-2 right-2 z-10">
                   {deleteConfirmId === item.id ? (
                     <div className="flex gap-1.5 bg-white p-1 rounded-full shadow-lg animate-in zoom-in duration-200 border border-[#36454F]/5">
@@ -267,8 +298,6 @@ function GatheringPlace() {
               <div key={item.id} className="bg-white rounded-[2rem] border border-[#36454F]/5 overflow-hidden shadow-sm hover:shadow-md transition-all">
                 <div className="bg-[#F5F0E8]/50 px-6 py-3 border-b border-[#36454F]/5 flex justify-between items-center text-[12px] uppercase tracking-widest font-sans font-bold ">
                   {new Date(item.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-
-                  {/* --- NOTE/LINK DELETE (COMPASS STYLE) --- */}
                   <div className="flex items-center">
                     {deleteConfirmId === item.id ? (
                       <div className="flex items-center gap-2 bg-white px-2 py-1 rounded-full shadow-md border border-[#36454F]/5 animate-in slide-in-from-right-2 duration-300">
@@ -298,7 +327,6 @@ function GatheringPlace() {
           ))}
         </div>
 
-        {/* LOAD MORE BUTTON */}
         {filteredItems.length > visibleCount && (
           <div className="mt-12 flex justify-center">
             <button
