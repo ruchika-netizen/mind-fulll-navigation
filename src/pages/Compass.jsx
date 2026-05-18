@@ -10,12 +10,8 @@ function Compass() {
   const [activeTab, setActiveTab] = useState("previous");
   const [loading, setLoading] = useState(false);
   const [entries, setEntries] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
-
   const [northStar, setNorthStar] = useState("");
   const [steps, setSteps] = useState(["", "", ""]);
-
   const [prevEditData, setPrevEditData] = useState({});
   const [isEditingAll, setIsEditingAll] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -24,12 +20,12 @@ function Compass() {
   const northStarRef = useRef(null);
   const stepRefs = useRef([]);
 
-  const currentEntries = entries;
-
-  const adjustHeight = (el) => {
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
+  // Auto-grow function optimized for both typing and Scribble
+  const autoGrow = (el) => {
+    if (el) {
+      el.style.height = "auto";
+      el.style.height = el.scrollHeight + "px";
+    }
   };
 
   useEffect(() => {
@@ -47,10 +43,11 @@ function Compass() {
     setShowConfirm(false);
   }, [entries, activeTab]);
 
+  // Initial height adjust when tab changes or data loads
   useEffect(() => {
-    adjustHeight(northStarRef.current);
-    stepRefs.current.forEach(adjustHeight);
-  }, [northStar, steps, prevEditData, activeTab, isEditingAll]);
+    if (northStarRef.current) autoGrow(northStarRef.current);
+    stepRefs.current.forEach(el => el && autoGrow(el));
+  }, [activeTab, isEditingAll, prevEditData, northStar, steps]);
 
   const fetchEntries = async () => {
     setLoading(true);
@@ -62,11 +59,8 @@ function Compass() {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
       if (!error && data) setEntries(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
 
   const showToast = (message, type = "success") => {
@@ -83,12 +77,8 @@ function Compass() {
       setIsEditingAll(false);
       setShowConfirm(false);
       showToast("Entry Deleted", "success");
-    } catch (err) {
-      console.error(err);
-      showToast("Delete Failed", "error");
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { showToast("Delete Failed", "error"); }
+    finally { setLoading(false); }
   };
 
   const handleUpdate = async (id, updatedData) => {
@@ -96,34 +86,21 @@ function Compass() {
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      const { error } = await supabase
-        .from("compass_goals")
-        .update({
-          north_star: updatedData.north_star,
-          step_1: updatedData.steps[0],
-          step_2: updatedData.steps[1],
-          step_3: updatedData.steps[2]
-        })
-        .eq("id", id)
-        .eq("user_id", user.id);
-
-      if (error) throw error;
+      await supabase.from("compass_goals").update({
+        north_star: updatedData.north_star,
+        step_1: updatedData.steps[0],
+        step_2: updatedData.steps[1],
+        step_3: updatedData.steps[2]
+      }).eq("id", id).eq("user_id", user.id);
       await fetchEntries();
       setIsEditingAll(false);
       showToast("Path Updated Successfully", "success");
-    } catch (err) {
-      console.error(err);
-      showToast("Update Failed", "error");
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { showToast("Update Failed", "error"); }
+    finally { setLoading(false); }
   };
 
   const handleSave = async () => {
-    if (entries.length >= 25) {
-      showToast("Compass is full (25/25).", "error");
-      return;
-    }
+    if (entries.length >= 25) { showToast("Compass is full.", "error"); return; }
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -135,23 +112,11 @@ function Compass() {
         step_3: steps[2],
         type: "General",
       }]);
-      setNorthStar("");
-      setSteps(["", "", ""]);
+      setNorthStar(""); setSteps(["", "", ""]);
       await fetchEntries();
       setActiveTab("all");
       showToast("Path Recorded", "success");
-    } catch (err) {
-      console.error(err);
-      setLoading(false);
-    }
-  };
-
-
-  const autoGrow = (el) => {
-    if (el) {
-      el.style.height = "auto";
-      el.style.height = el.scrollHeight + "px";
-    }
+    } catch (err) { setLoading(false); }
   };
 
   const labels = ["What I am leaving behind", "What I am carrying forward", "The horizon I am moving toward"];
@@ -165,8 +130,8 @@ function Compass() {
         <p className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold">{toast.message}</p>
       </div>
 
-      <header className="relative w-full max-w-7xl mx-auto pt-10 pb-7 text-center ">
-        <div className="absolute top-6 md:top-12 ">
+      <header className="relative w-full max-w-7xl mx-auto pt-10 pb-7 text-center">
+        <div className="absolute top-6 md:top-12 left-6">
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all">
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
             <span className="mt-0.5">Back</span>
@@ -199,71 +164,49 @@ function Compass() {
             </div>
           ) : (
             <motion.div key="content" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-
               {(activeTab === "new" || activeTab === "previous" || isEditingAll) && (
                 <div className="relative">
-
-
+                  {/* Delete Logic */}
                   {(activeTab === "previous" || isEditingAll) && entries.length > 0 && (
                     <div className="absolute -top-12 right-0 z-50">
                       {!showConfirm ? (
-                        <button
-                          onClick={() => setShowConfirm(true)}
-                          className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm border border-[#36454F]/5 text-[#36454F]/40 hover:text-red-500 transition-colors"
-                        >
+                        <button onClick={() => setShowConfirm(true)} className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm border border-[#36454F]/5 text-[#36454F]/40 hover:text-red-500 transition-colors">
                           <Trash2 size={18} />
                         </button>
                       ) : (
                         <div className="flex items-center gap-2 bg-white p-1 rounded-full shadow-md border border-[#36454F]/5">
-                          <button
-                            onClick={() => deleteEntry(prevEditData.id)}
-                            className="p-2 bg-red-500 text-white rounded-full transition-transform active:scale-90"
-                          >
-                            <CheckCircle2 size={16} />
-                          </button>
-                          <button
-                            onClick={() => setShowConfirm(false)}
-                            className="p-2 text-[#36454F]/40 hover:text-[#36454F] transition-colors"
-                          >
-                            <X size={16} />
-                          </button>
+                          <button onClick={() => deleteEntry(prevEditData.id)} className="p-2 bg-red-500 text-white rounded-full transition-transform active:scale-90"><CheckCircle2 size={16} /></button>
+                          <button onClick={() => setShowConfirm(false)} className="p-2 text-[#36454F]/40 hover:text-[#36454F] transition-colors"><X size={16} /></button>
                         </div>
                       )}
                     </div>
                   )}
 
-
                   {isEditingAll && (
-                    <button onClick={() => setIsEditingAll(false)} className="absolute -top-10 left-0 text-[12px] uppercase font-bold font-sans tracking-widest hover:opacity-100 transition-opacity">
-                      ‹ Back to list
-                    </button>
+                    <button onClick={() => setIsEditingAll(false)} className="absolute -top-10 left-0 text-[12px] uppercase font-bold font-sans tracking-widest hover:opacity-100 transition-opacity">‹ Back to list</button>
                   )}
 
-
-
                   <div className="flex flex-col md:flex-row gap-8 justify-center">
-                    {/* Left Card */}
+                    {/* Left Card: Orientation */}
                     <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col items-center h-[800px]">
                       <h2 className="text-2xl font-light italic text-center mb-1">Orientation Phase</h2>
                       <p className="text-[14px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 text-center">Finding your direction</p>
                       <div className="mb-10 opacity-[0.15] pointer-events-none">
-                        <svg width="140" height="140" viewBox="0 0 100 100" className="stroke-[#36454F] fill-none">
-                          <path d="M 85,50 C 85,75 70,88 50,88 C 25,88 12,70 12,50 C 12,25 30,12 55,12 C 70,12 82,22 84,35" strokeWidth="0.8" strokeLinecap="round" />
-                        </svg>
+                        <svg width="140" height="140" viewBox="0 0 100 100" className="stroke-[#36454F] fill-none"><path d="M 85,50 C 85,75 70,88 50,88 C 25,88 12,70 12,50 C 12,25 30,12 55,12 C 70,12 82,22 84,35" strokeWidth="0.8" strokeLinecap="round" /></svg>
                       </div>
                       <div className="w-full flex flex-col overflow-hidden">
-                        <label className="text-[14px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 text-center uppercase">
-                          Define Your North Star
-                        </label>
-
+                        <label className="text-[14px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 text-center uppercase">Define Your North Star</label>
                         <div className="w-full h-[390px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 shadow-inner transition-all duration-300 focus-within:border-[#EAB308] focus-within:bg-white overflow-hidden flex flex-col">
                           <textarea
                             ref={northStarRef}
                             maxLength={2000}
+                            //enterKeyHint
+                            enterKeyHint="done"
                             value={activeTab === "new" ? northStar : prevEditData.north_star || ""}
                             onChange={(e) => {
                               const val = e.target.value;
                               activeTab === "new" ? setNorthStar(val) : setPrevEditData({ ...prevEditData, north_star: val });
+                              autoGrow(e.target);
                             }}
                             placeholder="What is your new direction?..."
                             className="w-full h-full bg-transparent outline-none italic text-md text-[#36454F] resize-none overflow-y-auto river-scroll leading-relaxed"
@@ -272,36 +215,28 @@ function Compass() {
                       </div>
                     </div>
 
-                    {/* Right Card */}
+                    {/* Right Card: Journey Mapping */}
                     <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col h-[800px]">
                       <h2 className="text-2xl font-light italic text-center mb-1">Journey Mapping</h2>
                       <p className="text-[14px] uppercase tracking-[0.2em] block mb-8 font-sans font-bold opacity-80 text-center">The shape of your journey</p>
-
                       <div className="space-y-6 flex-grow flex flex-col overflow-y-auto pr-2 river-scroll">
                         {labels.map((label, i) => (
                           <div key={i} className="flex flex-col flex-shrink-0">
-                            <label className="text-[13px] uppercase tracking-[0.2em] mb-2 font-sans font-bold opacity-80">
-                              {label}
-                            </label>
-
+                            <label className="text-[13px] uppercase tracking-[0.2em] mb-2 font-sans font-bold opacity-80">{label}</label>
                             <div className="w-full h-auto bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 shadow-inner transition-all duration-300 focus-within:border-[#EAB308] focus-within:bg-white overflow-hidden">
                               <textarea
-
-                                ref={(el) => {
-                                  stepRefs.current[i] = el;
-                                  if (el) autoGrow(el);
-                                }}
+                                ref={(el) => { stepRefs.current[i] = el; if (el) autoGrow(el); }}
                                 value={activeTab === "new" ? steps[i] : (prevEditData.steps ? prevEditData.steps[i] : "")}
                                 onChange={(e) => {
                                   const val = e.target.value;
                                   autoGrow(e.target);
-
                                   if (activeTab === "new") {
                                     const n = [...steps]; n[i] = val; setSteps(n);
                                   } else {
                                     const n = [...prevEditData.steps]; n[i] = val; setPrevEditData({ ...prevEditData, steps: n });
                                   }
                                 }}
+                                enterKeyHint="done"
                                 placeholder="..."
                                 maxLength={2000}
                                 className="w-full bg-transparent outline-none italic text-md text-[#36454F] resize-none overflow-hidden leading-relaxed min-h-[80px]"
@@ -325,7 +260,7 @@ function Compass() {
                 </div>
               )}
 
-              {/* ALL TAB */}
+              {/* ALL TAB View */}
               {activeTab === "all" && !isEditingAll && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto w-full">
                   <div className="flex flex-col gap-1 mb-10 px-2">
@@ -337,7 +272,7 @@ function Compass() {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    {currentEntries.map((entry) => (
+                    {entries.map((entry) => (
                       <div key={entry.id} onClick={() => { setPrevEditData({ ...entry, steps: [entry.step_1, entry.step_2, entry.step_3] }); setIsEditingAll(true); }} className="group bg-white/40 px-6 py-5 rounded-2xl border border-[#36454F]/5 flex items-center gap-6 cursor-pointer hover:bg-white hover:shadow-md transition-all">
                         <div className="w-12 h-12 bg-[#F5F0E8] rounded-xl flex flex-col items-center justify-center group-hover:bg-[#36454F] group-hover:text-white transition-all">
                           <span className="text-sm font-sans font-bold">{new Date(entry.created_at).getDate()}</span>
