@@ -12,30 +12,23 @@ function Header({ session }) {
   const navigate = useNavigate();
 
   const confirmLogout = async () => {
-    // 1. Modal ko turant band karo taaki UI fast lage
     setShowLogoutModal(false);
 
-    // 2. Local storage/Session clean-up pehle karo
     sessionStorage.setItem("enso_played", "true");
     localStorage.removeItem("soundEnabled");
 
     try {
-      // 3. Audio ko stop karo turant
+
       if (window.currentAppAudio) {
         window.currentAppAudio.pause();
         window.currentAppAudio = null;
       }
 
-      // 4. Sign out call ko await karo par UI freeze mat hone do
       await supabase.auth.signOut();
-
-      // 5. window.location.href ki jagah navigate use karo (faster transition)
-      // Agar header session prop par dependent hai, toh navigate hi session clear kar dega
       navigate("/login", { replace: true });
 
     } catch (error) {
       console.error("Logout error:", error);
-      // Agar error aaye toh bhi login pe bhej do
       window.location.href = "/login";
     }
   };
