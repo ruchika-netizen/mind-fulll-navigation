@@ -147,6 +147,14 @@ function Compass() {
     }
   };
 
+
+  const autoGrow = (el) => {
+    if (el) {
+      el.style.height = "auto";
+      el.style.height = el.scrollHeight + "px";
+    }
+  };
+
   const labels = ["What I am leaving behind", "What I am carrying forward", "The horizon I am moving toward"];
 
   return (
@@ -270,26 +278,36 @@ function Compass() {
                       <h2 className="text-2xl font-light italic text-center mb-1">Journey Mapping</h2>
                       <p className="text-[14px] uppercase tracking-[0.2em] block mb-8 font-sans font-bold opacity-80 text-center">The shape of your journey</p>
 
-                      <div className="space-y-6 flex-grow overflow-y-auto pr-2 river-scroll">
+                      <div className="space-y-6 flex-grow flex flex-col overflow-y-auto pr-2 river-scroll">
                         {labels.map((label, i) => (
-                          <div key={i} className="flex flex-col">
-                            <label className="text-[13px] uppercase tracking-[0.2em] block mb-2 font-sans font-bold opacity-80">{label}</label>
-                            <div className="w-full flex-grow bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 transition-all duration-300 shadow-inner focus-within:border-[#EAB308] focus-within:bg-white">                              <textarea
-                              ref={el => stepRefs.current[i] = el}
-                              maxLength={2000}
-                              value={activeTab === "new" ? steps[i] : (prevEditData.steps ? prevEditData.steps[i] : "")}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                if (activeTab === "new") {
-                                  const n = [...steps]; n[i] = val; setSteps(n);
-                                } else {
-                                  const n = [...prevEditData.steps]; n[i] = val; setPrevEditData({ ...prevEditData, steps: n });
-                                }
-                              }}
-                              placeholder="..."
-                              className="w-full bg-transparent outline-none italic text-md text-[#36454F] resize-none overflow-hidden leading-relaxed  "
-                              style={{ minHeight: '80px' }}
-                            />
+                          <div key={i} className="flex flex-col flex-shrink-0">
+                            <label className="text-[13px] uppercase tracking-[0.2em] mb-2 font-sans font-bold opacity-80">
+                              {label}
+                            </label>
+
+                            <div className="w-full h-auto bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 shadow-inner transition-all duration-300 focus-within:border-[#EAB308] focus-within:bg-white overflow-hidden">
+                              <textarea
+                                // UseEffect call manually for initial load
+                                ref={(el) => {
+                                  stepRefs.current[i] = el;
+                                  if (el) autoGrow(el); // Bina click kiye expand karne ke liye
+                                }}
+                                value={activeTab === "new" ? steps[i] : (prevEditData.steps ? prevEditData.steps[i] : "")}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  autoGrow(e.target); // Type karte waqt expand karne ke liye
+
+                                  if (activeTab === "new") {
+                                    const n = [...steps]; n[i] = val; setSteps(n);
+                                  } else {
+                                    const n = [...prevEditData.steps]; n[i] = val; setPrevEditData({ ...prevEditData, steps: n });
+                                  }
+                                }}
+                                placeholder="..."
+                                maxLength={2000}
+                                className="w-full bg-transparent outline-none italic text-md text-[#36454F] resize-none overflow-hidden leading-relaxed min-h-[120px]"
+                                style={{ height: 'auto' }}
+                              />
                             </div>
                           </div>
                         ))}
