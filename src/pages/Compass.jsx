@@ -44,7 +44,6 @@ function Compass() {
         steps: [latest.step_1, latest.step_2, latest.step_3]
       });
     }
-    // Tab change hote hi confirm state reset kar do
     setShowConfirm(false);
   }, [entries, activeTab]);
 
@@ -204,7 +203,7 @@ function Compass() {
               {(activeTab === "new" || activeTab === "previous" || isEditingAll) && (
                 <div className="relative">
 
-                  {/* Delete Button Container - Same as your 2nd code snippet */}
+
                   {(activeTab === "previous" || isEditingAll) && entries.length > 0 && (
                     <div className="absolute -top-12 right-0 z-50">
                       {!showConfirm ? (
@@ -233,7 +232,7 @@ function Compass() {
                     </div>
                   )}
 
-                  {/* Baaki ka content (isEditingAll back button aur Cards) yahan aayega... */}
+
                   {isEditingAll && (
                     <button onClick={() => setIsEditingAll(false)} className="absolute -top-10 left-0 text-[12px] uppercase font-bold font-sans tracking-widest hover:opacity-100 transition-opacity">
                       ‹ Back to list
@@ -287,15 +286,15 @@ function Compass() {
 
                             <div className="w-full h-auto bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 shadow-inner transition-all duration-300 focus-within:border-[#EAB308] focus-within:bg-white overflow-hidden">
                               <textarea
-                                // UseEffect call manually for initial load
+
                                 ref={(el) => {
                                   stepRefs.current[i] = el;
-                                  if (el) autoGrow(el); // Bina click kiye expand karne ke liye
+                                  if (el) autoGrow(el);
                                 }}
                                 value={activeTab === "new" ? steps[i] : (prevEditData.steps ? prevEditData.steps[i] : "")}
                                 onChange={(e) => {
                                   const val = e.target.value;
-                                  autoGrow(e.target); // Type karte waqt expand karne ke liye
+                                  autoGrow(e.target);
 
                                   if (activeTab === "new") {
                                     const n = [...steps]; n[i] = val; setSteps(n);
