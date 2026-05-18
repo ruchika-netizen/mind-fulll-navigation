@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
-import { Loader2, Plus, History, Waves, Trash2, X, CheckCircle2, AlertCircle } from "lucide-react";
+import { Loader2, Plus, History, Waves, Trash2, X, CheckCircle2, AlertCircle, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import redds from "../assets/pexels-regan-dsouza-1315522347-30692724.jpg";
 
@@ -21,16 +21,11 @@ function Compass() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
-  // Refs for Auto-expanding behavior
   const northStarRef = useRef(null);
   const stepRefs = useRef([]);
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentEntries = entries.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(entries.length / itemsPerPage);
+  const currentEntries = entries;
 
-  // Function to adjust textarea height based on content
   const adjustHeight = (el) => {
     if (!el) return;
     el.style.height = "auto";
@@ -49,10 +44,10 @@ function Compass() {
         steps: [latest.step_1, latest.step_2, latest.step_3]
       });
     }
-    setCurrentPage(1);
+    // Tab change hote hi confirm state reset kar do
+    setShowConfirm(false);
   }, [entries, activeTab]);
 
-  // Adjust heights whenever content or tab changes
   useEffect(() => {
     adjustHeight(northStarRef.current);
     stepRefs.current.forEach(adjustHeight);
@@ -71,13 +66,58 @@ function Compass() {
     } catch (err) {
       console.error(err);
     } finally {
-      setTimeout(() => setLoading(false), 500);
+      setLoading(false);
     }
   };
 
   const showToast = (message, type = "success") => {
     setToast({ show: true, message, type });
     setTimeout(() => setToast(prev => ({ ...prev, show: false })), 4000);
+  };
+
+  const deleteEntry = async (id) => {
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase.from("compass_goals").delete().eq("id", id).eq("user_id", user.id);
+      await fetchEntries();
+      setIsEditingAll(false);
+      setShowConfirm(false);
+      showToast("Entry Deleted", "success");
+    } catch (err) {
+      console.error(err);
+      showToast("Delete Failed", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdate = async (id, updatedData) => {
+    if (!id) return;
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const { error } = await supabase
+        .from("compass_goals")
+        .update({
+          north_star: updatedData.north_star,
+          step_1: updatedData.steps[0],
+          step_2: updatedData.steps[1],
+          step_3: updatedData.steps[2]
+        })
+        .eq("id", id)
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+      await fetchEntries();
+      setIsEditingAll(false);
+      showToast("Path Updated Successfully", "success");
+    } catch (err) {
+      console.error(err);
+      showToast("Update Failed", "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSave = async () => {
@@ -107,62 +147,6 @@ function Compass() {
     }
   };
 
-  const handleUpdate = async (id, updatedData) => {
-    if (!id) return;
-    setLoading(true);
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      const { error } = await supabase
-        .from("compass_goals")
-        .update({
-          north_star: updatedData.north_star,
-          step_1: updatedData.steps[0],
-          step_2: updatedData.steps[1],
-          step_3: updatedData.steps[2]
-        })
-        .eq("id", id)
-        .eq("user_id", user.id);
-
-      if (error) throw error;
-      await fetchEntries();
-      setIsEditingAll(false);
-      showToast("Path Updated Successfully", "success");
-    } catch (err) {
-      console.error("Update Error:", err.message);
-      showToast("Update Failed", "error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const deleteEntry = async (id) => {
-    setLoading(true);
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      const { error } = await supabase
-        .from("compass_goals")
-        .delete()
-        .eq("id", id)
-        .eq("user_id", user.id);
-
-      if (error) throw error;
-      await fetchEntries();
-      setIsEditingAll(false);
-      setShowConfirm(false);
-      if (activeTab === "previous") setActiveTab("new");
-      showToast("Entry Deleted", "success");
-    } catch (err) {
-      console.error(err);
-      setLoading(false);
-    }
-  };
-
-  const tabs = [
-    { id: "previous", label: "Previous", icon: <History size={12} /> },
-    { id: "new", label: "New", icon: <Plus size={12} /> },
-    { id: "all", label: "All", icon: <Waves size={12} /> },
-  ];
-
   const labels = ["What I am leaving behind", "What I am carrying forward", "The horizon I am moving toward"];
 
   return (
@@ -174,7 +158,7 @@ function Compass() {
         <p className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold">{toast.message}</p>
       </div>
 
-      <header className="relative w-full max-w-7xl mx-auto pt-10 pb-7 text-center">
+      <header className="relative w-full max-w-7xl mx-auto pt-10 pb-7 text-center ">
         <div className="absolute top-6 md:top-12 ">
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all">
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
@@ -190,8 +174,8 @@ function Compass() {
       {/* TABS */}
       <div className="max-w-md mx-auto px-6 mb-10">
         <div className="flex bg-white/40 p-1 rounded-full border border-[#36454F]/5 shadow-inner relative">
-          {tabs.map((tab) => (
-            <button key={tab.id} onClick={() => { setActiveTab(tab.id); setIsEditingAll(false); setShowConfirm(false); }}
+          {[{ id: "previous", label: "Previous", icon: <History size={12} /> }, { id: "new", label: "New", icon: <Plus size={12} /> }, { id: "all", label: "All", icon: <Waves size={12} /> }].map((tab) => (
+            <button key={tab.id} onClick={() => { setActiveTab(tab.id); setIsEditingAll(false); }}
               className={`relative flex-1 flex items-center justify-center gap-2 py-3 rounded-full text-[12px] uppercase tracking-[0.2em] font-sans font-bold transition-colors duration-300 z-10 ${activeTab === tab.id ? "text-[#F5F0E8]" : "text-[#36454F]"}`}>
               {tab.icon} {tab.label}
               {activeTab === tab.id && <motion.div layoutId="activeTabCompass" className="absolute inset-0 bg-[#36454F] rounded-full -z-10 shadow-md" transition={{ type: "spring", bounce: 0.2, duration: 0.6 }} />}
@@ -203,28 +187,37 @@ function Compass() {
       <main className="max-w-6xl mx-auto px-6">
         <AnimatePresence mode="wait">
           {loading ? (
-            <motion.div key="loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center justify-center py-32">
+            <div className="flex flex-col items-center justify-center py-32">
               <Loader2 className="animate-spin text-[#36454F] opacity-20" size={40} />
-              <p className="mt-4 text-[11px] uppercase tracking-[0.3em] font-sans font-bold opacity-30 italic">Loading...</p>
-            </motion.div>
+            </div>
           ) : (
             <motion.div key="content" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+
               {(activeTab === "new" || activeTab === "previous" || isEditingAll) && (
                 <div className="relative">
 
-                  {/* Delete Button Container */}
+                  {/* Delete Button Container - Same as your 2nd code snippet */}
                   {(activeTab === "previous" || isEditingAll) && entries.length > 0 && (
-                    <div className="absolute -top-12 right-0 z-20">
+                    <div className="absolute -top-12 right-0 z-50">
                       {!showConfirm ? (
-                        <button onClick={() => setShowConfirm(true)} className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm border border-[#36454F]/5 text-[#36454F]/40 hover:text-red-500 transition-colors">
+                        <button
+                          onClick={() => setShowConfirm(true)}
+                          className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm border border-[#36454F]/5 text-[#36454F]/40 hover:text-red-500 transition-colors"
+                        >
                           <Trash2 size={18} />
                         </button>
                       ) : (
                         <div className="flex items-center gap-2 bg-white p-1 rounded-full shadow-md border border-[#36454F]/5">
-                          <button onClick={() => deleteEntry(prevEditData.id)} className="p-2 bg-red-500 text-white rounded-full transition-transform active:scale-90">
+                          <button
+                            onClick={() => deleteEntry(prevEditData.id)}
+                            className="p-2 bg-red-500 text-white rounded-full transition-transform active:scale-90"
+                          >
                             <CheckCircle2 size={16} />
                           </button>
-                          <button onClick={() => setShowConfirm(false)} className="p-2 text-[#36454F]/40 hover:text-[#36454F] transition-colors">
+                          <button
+                            onClick={() => setShowConfirm(false)}
+                            className="p-2 text-[#36454F]/40 hover:text-[#36454F] transition-colors"
+                          >
                             <X size={16} />
                           </button>
                         </div>
@@ -232,106 +225,96 @@ function Compass() {
                     </div>
                   )}
 
+                  {/* Baaki ka content (isEditingAll back button aur Cards) yahan aayega... */}
                   {isEditingAll && (
                     <button onClick={() => setIsEditingAll(false)} className="absolute -top-10 left-0 text-[12px] uppercase font-bold font-sans tracking-widest hover:opacity-100 transition-opacity">
                       ‹ Back to list
                     </button>
                   )}
 
-                  {activeTab === "previous" && entries.length === 0 ? (
-                    <div className="text-center py-32 italic">
-                      <p className="mb-6 text-xl">No previous path found. Start a new journey.</p>
-                      <button onClick={() => setActiveTab("new")} className="text-[12px] border-b border-[#36454F]/20 pb-1 uppercase font-sans font-bold hover:border-[#36454F] transition-all tracking-[0.2em]">
-                        Map a new journey
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col md:flex-row gap-8 justify-center">
 
-                      {/* Left Side: Orientation Phase */}
-                      <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col items-center min-h-[600px]">
-                        <h2 className="text-2xl font-light italic text-center mb-1">Orientation Phase</h2>
-                        <p className="text-[14px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 text-center">Finding your direction</p>
 
-                        <div className="mb-10 opacity-[0.15] pointer-events-none">
-                          <svg width="140" height="140" viewBox="0 0 100 100" className="stroke-[#36454F] fill-none">
-                            <path d="M 85,50 C 85,75 70,88 50,88 C 25,88 12,70 12,50 C 12,25 30,12 55,12 C 70,12 82,22 84,35" strokeWidth="0.8" strokeLinecap="round" />
-                          </svg>
+                  <div className="flex flex-col md:flex-row gap-8 justify-center">
+                    {/* Left Card */}
+                    <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col items-center h-[800px]">
+                      <h2 className="text-2xl font-light italic text-center mb-1">Orientation Phase</h2>
+                      <p className="text-[14px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 text-center">Finding your direction</p>
+                      <div className="mb-10 opacity-[0.15] pointer-events-none">
+                        <svg width="140" height="140" viewBox="0 0 100 100" className="stroke-[#36454F] fill-none">
+                          <path d="M 85,50 C 85,75 70,88 50,88 C 25,88 12,70 12,50 C 12,25 30,12 55,12 C 70,12 82,22 84,35" strokeWidth="0.8" strokeLinecap="round" />
+                        </svg>
+                      </div>
+                      <div className="w-full flex flex-col overflow-hidden">
+                        <label className="text-[14px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 text-center uppercase">
+                          Define Your North Star
+                        </label>
+
+                        <div className="w-full h-[390px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 shadow-inner transition-all duration-300 focus-within:border-[#EAB308] focus-within:bg-white overflow-hidden flex flex-col">
+                          <textarea
+                            ref={northStarRef}
+                            maxLength={2000}
+                            value={activeTab === "new" ? northStar : prevEditData.north_star || ""}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              activeTab === "new" ? setNorthStar(val) : setPrevEditData({ ...prevEditData, north_star: val });
+                            }}
+                            placeholder="What is your new direction?..."
+                            className="w-full h-full bg-transparent outline-none italic text-md text-[#36454F] resize-none overflow-y-auto river-scroll leading-relaxed"
+                          />
                         </div>
+                      </div>
+                    </div>
 
-                        <div className="w-full flex flex-col">
-                          <label className="text-[14px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 text-center uppercase">Define Your North Star</label>
+                    {/* Right Card */}
+                    <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col h-[800px]">
+                      <h2 className="text-2xl font-light italic text-center mb-1">Journey Mapping</h2>
+                      <p className="text-[14px] uppercase tracking-[0.2em] block mb-8 font-sans font-bold opacity-80 text-center">The shape of your journey</p>
 
-                          {/* STATIC FRAME: Fixed height container with internal scroll */}
-                          <div className="w-full h-[280px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 shadow-inner overflow-y-auto river-scroll">
-                            <textarea
-                              ref={northStarRef}
-                              value={activeTab === "new" ? northStar : prevEditData.north_star || ""}
+                      <div className="space-y-6 flex-grow overflow-y-auto pr-2 river-scroll">
+                        {labels.map((label, i) => (
+                          <div key={i} className="flex flex-col">
+                            <label className="text-[13px] uppercase tracking-[0.2em] block mb-2 font-sans font-bold opacity-80">{label}</label>
+                            <div className="w-full flex-grow bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 transition-all duration-300 shadow-inner focus-within:border-[#EAB308] focus-within:bg-white">                              <textarea
+                              ref={el => stepRefs.current[i] = el}
+                              maxLength={2000}
+                              value={activeTab === "new" ? steps[i] : (prevEditData.steps ? prevEditData.steps[i] : "")}
                               onChange={(e) => {
                                 const val = e.target.value;
-                                activeTab === "new" ? setNorthStar(val) : setPrevEditData({ ...prevEditData, north_star: val });
+                                if (activeTab === "new") {
+                                  const n = [...steps]; n[i] = val; setSteps(n);
+                                } else {
+                                  const n = [...prevEditData.steps]; n[i] = val; setPrevEditData({ ...prevEditData, steps: n });
+                                }
                               }}
-                              placeholder="What is your new direction?..."
-                              className="w-full bg-transparent outline-none italic text-md text-[#36454F] resize-none overflow-hidden transition-all duration-300"
-                              style={{ minHeight: '100%' }}
+                              placeholder="..."
+                              className="w-full bg-transparent outline-none italic text-md text-[#36454F] resize-none overflow-hidden leading-relaxed  "
+                              style={{ minHeight: '80px' }}
                             />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Right Side: Journey Mapping */}
-                      <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col min-h-[600px]">
-                        <h2 className="text-2xl font-light italic text-center mb-1">Journey Mapping</h2>
-                        <p className="text-[14px] uppercase tracking-[0.2em] block mb-8 font-sans font-bold opacity-80 text-center">The shape of your journey</p>
-
-                        <div className="space-y-6 flex-grow">
-                          {labels.map((label, i) => (
-                            <div key={i} className="flex flex-col">
-                              <label className="text-[13px] uppercase tracking-[0.2em] block mb-2 font-sans font-bold opacity-80">{label}</label>
-
-                              {/* STATIC FRAME for Steps */}
-                              <div className="w-full h-[100px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-xl p-3 shadow-inner overflow-y-auto river-scroll">
-                                <textarea
-                                  ref={el => stepRefs.current[i] = el}
-                                  value={activeTab === "new" ? steps[i] : (prevEditData.steps ? prevEditData.steps[i] : "")}
-                                  onChange={(e) => {
-                                    const val = e.target.value;
-                                    if (activeTab === "new") {
-                                      const n = [...steps]; n[i] = val; setSteps(n);
-                                    } else {
-                                      const n = [...prevEditData.steps]; n[i] = val; setPrevEditData({ ...prevEditData, steps: n });
-                                    }
-                                  }}
-                                  placeholder="..."
-                                  className="w-full bg-transparent outline-none italic text-md text-[#36454F] resize-none overflow-hidden"
-                                />
-                              </div>
                             </div>
-                          ))}
-                        </div>
-
-                        <button onClick={() => activeTab === "new" ? handleSave() : handleUpdate(prevEditData.id, prevEditData)} disabled={loading} className="w-full bg-[#36454F] text-white py-5 mb-4 rounded-xl mt-8 font-sans tracking-[0.4em] uppercase text-[12px] font-bold shadow-lg hover:bg-black transition-all active:scale-95 disabled:opacity-50">
-                          {loading ? <Loader2 size={16} className="animate-spin mx-auto" /> : activeTab === "new" ? "Commit to Path" : "Update Path"}
-                        </button>
-
-                        <div className="mt-4 flex items-center justify-between">
-                          <p className="text-[18px] italic leading-relaxed opacity-80">“Be the traveller, not just the map.”</p>
-                          <img src={redds} className="w-12 h-10 object-contain grayscale opacity-30 rounded-full" alt="icon" />
-                        </div>
+                          </div>
+                        ))}
                       </div>
 
+                      <button onClick={() => activeTab === "new" ? handleSave() : handleUpdate(prevEditData.id, prevEditData)} className="w-full bg-[#36454F] text-white py-4 rounded-xl mt-6 font-sans tracking-[0.4em] uppercase text-[12px] font-bold shadow-lg hover:bg-black transition-all">
+                        {loading ? <Loader2 size={16} className="animate-spin mx-auto" /> : activeTab === "new" ? "Commit to Path" : "Update Path"}
+                      </button>
+
+                      <div className="mt-4 flex items-center justify-between">
+                        <p className="text-[18px] italic leading-relaxed opacity-80">“Be the traveller, not just the map.”</p>
+                        <img src={redds} className="w-12 h-10 object-contain grayscale opacity-30 rounded-full" alt="icon" />
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               )}
 
-              {/* ALL ENTRIES VIEW */}
+              {/* ALL TAB */}
               {activeTab === "all" && !isEditingAll && (
-                <motion.div key="all" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto w-full">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto w-full">
                   <div className="flex flex-col gap-1 mb-10 px-2">
                     <span className="text-[16px] uppercase tracking-[0.1em] font-sans font-bold">Captured</span>
                     <div className="flex items-baseline">
-                      <span className="text-2xl italic font-bold font-light">{entries.length}</span>
+                      <span className="text-2xl italic font-bold">{entries.length}</span>
                       <span className="text-2xl italic font-light mx-2">/</span>
                       <span className="text-2xl italic font-light opacity-40">25</span>
                     </div>
@@ -348,13 +331,6 @@ function Compass() {
                       </div>
                     ))}
                   </div>
-                  {totalPages > 1 && (
-                    <div className="flex justify-center items-center gap-3 mt-12">
-                      {[...Array(totalPages)].map((_, i) => (
-                        <button key={i} onClick={() => { setCurrentPage(i + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`h-2 rounded-full transition-all duration-500 ${currentPage === i + 1 ? "bg-[#36454F] w-10" : "bg-[#36454F]/20 w-2 hover:bg-[#36454F]/40"}`} />
-                      ))}
-                    </div>
-                  )}
                 </motion.div>
               )}
             </motion.div>
