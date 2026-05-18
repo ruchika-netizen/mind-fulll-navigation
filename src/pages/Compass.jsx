@@ -174,10 +174,9 @@ function Compass() {
               ) : (
 
                 <>
-                  {/* PREVIOUS/NEW VIEW (When data exists or tab is 'new') */}
+
                   {(activeTab === "new" || activeTab === "previous" || isEditingAll) && (
                     <div className="relative">
-                      {/* Delete logic... same as before */}
                       {(activeTab === "previous" || isEditingAll) && entries.length > 0 && (
                         <div className="absolute -top-12 right-0 z-50">
                           {!showConfirm ? (

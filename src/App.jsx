@@ -44,8 +44,6 @@ function App() {
   const isVerified = searchParams.get("verified") === "true";
   const isOnboarding = searchParams.get("mode") === "onboarding";
   const isAuthPage = ["/login", "/signup", "/forgot-password", "/reset-password"].includes(location.pathname);
-
-  // Hash check (Supabase confirmation sends data in hash #access_token=...)
   const hasAccessToken = location.hash.includes("access_token");
 
   const [session, setSession] = useState(null);
@@ -56,7 +54,6 @@ function App() {
   const [isAnimationLoading, setIsAnimationLoading] = useState(() => {
     const played = sessionStorage.getItem("enso_played");
     if (isAuthPage) return false;
-    // Agar confirmation chal rahi hai toh loader dikhao
     if (isVerified || hasAccessToken) return true;
     return played !== "true";
   });
@@ -68,9 +65,7 @@ function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
       setSession(s);
 
-      // --- REDIRECTION LOGIC FOR CONFIRM EMAIL ---
       if (event === "SIGNED_IN" && (isVerified || hasAccessToken)) {
-        // Confirmation ke baad seedha onboarding par bhejo
         navigate("/invitation?mode=onboarding", { replace: true });
       }
 
@@ -118,7 +113,7 @@ function App() {
           <Route path="/login" element={<AuthGuard requireAuth={false}><Login /></AuthGuard>} />
           <Route path="/signup" element={<AuthGuard requireAuth={false}><Signup /></AuthGuard>} />
 
-          {/* ROOT ROUTE: Verification and normal Home logic */}
+
           <Route
             path="/"
             element={
@@ -134,9 +129,9 @@ function App() {
             }
           />
 
-          {/* Private Routes */}
+
           <Route path="/invitation" element={<AuthGuard requireAuth={true}><Invitation /></AuthGuard>} />
-          {/* ... baki routes wahi rahenge jo aapne diye hain ... */}
+
           <Route path="/navigator" element={<AuthGuard requireAuth={true}><Navigator /></AuthGuard>} />
           <Route path="/settings" element={<AuthGuard requireAuth={true}><Settings /></AuthGuard>} />
           <Route path="/navigatorguide" element={<AuthGuard requireAuth={true}><NavigatorGuide /></AuthGuard>} />

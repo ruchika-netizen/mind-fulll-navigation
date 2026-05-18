@@ -37,7 +37,6 @@ const ResetPassword = () => {
 
         setSuccess(true);
 
-        // 3. SignOut aur Navigate
         await supabase.auth.signOut();
         navigate("/login", { replace: true });
     };

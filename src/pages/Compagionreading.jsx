@@ -43,7 +43,6 @@ const CompanionReadings = () => {
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif flex flex-col overflow-x-hidden relative">
 
-      {/* HEADER - Hamesha Visible Rahega */}
       <header className="relative w-full max-w-7xl mx-auto pt-10 pb-8 text-center  z-10">
         <div className="absolute top-6 md:top-12 ">
           <button
@@ -66,7 +65,6 @@ const CompanionReadings = () => {
       {/* MAIN AREA */}
       <main className="flex-grow flex items-center justify-center px-4 pb-6 relative">
 
-        {/* LOADER - Sirf tab dikhega jab content ready nahi hai */}
         <AnimatePresence>
           {!isPageReady && (
             <motion.div
@@ -80,13 +78,12 @@ const CompanionReadings = () => {
           )}
         </AnimatePresence>
 
-        {/* CONTENT SPREAD - Content ready hote hi reveal hoga */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 10 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-7"
-        >
+          className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-7">
+
           {/* LEFT PAGE: Image */}
           <div className="flex flex-col items-center justify-center">
             <div className="w-full aspect-[4/5] rounded-[2rem] overflow-hidden shadow-inner bg-[#FDFCFB]">
@@ -98,7 +95,7 @@ const CompanionReadings = () => {
             </div>
           </div>
 
-          {/* RIGHT PAGE: Text Content */}
+
           <div className="p-8 md:p-12 flex flex-col rounded-[2rem] justify-center bg-white/40 border border-white/20 shadow-sm">
             <div className="max-w-lg mx-auto space-y-8 text-center lg:text-left">
               <header className="space-y-2">
@@ -129,7 +126,6 @@ const CompanionReadings = () => {
         </motion.div>
       </main>
 
-      {/* FOOTER - Footers usually remain visible or fade in with content */}
       <footer className={`h-[15vh] flex flex-col items-center justify-center gap-6 px-10 transition-opacity duration-700 ${isPageReady ? "opacity-100" : "opacity-0"}`}>
         <div className="max-w-7xl w-full flex justify-between">
           <button

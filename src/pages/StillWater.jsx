@@ -44,10 +44,10 @@ function StillWater() {
   useEffect(() => {
     if (isPopupOpen && textAreaRef.current) {
       const length = reflection.length;
-      // Cursor ko text ke bilkul end mein set karne ke liye
+
       textAreaRef.current.setSelectionRange(length, length);
     }
-  }, [isPopupOpen]); // Jab bhi popup khulega yeh chalega
+  }, [isPopupOpen]);
   return (
     <div className="min-h-screen bg-[#F5F0E8] font-serif text-[#36454F] selection:bg-[#36454F]/10 flex flex-col items-center relative overflow-x-hidden">
 
@@ -90,7 +90,7 @@ function StillWater() {
             </div>
           </div>
 
-          {/* Fixed Prompt: Next line logic applied here */}
+
           <div className="w-full flex justify-center">
             <div className="max-w-3xl flex flex-col items-center">
               <p className="text-3xl text-center italic leading-[1.4] text-[#36454F] font-light whitespace-pre-line">
@@ -115,7 +115,7 @@ function StillWater() {
             </button>
 
             <div className="pt-4">
-              {/* Textarea Wrapper for white background and padding */}
+
               <div className="bg-white/60 border border-[#36454F]/5 rounded-[1.8rem] p-6 focus-within:border-[#EAB308]/40 transition-all duration-300">
                 <textarea
                   ref={textAreaRef}

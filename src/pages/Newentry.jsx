@@ -53,15 +53,13 @@ function NewRiverEntry() {
                 rows="2"
                 onChange={(e) => setFormData({ ...formData, first_steps: e.target.value })}
               />
-              {/* Character Watermark (Section 8: 15% opacity) */}
+
               <div className="absolute bottom-2 right-2 opacity-[0.15] pointer-events-none">
                 <img src="/path-to-character.png" alt="" className="w-12" />
               </div>
             </div>
           </div>
         </div>
-
-        {/* RIGHT SIDE: Evening Reflection (Screen 9) */}
         <div className="flex-1 p-10 bg-stone-50/30 flex flex-col justify-between">
           <div>
             <h2 className="text-sm uppercase tracking-[0.3em] text-[#36454F]/40 mb-8">Evening Reflection</h2>

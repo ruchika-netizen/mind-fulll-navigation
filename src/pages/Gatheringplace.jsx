@@ -183,8 +183,6 @@ function GatheringPlace() {
 
       <main className="max-w-4xl mx-auto px-6">
 
-        {/* TABS - EXACT COMPASS STYLE */}
-        {/* TABS - NOW COMPACT & CENTERED LIKE COMPASS */}
         <div className="flex justify-center mb-2 px-6">
           <div className="flex bg-white/40 p-1 rounded-full border border-[#36454F]/5 shadow-inner relative w-fit">
             {tabs.map((tab) => (

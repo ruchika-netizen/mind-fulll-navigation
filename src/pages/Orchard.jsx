@@ -14,17 +14,12 @@ function Orchard() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  // Form States (New Entry)
   const [pruning, setPruning] = useState(["", "", ""]);
   const [harvest, setHarvest] = useState("");
-
-  // Edit/Previous States
   const [prevEditData, setPrevEditData] = useState({});
   const [isEditingAll, setIsEditingAll] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
-
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentEntries = entries.slice(indexOfFirstItem, indexOfLastItem);
@@ -231,8 +226,6 @@ function Orchard() {
                     </div>
                   ) : (
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col lg:flex-row gap-8 justify-center items-stretch">
-
-                      {/* LEFT CARD: SEASONAL PRUNING */}
                       <div className="flex-1 max-w-[550px] bg-white rounded-[25px] p-10 shadow-sm border border-white/50 flex flex-col transition-all hover:shadow-md">
                         <div className="mb-8 text-center">
                           <h2 className="text-2xl font-light italic text-[#36454F]">Seasonal Pruning</h2>
@@ -321,7 +314,7 @@ function Orchard() {
                       </div>
                     ))}
                   </div>
-                  {/* Pagination logic remains the same */}
+
                 </motion.div>
               )}
             </motion.div>

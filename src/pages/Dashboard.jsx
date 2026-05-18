@@ -81,7 +81,6 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-[#F5F0E8] flex font-serif">
 
-      {/* SIDEBAR - Mindful Navigation */}
       <div className="w-64 bg-white border-r border-[#e5e0d8] p-6 hidden md:block">
         <h2 className="text-xl font-medium mb-10 text-[#36454F] tracking-widest uppercase">The Navigator</h2>
 
@@ -104,10 +103,9 @@ function Dashboard() {
         </ul>
       </div>
 
-      {/* MAIN CONTENT */}
+
       <div className="flex-1 p-6 md:p-12 overflow-y-auto">
 
-        {/* ADD NEW ENTRY (The Morning/Evening Form) */}
         {activeTab === "add" && (
           <div className="max-w-2xl mx-auto bg-white p-10 rounded-3xl shadow-sm border border-[#e5e0d8]">
             <h2 className="text-3xl text-[#36454F] mb-2">Morning Current</h2>
@@ -175,7 +173,7 @@ function Dashboard() {
           </div>
         )}
 
-        {/* THE RIVER (List of past entries) */}
+
         {activeTab === "journal" && (
           <div className="max-w-5xl mx-auto">
             <h2 className="text-4xl text-[#36454F] mb-10">The River</h2>
@@ -207,7 +205,6 @@ function Dashboard() {
           </div>
         )}
 
-        {/* MILESTONES (Placeholder for now) */}
         {activeTab === "milestones" && (
           <div className="text-center mt-20">
             <h2 className="text-3xl text-[#36454F] mb-4">Milestones</h2>

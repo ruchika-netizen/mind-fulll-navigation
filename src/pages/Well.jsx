@@ -92,7 +92,6 @@ function Well() {
       {/* LOWER SECTION WRAPPER */}
       <div className="relative flex-grow flex flex-col overflow-hidden">
 
-        {/* 1. LOADING OVERLAY - SIRF CONTENT AREA KE LIYE */}
         <AnimatePresence>
           {!imageLoaded && (
             <motion.div
@@ -107,7 +106,6 @@ function Well() {
           )}
         </AnimatePresence>
 
-        {/* MAIN CONTAINER - Fade in hoga jab image load ho jaye */}
         <motion.main
           initial={{ opacity: 0 }}
           animate={{ opacity: imageLoaded ? 1 : 0 }}
@@ -157,7 +155,6 @@ function Well() {
         </footer>
       </div>
 
-      {/* POPUP SECTION - (Popup logic same rahegi) */}
       <AnimatePresence>
         {isPopupOpen && (
           <div className="fixed inset-0 z-[500] flex items-center justify-center p-6">

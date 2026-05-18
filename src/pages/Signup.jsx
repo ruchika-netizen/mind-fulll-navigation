@@ -73,7 +73,7 @@ function Signup() {
 
       <div className="bg-white border border-[#36454F]/5 rounded-[2.5rem] w-full max-w-md p-10 shadow-sm text-center">
         {isSignedUp ? (
-          // --- SUCCESS VIEW (Fixes Blank Screen) ---
+
           <div className="py-10 animate-in fade-in zoom-in duration-500">
             <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
               <MailCheck className="text-green-500" size={40} />

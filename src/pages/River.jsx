@@ -158,7 +158,6 @@ function River() {
   return (
     <div className="min-h-screen bg-[#F5F0E8] font-serif text-[#36454F] selection:bg-[#36454F]/10 pb-20">
 
-      {/* COMPASS STYLE TOAST NOTIFICATION */}
       <AnimatePresence>
         {updateSuccess && (
           <motion.div

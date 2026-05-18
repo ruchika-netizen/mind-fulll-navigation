@@ -1,18 +1,18 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import pika from "../assets/pexels-84328701-10035016.jpg"; 
-import redpanda from "../assets/bothredpikapandatogether.png"; 
+import pika from "../assets/pexels-84328701-10035016.jpg";
+import redpanda from "../assets/bothredpikapandatogether.png";
 
 function Invitation() {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-[#F5F0E8] flex flex-col items-center justify-center relative p-4 md:p-12 font-serif text-[#36454F] overflow-x-hidden">
-      
-      {/* --- MAIN UNIFIED CARD --- */}
+
+
       <div className="max-w-5xl w-full bg-white rounded-[3rem] p-8 md:p-16 shadow-sm flex flex-col items-center relative z-10 animate-in fade-in zoom-in duration-1000">
-        
-        {/* SECTION 1: THE INVITATION */}
+
+
         <header className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-light italic tracking-tight mb-2">The Invitation</h1>
           <p className="text-[10px] uppercase tracking-[0.5em] font-sans font-bold opacity-30">Of The Navigator</p>
@@ -28,13 +28,13 @@ function Invitation() {
           </p>
         </div>
 
-        {/* SECTION 2: THE PARTNERS */}
+
         <div className="w-full border-t border-[#36454F]/5 pt-16">
           <div className="w-full h-56 md:h-96 rounded-[2.5rem] overflow-hidden mb-16 grayscale-[0.1] opacity-95 border border-[#36454F]/5 shadow-inner">
-            <img 
-              src={redpanda} 
-              alt="Forest Companions" 
-              className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105" 
+            <img
+              src={redpanda}
+              alt="Forest Companions"
+              className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105"
             />
           </div>
 
@@ -43,9 +43,8 @@ function Invitation() {
             <div className="w-8 h-[1px] bg-[#36454F]/20 mx-auto mt-4" />
           </header>
 
-          {/* FLEX CONTAINER FOR PARTNERS */}
           <div className="flex flex-col md:flex-row gap-12 md:gap-16 px-2 items-stretch mb-10">
-            
+
             {/* Red Panda Section */}
             <div className="flex-1 flex flex-col space-y-5 group">
               <div className="flex flex-col">
@@ -59,10 +58,9 @@ function Invitation() {
               </p>
             </div>
 
-            {/* Vertical Divider (Desktop Only) */}
+
             <div className="hidden md:block w-px bg-[#36454F]/10 self-stretch" />
 
-            {/* Pika Section */}
             <div className="flex-1 flex flex-col space-y-5 group">
               <div className="flex flex-col">
                 <h3 className="text-xl md:text-2xl italic font-medium border-b border-[#36454F]/10 pb-3 inline-block">
@@ -77,19 +75,18 @@ function Invitation() {
           </div>
         </div>
 
-        {/* --- FINAL ACTION SECTION --- */}
         <div className="w-full flex flex-col md:flex-row items-center justify-between mt-12 gap-8 border-t border-[#36454F]/5 pt-12">
           <div className="flex flex-col items-center md:items-start">
             <p className="text-[11px] italic opacity-40 font-medium tracking-wide">
               "At the end of your journey, one final companion waits."
             </p>
           </div>
-          
-          <button 
+
+          <button
             onClick={() => navigate("/breath")}
             className="group flex items-center gap-6 bg-[#36454F] text-[#F5F0E8] pl-10 pr-8 py-5 rounded-full text-[11px] uppercase tracking-[0.4em] font-sans font-bold transition-all duration-500 hover:bg-black hover:shadow-2xl active:scale-95 shadow-lg w-full md:w-auto justify-center"
           >
-            Enter the Journey 
+            Enter the Journey
             <span className="group-hover:translate-x-2 transition-transform text-xl leading-none">›</span>
           </button>
         </div>

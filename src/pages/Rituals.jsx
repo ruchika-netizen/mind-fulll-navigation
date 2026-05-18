@@ -72,7 +72,6 @@ const JourneyEnd = () => {
       <div className="max-w-7xl w-full relative min-h-[700px] flex items-center justify-center">
         <AnimatePresence mode="wait">
           {status === "idle" ? (
-            /* ================== STATE 1: SPLIT VIEW (Initial) ================== */
             <motion.div
               key="input-screen"
               initial={{ opacity: 1 }}
@@ -122,7 +121,6 @@ const JourneyEnd = () => {
               </div>
             </motion.div>
           ) : (
-            /* ================== STATE 2: CENTERED FULL VIEW (Success) ================== */
             <motion.div
               key="success-screen"
               initial={{ opacity: 0, y: 20 }}

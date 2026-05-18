@@ -1,33 +1,31 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import pikaHill from "../assets/pexels-regan-dsouza-1315522347-30692724.jpg"; 
-import pikaSmile from "../assets/pexels-regan-dsouza-1315522347-30990826.jpg"; 
+import pikaHill from "../assets/pexels-regan-dsouza-1315522347-30692724.jpg";
+import pikaSmile from "../assets/pexels-regan-dsouza-1315522347-30990826.jpg";
 
 const FinalWord = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#36454F] font-serif flex flex-col overflow-x-hidden selection:bg-[#36454F]/10">
-      
-      {/* FINAL PAGE (Hilltop) */}
+
       <section className="min-h-screen flex flex-col items-center justify-center p-8 md:p-20 text-center space-y-12">
         <div className="max-w-4xl w-full">
           <div className="aspect-video w-full rounded-[3rem] overflow-hidden mb-12 shadow-2xl border border-[#36454F]/10 bg-white p-4">
-            <img 
-              src={pikaHill} 
-              alt="Navigating toward horizon" 
+            <img
+              src={pikaHill}
+              alt="Navigating toward horizon"
               className="w-full h-full object-cover rounded-[2rem] grayscale-[0.2]"
             />
           </div>
-          
+
           <h2 className="text-xl md:text-xl font-light italic leading-relaxed max-w-2xl mx-auto">
-            “You have navigated the river. You have stood upon the mountain. 
+            “You have navigated the river. You have stood upon the mountain.
             The journey is not finished; it has simply become you. Go in peace.”
           </h2>
         </div>
 
-        {/* Footer info at the bottom of first fold */}
         <div className="pt-20">
           <p className="text-[10px] uppercase tracking-[0.5em] font-sans font-bold opacity-60">
             Designed and printed in British Columbia, Canada.
@@ -53,11 +51,11 @@ const FinalWord = () => {
           </p>
 
           <div className="flex justify-center pt-12">
-             <img src={pikaSmile} alt="Facing the reader" className="w-32 h-auto grayscale-[0.5]" />
+            <img src={pikaSmile} alt="Facing the reader" className="w-32 h-auto grayscale-[0.5]" />
           </div>
         </div>
 
-        <button 
+        <button
           onClick={() => navigate("/")}
           className="mt-20 flex items-center gap-2 text-[10px] uppercase tracking-[0.5em] font-sans font-bold hover:tracking-[0.7em] transition-all duration-500"
         >

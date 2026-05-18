@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-
-// Assets
 import pika from "../assets/pikastone.png";
 import pikas from "../assets/redanda.png";
 import pikass from "../assets/redpikapnada.png";
@@ -158,7 +156,6 @@ const WellbeingPractices = () => {
       {/* FOOTER */}
       <footer className="w-full max-w-[85rem] mx-auto px-6 md:px-12 h-[12vh] flex items-center justify-between  shrink-0 mb-4 mt-4">
 
-        {/* Left Side: PREVIOUS Button */}
         <button
           onClick={() => currentSlide === 0 ? navigate("/well") : setCurrentSlide(s => s - 1)}
           className="flex items-center gap-2 text-[12px] uppercase tracking-widest font-sans font-bold group"
@@ -166,7 +163,7 @@ const WellbeingPractices = () => {
           <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> PREVIOUS
         </button>
 
-        {/* Right Side: NEXT PRACTICE (Only shows if NOT on the last slide) */}
+
         {currentSlide < practices.length - 1 && (
           <button
             onClick={() => setCurrentSlide(s => s + 1)}

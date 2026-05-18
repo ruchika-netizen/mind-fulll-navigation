@@ -12,7 +12,6 @@ const PaymentSuccess = () => {
 
         const syncPayment = async (userId) => {
             try {
-                // Get current profile count
                 const { data: profile, error: fetchError } = await supabase
                     .from("profiles")
                     .select("payment_count")
@@ -24,7 +23,7 @@ const PaymentSuccess = () => {
                 const currentCount = parseInt(profile?.payment_count || 0);
                 const newCount = currentCount + 1;
 
-                // Update database
+
                 const { error: updateError } = await supabase
                     .from("profiles")
                     .update({ payment_count: newCount })

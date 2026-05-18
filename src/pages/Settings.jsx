@@ -71,7 +71,7 @@ function Settings() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          // Inline style use kar rahe hain taaki koi bhi CSS file ise override na kar sake
+
           style={{ backgroundColor: '#ffffff' }}
           className="rounded-[3rem] shadow-xl border border-[#36454F]/5 overflow-hidden p-12 space-y-10"
         >
@@ -157,7 +157,7 @@ function Settings() {
                         onClick={() => setOpenIndex(isOpen ? null : index)}
                         className="w-full flex items-center justify-between text-left px-6 py-4 outline-none"
                       >
-                        {/* Font size 19px se 16px kar diya */}
+
                         <p className="text-[16px] font-serif italic text-[#36454F]">{faq.question}</p>
                         <ChevronDown size={14} className={`transition-transform duration-500 text-[#36454F]/30 ${isOpen ? 'rotate-180 text-[#36454F]' : ''}`} />
                       </button>
@@ -170,7 +170,6 @@ function Settings() {
                             exit={{ height: 0, opacity: 0 }}
                             transition={{ duration: 0.3, ease: "easeInOut" }}
                           >
-                            {/* Answer ka font 17px se 14px kar diya */}
                             <div className="px-6 pb-5 pt-0 text-[16px] font-sans italic text-[#36454F] leading-relaxed">
                               <div className="w-6 h-[1px] bg-[#36454F]/10 mb-3" />
                               {faq.answer}
@@ -186,7 +185,7 @@ function Settings() {
           </div>
         </motion.div>
       </main>
-    </div>
+    </div >
   );
 }
 
