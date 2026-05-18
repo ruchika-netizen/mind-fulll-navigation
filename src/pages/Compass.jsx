@@ -304,7 +304,7 @@ function Compass() {
                                 }}
                                 placeholder="..."
                                 maxLength={2000}
-                                className="w-full bg-transparent outline-none italic text-md text-[#36454F] resize-none overflow-hidden leading-relaxed min-h-[120px]"
+                                className="w-full bg-transparent outline-none italic text-md text-[#36454F] resize-none overflow-hidden leading-relaxed min-h-[80px]"
                                 style={{ height: 'auto' }}
                               />
                             </div>
