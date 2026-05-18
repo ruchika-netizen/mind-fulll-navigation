@@ -23,7 +23,8 @@ function Compass() {
   const autoGrow = (el) => {
     if (el) {
       el.style.height = "auto";
-      el.style.height = el.scrollHeight + "px";
+      const newHeight = el.scrollHeight;
+      el.style.height = `${newHeight}px`;
     }
   };
 
@@ -129,7 +130,7 @@ function Compass() {
       </div>
 
       <header className="relative w-full max-w-7xl mx-auto pt-10 pb-7 text-center">
-        <div className="absolute top-6 md:top-12 ">
+        <div className="absolute top-6 md:top-12 left-6">
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all">
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
             <span className="mt-0.5">Back</span>
@@ -163,7 +164,6 @@ function Compass() {
           ) : (
             <motion.div key="content" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
 
-              {/* FIXED EMPTY STATE FOR PREVIOUS TAB */}
               {activeTab === "previous" && entries.length === 0 ? (
                 <div className="text-center py-32 italic">
                   <p className="mb-6 text-xl">No previous path found. Start a new journey.</p>
@@ -172,9 +172,7 @@ function Compass() {
                   </button>
                 </div>
               ) : (
-
                 <>
-
                   {(activeTab === "new" || activeTab === "previous" || isEditingAll) && (
                     <div className="relative">
                       {(activeTab === "previous" || isEditingAll) && entries.length > 0 && (
@@ -211,6 +209,7 @@ function Compass() {
                                 ref={northStarRef}
                                 maxLength={2000}
                                 enterKeyHint="done"
+                                spellCheck="false"
                                 value={activeTab === "new" ? northStar : prevEditData.north_star || ""}
                                 onChange={(e) => {
                                   const val = e.target.value;
@@ -232,7 +231,7 @@ function Compass() {
                             {labels.map((label, i) => (
                               <div key={i} className="flex flex-col flex-shrink-0">
                                 <label className="text-[13px] uppercase tracking-[0.2em] mb-2 font-sans font-bold opacity-80">{label}</label>
-                                <div className="w-full h-auto bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 shadow-inner transition-all duration-300 focus-within:border-[#EAB308] focus-within:bg-white overflow-hidden">
+                                <div className="w-full h-auto min-h-[100px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 shadow-inner transition-all duration-300 focus-within:border-[#EAB308] focus-within:bg-white overflow-hidden">
                                   <textarea
                                     ref={(el) => { stepRefs.current[i] = el; if (el) autoGrow(el); }}
                                     value={activeTab === "new" ? steps[i] : (prevEditData.steps ? prevEditData.steps[i] : "")}
@@ -246,6 +245,7 @@ function Compass() {
                                       }
                                     }}
                                     enterKeyHint="done"
+                                    spellCheck="false"
                                     placeholder="..."
                                     maxLength={2000}
                                     className="w-full bg-transparent outline-none italic text-md text-[#36454F] resize-none overflow-hidden leading-relaxed min-h-[80px]"
