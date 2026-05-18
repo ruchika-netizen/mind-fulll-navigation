@@ -131,7 +131,7 @@ function Compass() {
       </div>
 
       <header className="relative w-full max-w-7xl mx-auto pt-10 pb-7 text-center">
-        <div className="absolute top-6 md:top-12 left-6">
+        <div className="absolute top-6 md:top-12 ">
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[12px] uppercase tracking-[0.4em] font-sans font-bold text-[#36454F] group transition-all">
             <span className="text-lg leading-none group-hover:-translate-x-1 transition-transform inline-block">‹</span>
             <span className="mt-0.5">Back</span>
