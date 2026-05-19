@@ -1,19 +1,16 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link } from "react-router-dom";
 import { CheckCircle2, AlertCircle, Loader2, Eye, EyeOff, MailCheck } from "lucide-react";
-import ReCAPTCHA from "react-google-recaptcha";
 
 function Signup() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState(null);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
   const [isSignedUp, setIsSignedUp] = useState(false);
 
   const navigate = useNavigate();
-  const recaptchaRef = useRef();
 
   const triggerToast = (message, type = "success") => {
     setToast({ show: true, message, type });
@@ -24,10 +21,6 @@ function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    if (!captchaToken) {
-      triggerToast("Please verify the Google reCAPTCHA", "error");
-      return;
-    }
     setLoading(true);
 
     try {
@@ -35,19 +28,19 @@ function Signup() {
         email: form.email.trim(),
         password: form.password,
         options: {
-          captchaToken: captchaToken,
+
           emailRedirectTo: `${window.location.origin}/login?verified=true`,
         },
       });
 
       if (error) {
         triggerToast(error.message, "error");
-        recaptchaRef.current?.reset();
-        setCaptchaToken(null);
       } else {
+
         if (data?.user && data.user.identities?.length === 0) {
           triggerToast("Email already registered. Try logging in.", "error");
         } else {
+
           setIsSignedUp(true);
           triggerToast("Verification link sent! Check your email.", "success");
         }
@@ -73,7 +66,6 @@ function Signup() {
 
       <div className="bg-white border border-[#36454F]/5 rounded-[2.5rem] w-full max-w-md p-10 shadow-sm text-center">
         {isSignedUp ? (
-
           <div className="py-10 animate-in fade-in zoom-in duration-500">
             <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
               <MailCheck className="text-green-500" size={40} />
@@ -83,12 +75,8 @@ function Signup() {
               We've sent a verification link to <br /> <strong>{form.email}</strong>. <br />
               Please confirm your email to activate your account.
             </p>
-            {/* <Link to="/login" className="text-[10px] uppercase tracking-widest font-bold font-sans underline opacity-60 hover:opacity-100">
-              Back to Login
-            </Link> */}
           </div>
         ) : (
-          // --- SIGNUP FORM ---
           <>
             <h2 className="text-3xl text-center mb-10 italic text-[#36454F]">Create Account</h2>
             <form onSubmit={handleSignup} className="space-y-6" autoComplete="off">
@@ -104,7 +92,7 @@ function Signup() {
               </div>
 
               <div className="text-left space-y-2">
-                <label className="text-[12px] uppercase tracking-[0.3em]  font-sans font-bold ml-1">Create Password</label>
+                <label className="text-[12px] uppercase tracking-[0.3em] font-sans font-bold ml-1">Create Password</label>
                 <div className="relative group">
                   <input
                     type="text"
@@ -121,16 +109,6 @@ function Signup() {
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
-                </div>
-              </div>
-
-              <div className="flex justify-center py-2">
-                <div className="scale-[0.85] origin-center">
-                  <ReCAPTCHA
-                    ref={recaptchaRef}
-                    sitekey="6LeH3NssAAAAAGpM5Uw9uM8XLWDTq_5a2qqR0fHA"
-                    onChange={(token) => setCaptchaToken(token)}
-                  />
                 </div>
               </div>
 

@@ -203,7 +203,12 @@ function Compass() {
                             <svg width="140" height="140" viewBox="0 0 100 100" className="stroke-[#36454F] fill-none"><path d="M 85,50 C 85,75 70,88 50,88 C 25,88 12,70 12,50 C 12,25 30,12 55,12 C 70,12 82,22 84,35" strokeWidth="0.8" strokeLinecap="round" /></svg>
                           </div>
                           <div className="w-full flex flex-col overflow-hidden">
-                            <label className="text-[14px] uppercase tracking-[0.2em] block mb-3 font-sans font-bold opacity-80 text-center uppercase">Define Your North Star</label>
+                            <div className="flex justify-between items-center mb-3">
+                              <label className="text-[14px] uppercase tracking-[0.2em] font-sans font-bold opacity-80 uppercase">Define Your North Star</label>
+                              <span className="text-[10px] font-sans font-bold opacity-40 tracking-widest">
+                                {(activeTab === "new" ? northStar : prevEditData.north_star || "").length} / 2000
+                              </span>
+                            </div>
                             <div className="w-full h-[390px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 shadow-inner transition-all duration-300 focus-within:border-[#EAB308] focus-within:bg-white overflow-hidden flex flex-col">
                               <textarea
                                 ref={northStarRef}
@@ -228,32 +233,40 @@ function Compass() {
                           <h2 className="text-2xl font-light italic text-center mb-1">Journey Mapping</h2>
                           <p className="text-[14px] uppercase tracking-[0.2em] block mb-8 font-sans font-bold opacity-80 text-center">The shape of your journey</p>
                           <div className="space-y-6 flex-grow flex flex-col overflow-y-auto pr-2 river-scroll">
-                            {labels.map((label, i) => (
-                              <div key={i} className="flex flex-col flex-shrink-0">
-                                <label className="text-[13px] uppercase tracking-[0.2em] mb-2 font-sans font-bold opacity-80">{label}</label>
-                                <div className="w-full h-auto min-h-[100px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 shadow-inner transition-all duration-300 focus-within:border-[#EAB308] focus-within:bg-white overflow-hidden">
-                                  <textarea
-                                    ref={(el) => { stepRefs.current[i] = el; if (el) autoGrow(el); }}
-                                    value={activeTab === "new" ? steps[i] : (prevEditData.steps ? prevEditData.steps[i] : "")}
-                                    onChange={(e) => {
-                                      const val = e.target.value;
-                                      autoGrow(e.target);
-                                      if (activeTab === "new") {
-                                        const n = [...steps]; n[i] = val; setSteps(n);
-                                      } else {
-                                        const n = [...prevEditData.steps]; n[i] = val; setPrevEditData({ ...prevEditData, steps: n });
-                                      }
-                                    }}
-                                    enterKeyHint="done"
-                                    spellCheck="false"
-                                    placeholder="..."
-                                    maxLength={2000}
-                                    className="w-full bg-transparent outline-none italic text-md text-[#36454F] resize-none overflow-hidden leading-relaxed min-h-[80px]"
-                                    style={{ height: 'auto' }}
-                                  />
+                            {labels.map((label, i) => {
+                              const currentVal = activeTab === "new" ? steps[i] : (prevEditData.steps ? prevEditData.steps[i] : "");
+                              return (
+                                <div key={i} className="flex flex-col flex-shrink-0">
+                                  <div className="flex justify-between items-center mb-2">
+                                    <label className="text-[13px] uppercase tracking-[0.2em] font-sans font-bold opacity-80">{label}</label>
+                                    <span className="text-[10px] font-sans font-bold opacity-40 tracking-widest">
+                                      {currentVal.length} / 2000
+                                    </span>
+                                  </div>
+                                  <div className="w-full h-auto min-h-[100px] bg-[#F5F0E8]/40 border border-[#36454F]/10 rounded-2xl p-4 shadow-inner transition-all duration-300 focus-within:border-[#EAB308] focus-within:bg-white overflow-hidden">
+                                    <textarea
+                                      ref={(el) => { stepRefs.current[i] = el; if (el) autoGrow(el); }}
+                                      value={currentVal}
+                                      onChange={(e) => {
+                                        const val = e.target.value;
+                                        autoGrow(e.target);
+                                        if (activeTab === "new") {
+                                          const n = [...steps]; n[i] = val; setSteps(n);
+                                        } else {
+                                          const n = [...prevEditData.steps]; n[i] = val; setPrevEditData({ ...prevEditData, steps: n });
+                                        }
+                                      }}
+                                      enterKeyHint="done"
+                                      spellCheck="false"
+                                      placeholder="..."
+                                      maxLength={2000}
+                                      className="w-full bg-transparent outline-none italic text-md text-[#36454F] resize-none overflow-hidden leading-relaxed min-h-[80px]"
+                                      style={{ height: 'auto' }}
+                                    />
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
 
                           <button onClick={() => activeTab === "new" ? handleSave() : handleUpdate(prevEditData.id, prevEditData)} className="w-full bg-[#36454F] text-white py-4 rounded-xl mt-6 font-sans tracking-[0.4em] uppercase text-[12px] font-bold shadow-lg hover:bg-black transition-all">
