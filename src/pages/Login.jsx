@@ -22,6 +22,17 @@ const Login = () => {
 
   const isVerifiedFlow = searchParams.get("verified") === "true";
 
+  // --- NAYA CODE: URL ERRORS PAKADNE KE LIYE ---
+  useEffect(() => {
+    const errorDescription = searchParams.get("error_description");
+    if (errorDescription) {
+      setErrorMsg(errorDescription.replace(/\+/g, " ")); //
+      // URL clean karne ke liye taaki ?error=... hat jaye
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [searchParams]);
+  // ---------------------------------------------
+
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -32,25 +43,20 @@ const Login = () => {
     checkSession();
   }, [navigate]);
 
+  // handleLogin and other functions remain same...
   const handleLogin = async (e) => {
     e.preventDefault();
-
     if (!captchaToken) {
       setErrorMsg("Please verify reCAPTCHA that you are human");
       return;
     }
-
     setLoading(true);
     setErrorMsg("");
-
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
-      options: {
-        captchaToken: captchaToken,
-      },
+      options: { captchaToken: captchaToken },
     });
-
     if (error) {
       setErrorMsg(error.message);
       setLoading(false);
@@ -88,6 +94,7 @@ const Login = () => {
           {isVerifiedFlow ? "Confirm Presence" : "Welcome Back"}
         </h2>
 
+        {/* ERROR DISPLAY (Already exists in your code, now handles URL errors too) */}
         {errorMsg && (
           <div className="mb-6 flex items-center gap-2 text-red-500 text-[11px] uppercase tracking-widest font-sans font-bold bg-red-50 p-3 rounded-xl border border-red-100">
             <AlertCircle size={14} /> {errorMsg}
@@ -95,6 +102,7 @@ const Login = () => {
         )}
 
         <form onSubmit={handleLogin} className="space-y-7" autoComplete="off">
+          {/* Email, Password and reCAPTCHA fields as per your original code... */}
           <div className="space-y-2">
             <label className="text-[12px] uppercase tracking-[0.3em] font-sans font-bold ml-1">Email Address</label>
             <input
@@ -105,7 +113,6 @@ const Login = () => {
               required
             />
           </div>
-
           <div className="space-y-2">
             <div className="flex justify-between items-center px-1">
               <label className="text-[12px] uppercase tracking-[0.3em] font-sans font-bold">Password</label>
@@ -131,8 +138,6 @@ const Login = () => {
               </button>
             </div>
           </div>
-
-          {/* ReCAPTCHA */}
           <div className="flex justify-center py-2 overflow-hidden">
             <div className="scale-[0.85] origin-center">
               <ReCAPTCHA
@@ -142,7 +147,6 @@ const Login = () => {
               />
             </div>
           </div>
-
           <button
             type="submit"
             disabled={loading}
@@ -151,7 +155,6 @@ const Login = () => {
             {loading ? <Loader2 className="animate-spin" size={18} /> : "Sign In"}
           </button>
         </form>
-
         {!isVerifiedFlow && (
           <p className="text-center mt-8 text-[11px] uppercase tracking-[0.2em] font-bold font-sans">
             Don't have an account? <Link to="/signup" className="underline font-bold opacity-100">signup</Link>
