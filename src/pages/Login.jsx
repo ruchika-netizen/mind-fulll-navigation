@@ -22,25 +22,6 @@ const Login = () => {
 
   const isVerifiedFlow = searchParams.get("verified") === "true";
 
-
-  useEffect(() => {
-
-    const hashParams = new URLSearchParams(location.hash.substring(1));
-    const errorDesc = hashParams.get("error_description") || searchParams.get("error_description");
-
-    if (errorDesc) {
-
-      let friendlyMessage = errorDesc.replace(/\+/g, " ");
-      if (friendlyMessage.includes("otp_expired") || friendlyMessage.includes("expired")) {
-        friendlyMessage = "Your magic link has expired. Please sign in or request a new one.";
-      }
-
-      setErrorMsg(friendlyMessage);
-      navigate(location.pathname, { replace: true });
-    }
-  }, [location, navigate, searchParams]);
-
-
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -108,9 +89,8 @@ const Login = () => {
         </h2>
 
         {errorMsg && (
-          <div className="mb-6 flex items-center gap-2 text-red-500 text-[11px] uppercase tracking-widest font-sans font-bold bg-red-50 p-4 rounded-xl border border-red-100 shadow-sm animate-in slide-in-from-top-1">
-            <AlertCircle size={14} className="shrink-0" />
-            <span>{errorMsg}</span>
+          <div className="mb-6 flex items-center gap-2 text-red-500 text-[11px] uppercase tracking-widest font-sans font-bold bg-red-50 p-3 rounded-xl border border-red-100">
+            <AlertCircle size={14} /> {errorMsg}
           </div>
         )}
 
