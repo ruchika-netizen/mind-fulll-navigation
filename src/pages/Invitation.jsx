@@ -23,7 +23,7 @@ function Invitation() {
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#F5F0E8] text-[#36454F]">
           <Loader2 className="w-10 h-10 animate-spin opacity-40" />
           <p className="mt-4 font-sans text-[10px] uppercase tracking-[0.4em] font-bold opacity-60">
-            Preparing Your Journey...
+            Loading...
           </p>
         </div>
       )}
