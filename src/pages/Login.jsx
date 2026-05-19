@@ -26,7 +26,7 @@ const Login = () => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        navigate("/invitation?mode=onboarding");
+        navigate("/invitation", { state: { mode: "onboarding" }, replace: true });
       }
     };
     checkSession();
@@ -58,7 +58,7 @@ const Login = () => {
       setCaptchaToken(null);
     } else if (data?.user) {
       if (isVerifiedFlow) {
-        navigate("/invitation?mode=onboarding");
+        navigate("/invitation", { state: { mode: "onboarding" }, replace: true });
       } else {
         setShowEnso(true);
       }
