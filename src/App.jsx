@@ -42,7 +42,8 @@ function App() {
   const searchParams = new URLSearchParams(location.search);
 
   const isVerified = searchParams.get("verified") === "true";
-  const isOnboarding = searchParams.get("mode") === "onboarding";
+  // const isOnboarding = searchParams.get("mode") === "onboarding";
+  const isOnboarding = location.state?.mode === "onboarding";
   const isAuthPage = ["/login", "/signup", "/forgot-password", "/reset-password"].includes(location.pathname);
   const hasAccessToken = location.hash.includes("access_token");
 
@@ -66,7 +67,7 @@ function App() {
       setSession(s);
 
       if (event === "SIGNED_IN" && (isVerified || hasAccessToken)) {
-        navigate("/invitation?mode=onboarding", { replace: true });
+        navigate("/invitation", { state: { mode: "onboarding" }, replace: true });
       }
 
       if (event === "SIGNED_OUT") {
@@ -119,7 +120,7 @@ function App() {
             element={
               session ? (
                 (isVerified || hasAccessToken) ? (
-                  <Navigate to="/invitation?mode=onboarding" replace />
+                  <Navigate to="/invitation" state={{ mode: "onboarding" }} replace />
                 ) : (
                   <Home />
                 )

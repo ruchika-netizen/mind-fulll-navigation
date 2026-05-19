@@ -7,13 +7,18 @@ function Invitation() {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const isOnboarding = searchParams.get("mode") === "onboarding";
+  // const isOnboarding = searchParams.get("mode") === "onboarding";
+  const isOnboarding = location.state?.mode === "onboarding";
 
   const [isPageReady, setIsPageReady] = useState(false);
 
   const handleContinue = () => {
-    const nextPath = isOnboarding ? "/navigator?mode=onboarding" : "/navigator";
-    navigate(nextPath);
+
+    if (isOnboarding) {
+      navigate("/navigator", { state: { mode: "onboarding" } });
+    } else {
+      navigate("/navigator");
+    }
   };
 
   return (
@@ -40,8 +45,8 @@ function Invitation() {
               </h1>
             </header>
             <div className="space-y-6 max-w-xl mx-auto">
-              <p class="text-lg md:text-lg italic leading-relaxed opacity-90">The Mindful Navigator is a place to create your life — one intention, one reflection, one step at a time. To tend it. To navigate it with presence and purpose.</p>
-              <p class="text-lg md:text-lg italic leading-relaxed opacity-90">The Ensō on the cover is your circle — the shape of a journey that is already whole, whatever form it takes. May your path be clear and your heart be present. At the end of your journey, you will find one final companion waiting.</p>
+              <p className="text-lg md:text-lg italic leading-relaxed opacity-90">The Mindful Navigator is a place to create your life — one intention, one reflection, one step at a time. To tend it. To navigate it with presence and purpose.</p>
+              <p className="text-lg md:text-lg italic leading-relaxed opacity-90">The Ensō on the cover is your circle — the shape of a journey that is already whole, whatever form it takes. May your path be clear and your heart be present. At the end of your journey, you will find one final companion waiting.</p>
             </div>
           </div>
 
