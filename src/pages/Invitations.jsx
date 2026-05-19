@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
-import pikaIcon from "../assets/pexels-84328701-10035016.jpg";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import mainHero from "../assets/bothredpikapandatogether.png";
 
 function Invitation() {
@@ -9,6 +8,9 @@ function Invitation() {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const isOnboarding = searchParams.get("mode") === "onboarding";
+
+
+    const [isImageLoading, setIsImageLoading] = useState(true);
 
     const handleContinue = () => {
         const nextPath = isOnboarding ? "/breath?mode=onboarding" : "/breath";
@@ -25,7 +27,6 @@ function Invitation() {
                 </button>
             </div>
 
-
             <div className="max-w-[1300px] mx-auto w-full bg-white rounded-[2rem] shadow-sm flex flex-col lg:flex-row items-stretch animate-in fade-in zoom-in duration-1000 mt-4">
 
                 {/* LEFT COLUMN */}
@@ -37,10 +38,10 @@ function Invitation() {
                     </header>
 
                     <div className="space-y-6 max-w-xl text-left">
-                        <p className="text-lg md:text-lg italic leading-relaxed  text-center opacity-90">
+                        <p className="text-lg md:text-lg italic leading-relaxed text-center opacity-90">
                             The Mindful Navigator is a place to create your life — one intention, one reflection, one step at a time. To tend it. To navigate it with presence and purpose.
                         </p>
-                        <p className="text-lg md:text-lg italic leading-relaxed  text-center opacity-90">
+                        <p className="text-lg md:text-lg italic leading-relaxed text-center opacity-90">
                             The Ensō on the cover is your circle — the shape of a journey that is already whole, whatever form it takes. May your path be clear and your heart be present.
                             At the end of your journey, you will find one final companion waiting.
                         </p>
@@ -51,16 +52,29 @@ function Invitation() {
                 <div className="flex-1 p-8 md:p-8 flex flex-col rounded-[3.5rem] bg-white min-h-full">
 
                     <div className="flex-grow">
-                        <div className="w-full h-44 md:h-[350px] overflow-hidden rounded-[2.5rem] shadow-inner border border-[#36454F]/5 mb-8">
+                        {/* IMAGE CONTAINER WITH LOADER */}
+                        <div className="relative w-full h-44 md:h-[350px] overflow-hidden rounded-[2.5rem] shadow-inner border border-[#36454F]/5 mb-8 bg-[#F5F0E8]/30">
+
+                            {isImageLoading && (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+                                    <Loader2 className="w-8 h-8 animate-spin text-[#36454F]/20" />
+                                    <p className="text-[10px] uppercase tracking-[0.2em] mt-2 opacity-40 font-sans font-bold">Loading...</p>
+                                </div>
+                            )}
+
                             <img
                                 src={mainHero}
                                 alt="The Companions"
-                                className="w-full h-full object-cover transition-transform duration-[3000ms] hover:scale-105"
+                                onLoad={() => setIsImageLoading(false)}
+                                className={`w-full h-full object-cover transition-all duration-[1500ms] ${isImageLoading ? "opacity-0 scale-105" : "opacity-100 scale-100"
+                                    } hover:scale-105`}
                             />
                         </div>
+
                         <h2 className="text-center text-2xl italic font-light opacity-80 mb-8">
                             Your Partners in This Journey
                         </h2>
+
                         <div className="flex flex-col md:flex-row gap-12 items-stretch">
                             <div className="flex-1 space-y-4 group text-left">
                                 <div className="border-b border-[#36454F]/10 pb-4">
