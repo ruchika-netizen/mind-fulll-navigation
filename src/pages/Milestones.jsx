@@ -104,7 +104,7 @@ function Milestones() {
                 {/* Visual Left Badge */}
                 <div className="flex flex-col items-center justify-center w-12 h-12 bg-[#F5F0E8] rounded-2xl border border-[#36454F]/5 group-hover:bg-[#36454F] group-hover:text-white transition-all duration-500 shrink-0">
                   <Bookmark size={14} className="mb-0.5 opacity-20 group-hover:opacity-100" />
-                  <span className="text-[9px] font-bold font-sans opacity-40 group-hover:opacity-100">
+                  <span className="text-[12px] font-bold font-sans opacity-40 group-hover:opacity-100">
                     {new Date(milestone.created_at).toLocaleDateString('en-GB', { day: '2-digit' })}
                   </span>
                 </div>
@@ -114,7 +114,7 @@ function Milestones() {
                   <h3 className="text-[17px] italic font-medium text-[#36454F] mb-0.5 group-hover:text-black transition-colors truncate">
                     {milestone.title}
                   </h3>
-                  <p className="text-[12px] opacity-40 italic leading-tight font-sans group-hover:opacity-70 transition-opacity">
+                  <p className="text-[14px]  italic leading-tight font-sans  transition-opacity">
                     {truncateWords(milestone.ask_of_you, 10)}
                   </p>
                 </div>
