@@ -147,7 +147,9 @@ function App() {
           <Route path="/forge" element={<AuthGuard requireAuth={true}><Forge /></AuthGuard>} />
           <Route path="/still-water" element={<AuthGuard requireAuth={true}><StillWater /></AuthGuard>} />
           <Route path="/wellbeingpractices" element={<AuthGuard requireAuth={true}><WellbeingPractices /></AuthGuard>} />
-          <Route path="/mark-moment" element={<AuthGuard requireAuth={true}><MarkMoment /></AuthGuard>} />
+{/* App.js mein dono cases handle karein */}
+<Route path="/mark-moment" element={<AuthGuard requireAuth={true}><MarkMoment /></AuthGuard>} />
+<Route path="/mark-moment/:id" element={<AuthGuard requireAuth={true}><MarkMoment /></AuthGuard>} />
           <Route path="/companionReadings" element={<AuthGuard requireAuth={true}><CompanionReadings /></AuthGuard>} />
           <Route path="/partners" element={<AuthGuard requireAuth={true}><Partners /></AuthGuard>} />
           <Route path="/finalword" element={<AuthGuard requireAuth={true}><FinalWord /></AuthGuard>} />

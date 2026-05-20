@@ -98,7 +98,7 @@ function Milestones() {
             milestones.map((milestone) => (
               <div
                 key={milestone.id}
-                onClick={() => navigate(`/milestones/edit/${milestone.id}`)}
+                onClick={() => navigate(`/mark-moment/${milestone.id}`)}
                 className="group relative bg-white/40 rounded-[1rem] p-4 md:p-5 border border-white/50 hover:shadow-xl hover:bg-white transition-all duration-500 flex items-center gap-4 md:gap-6 cursor-pointer"
               >
                 {/* Visual Left Badge */}
@@ -122,7 +122,7 @@ function Milestones() {
                 {/* Target Date Badge */}
                 {milestone.target_date && (
                   <div className="hidden sm:flex flex-col items-end shrink-0 border-l border-[#36454F]/10 pl-4 py-1">
-                    <span className="text-[12px] uppercase tracking-[0.1em] font-sans font-bold ">Milestone</span>
+                    <span className="text-[11px] uppercase tracking-[0.1em] font-sans font-bold ">Milestone Date</span>
                     <span className="text-[12px] font-sans font-bold text-[#36454F]/60 group-hover:text-[#36454F]">
                       {formatDate(milestone.target_date)}
                     </span>
